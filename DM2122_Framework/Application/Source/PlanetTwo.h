@@ -34,6 +34,10 @@ class PlanetTwo : public Scene
 
 		//objects
 		GEO_METEOR,
+		GEO_TREE,
+		GEO_HEALTHPACK,
+		GEO_MOUNTAINDEW,
+		GEO_MINERAL1,
 
 		GEO_SCREEN,
 		GEO_TEXT,
@@ -125,6 +129,9 @@ private:
 	bool Switch;
 	bool Switch_LightBall;
 	float translateMeteor;
+	float translatehealthpack;
+	float rotatehealthpack;
+	bool healthup;
 	int meteorX;
 	int meteorZ;
 	double  g_dElapsedTime;

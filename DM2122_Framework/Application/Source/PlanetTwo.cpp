@@ -236,6 +236,18 @@ void PlanetTwo::Init()
 	meshList[GEO_METEOR] = MeshBuilder::GenerateOBJ("meteor", "OBJ//Meteor.obj");
 	meshList[GEO_METEOR]->textureID = LoadTGA("Image//meteor.tga");
 
+	//mineral1
+	meshList[GEO_MINERAL1] = MeshBuilder::GenerateOBJ("mineral1", "OBJ//mineral1.obj");
+	meshList[GEO_MINERAL1]->textureID = LoadTGA("Image//mineral1.tga");
+
+	//healthpack
+	meshList[GEO_HEALTHPACK] = MeshBuilder::GenerateOBJ("healthpack", "OBJ//healthpack.obj");
+	meshList[GEO_HEALTHPACK]->textureID = LoadTGA("Image//healthpack.tga");
+
+	//mountaindew
+	meshList[GEO_MOUNTAINDEW] = MeshBuilder::GenerateOBJ("mountaindew", "OBJ//mountaindew.obj");
+	meshList[GEO_MOUNTAINDEW]->textureID = LoadTGA("Image//mountaindew.tga");
+
 	//text
 	meshList[GEO_TEXT] = MeshBuilder::GenerateText("text", 16, 16);
 	meshList[GEO_TEXT]->textureID = LoadTGA("Image//ExportedFont.tga");
@@ -257,6 +269,9 @@ void PlanetTwo::Init()
 	meteorX = rand() % 600;
 	meteorZ = rand() % 600;
 	healthLeft = 100;
+	translatehealthpack = 0;
+	rotatehealthpack = 0;
+	healthup = false;
 }
 
 void PlanetTwo::Update(double dt)
@@ -264,28 +279,19 @@ void PlanetTwo::Update(double dt)
 	double X_Pos, Y_Pos; //get cursor position
 	int width, height; //get window size
 	g_dElapsedTime += dt;
+	static int transDir = 1; //health pack
 
-	glfwGetCursorPos(m_window, &X_Pos, &Y_Pos);// getting the cursor position 
-	glfwGetWindowSize(m_window, &width, &height); //get size to center cursor 
-	glfwSetCursorPos(m_window, width / 2, height / 2); //set cursor to center of screen
+	rotatehealthpack += (float)(50 * dt);
+	translatehealthpack += (float)(transDir * 0.5 * dt);
+	if (translatehealthpack > 0.5)
+	{
+		transDir = -1;
+	}
+	if (translatehealthpack < 0)
+	{
+		transDir = 1;
+	}
 
-	//modes
-	if (Application::IsKeyPressed('1'))
-	{
-		glEnable(GL_CULL_FACE);
-	}
-	if (Application::IsKeyPressed('2'))
-	{
-		glDisable(GL_CULL_FACE);
-	}
-	if (Application::IsKeyPressed('3'))
-	{
-		glPolygonMode(GL_FRONT_AND_BACK, GL_FILL); //default fill mode
-	}
-	if (Application::IsKeyPressed('4'))
-	{
-		glPolygonMode(GL_FRONT_AND_BACK, GL_LINE); //wireframe mode
-	}
 
 	//Switching on and off
 	if (Application::IsKeyPressed('B'))
@@ -320,8 +326,47 @@ void PlanetTwo::Update(double dt)
 	}
 	if (translateMeteor == -6200 && healthLeft > 0)
 	{
-		*changeHealth -= 5;
+		*changeHealth -= 100;
 	}
+
+	if ((camera.position.x <= 20 && camera.position.x >= -20) && (camera.position.z <= 20 && camera.position.z >= -20))
+	{
+		healthup = true;
+	
+	}
+
+	if ((healthup == true) && (healthLeft < 100))
+	{
+		*changeHealth += 100;
+	}
+
+	if (healthLeft >= 100)
+	{
+
+	}
+
+	glfwGetCursorPos(m_window, &X_Pos, &Y_Pos);// getting the cursor position 
+	glfwGetWindowSize(m_window, &width, &height); //get size to center cursor 
+	glfwSetCursorPos(m_window, width / 2, height / 2); //set cursor to center of screen
+
+	//modes
+	if (Application::IsKeyPressed('1'))
+	{
+		glEnable(GL_CULL_FACE);
+	}
+	if (Application::IsKeyPressed('2'))
+	{
+		glDisable(GL_CULL_FACE);
+	}
+	if (Application::IsKeyPressed('3'))
+	{
+		glPolygonMode(GL_FRONT_AND_BACK, GL_FILL); //default fill mode
+	}
+	if (Application::IsKeyPressed('4'))
+	{
+		glPolygonMode(GL_FRONT_AND_BACK, GL_LINE); //wireframe mode
+	}
+
 
 	fps = 1 / dt;
 
@@ -368,6 +413,28 @@ void PlanetTwo::Render()
 	modelStack.Translate(meteorX, 6000 + translateMeteor , meteorZ);
 	modelStack.Scale(100, 100, 100);
 	RenderMesh(meshList[GEO_METEOR], false);
+	modelStack.PopMatrix();
+
+	//mineral1
+	modelStack.PushMatrix();
+	modelStack.Translate(meteorX, 6000 + translateMeteor, meteorZ);
+	modelStack.Scale(100, 100, 100);
+	RenderMesh(meshList[GEO_METEOR], false);
+	modelStack.PopMatrix();
+
+	//mountaindew
+	modelStack.PushMatrix();
+	modelStack.Translate(meteorX, 6000 + translateMeteor, meteorZ);
+	modelStack.Scale(100, 100, 100);
+	RenderMesh(meshList[GEO_METEOR], false);
+	modelStack.PopMatrix();
+
+	//health pack
+	modelStack.PushMatrix();
+	modelStack.Scale(30, 30, 30);
+	modelStack.Translate(0, translatehealthpack - 1, 0);
+	modelStack.Rotate(rotatehealthpack, 0, 1, 0);
+	RenderMesh(meshList[GEO_HEALTHPACK], true);
 	modelStack.PopMatrix();
 
 	//Test mesh on screen
