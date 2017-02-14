@@ -32,6 +32,9 @@ class PlanetTwo : public Scene
 		GEO_FRONTNight,
 		GEO_BACKNight,
 
+		//objects
+		GEO_METEOR,
+
 		GEO_SCREEN,
 		GEO_TEXT,
 		GROUND,
@@ -102,6 +105,8 @@ public:
 	~PlanetTwo();
 
 	float fps;
+	int healthLeft;
+	int *changeHealth = &healthLeft;
 
 	//methods
 	virtual void Init();
@@ -119,6 +124,12 @@ private:
 	float LSPEED;
 	bool Switch;
 	bool Switch_LightBall;
+	float translateMeteor;
+	int meteorX;
+	int meteorZ;
+	double  g_dElapsedTime;
+
+
 
 	Camera3 camera;
 	MS modelStack, viewStack, projectionStack;

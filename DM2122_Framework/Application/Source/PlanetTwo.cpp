@@ -26,7 +26,8 @@ PlanetTwo::~PlanetTwo()
 
 void PlanetTwo::Init()
 {
-	m_programID = LoadShaders("Shader//Texture.vertexshader", "Shader//Text.fragmentshader");	// Use our shader
+	m_programID = LoadShaders("Shader//Texture.vertexshader", "Shader//Text.fragmentshader");
+	// Use our shader
 	glUseProgram(m_programID);
 
 	// Get a handle for our "MVP" uniform
@@ -156,11 +157,16 @@ void PlanetTwo::Init()
 	glUniform1f(m_parameters[U_LIGHT2_EXPONENT], light[2].exponent);
 
 	// Set background color to black
-	glClearColor(0.0f, 0.0f, 0.0f, 0.0f);
+	glClearColor(0.0f, 0.0f, 0.0f, 0.0f);
+
 	// Generate a default VAO for now
 	glGenVertexArrays(1, &m_vertexArrayID);
-	glBindVertexArray(m_vertexArrayID);
-	glEnable(GL_DEPTH_TEST);// Enable depth test	glEnable(GL_CULL_FACE);// Enable cull test	glPolygonMode(GL_FRONT_AND_BACK, GL_LINE); //wireframe mode	glPolygonMode(GL_FRONT_AND_BACK, GL_FILL); //default fill mode
+	glBindVertexArray(m_vertexArrayID);
+
+	glEnable(GL_DEPTH_TEST);// Enable depth test
+	glEnable(GL_CULL_FACE);// Enable cull test
+	glPolygonMode(GL_FRONT_AND_BACK, GL_LINE); //wireframe mode
+	glPolygonMode(GL_FRONT_AND_BACK, GL_FILL); //default fill mode
 	glEnable(GL_BLEND);//Enable blending
 	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 	glfwSetInputMode(m_window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);//Enable cursor
@@ -185,7 +191,8 @@ void PlanetTwo::Init()
 
 	//Front skybox
 	meshList[GEO_FRONT] = MeshBuilder::GenerateQuad("front", Color(1, 1, 1), 1, 1);
-	meshList[GEO_FRONT]->textureID = LoadTGA("Image/Front.tga");
+	meshList[GEO_FRONT]->textureID = LoadTGA("Image/Front.tga");
+
 	//back skybox
 	meshList[GEO_BACK] = MeshBuilder::GenerateQuad("back", Color(1, 1, 1), 1, 1);
 	meshList[GEO_BACK]->textureID = LoadTGA("Image//Back.tga");
@@ -207,7 +214,8 @@ void PlanetTwo::Init()
 	//=====================================
 	//Front skybox
 	meshList[GEO_FRONTNight] = MeshBuilder::GenerateQuad("front", Color(1, 1, 1), 1, 1);
-	meshList[GEO_FRONTNight]->textureID = LoadTGA("Image//FrontNight.tga");
+	meshList[GEO_FRONTNight]->textureID = LoadTGA("Image//FrontNight.tga");
+
 	//back skybox
 	meshList[GEO_BACKNight] = MeshBuilder::GenerateQuad("back", Color(1, 1, 1), 1, 1);
 	meshList[GEO_BACKNight]->textureID = LoadTGA("Image//BackNight.tga");
@@ -223,6 +231,10 @@ void PlanetTwo::Init()
 	//top skybox
 	meshList[GEO_TOPNight] = MeshBuilder::GenerateQuad("top", Color(1, 1, 1), 1, 1);
 	meshList[GEO_TOPNight]->textureID = LoadTGA("Image//TopNight.tga");
+
+	//meteor
+	meshList[GEO_METEOR] = MeshBuilder::GenerateOBJ("meteor", "OBJ//Meteor.obj");
+	meshList[GEO_METEOR]->textureID = LoadTGA("Image//meteor.tga");
 
 	//text
 	meshList[GEO_TEXT] = MeshBuilder::GenerateText("text", 16, 16);
@@ -241,12 +253,17 @@ void PlanetTwo::Init()
 
 	Switch = true;
 	Switch_LightBall = false;
+	translateMeteor = 0;
+	meteorX = rand() % 600;
+	meteorZ = rand() % 600;
+	healthLeft = 100;
 }
 
 void PlanetTwo::Update(double dt)
 {
 	double X_Pos, Y_Pos; //get cursor position
 	int width, height; //get window size
+	g_dElapsedTime += dt;
 
 	glfwGetCursorPos(m_window, &X_Pos, &Y_Pos);// getting the cursor position 
 	glfwGetWindowSize(m_window, &width, &height); //get size to center cursor 
@@ -281,6 +298,29 @@ void PlanetTwo::Update(double dt)
 	{
 		Switch = false;
 		Switch_LightBall = true;
+	}
+
+
+	if (translateMeteor >= -6200)
+	{
+		translateMeteor -= (float)(1000 * dt);
+	}
+
+	if (translateMeteor <= -6200)
+	{
+		translateMeteor = -6200;
+		g_dElapsedTime;
+		if (g_dElapsedTime > 10)
+		{
+			translateMeteor = 0;
+			g_dElapsedTime = 0;
+			meteorX = rand() % 600;
+			meteorZ = rand() % 600;
+		}
+	}
+	if (translateMeteor == -6200 && healthLeft > 0)
+	{
+		*changeHealth -= 5;
 	}
 
 	fps = 1 / dt;
@@ -323,6 +363,13 @@ void PlanetTwo::Render()
 	RenderMesh(meshList[GROUND], true);
 	modelStack.PopMatrix();
 
+	//meteor
+	modelStack.PushMatrix();
+	modelStack.Translate(meteorX, 6000 + translateMeteor , meteorZ);
+	modelStack.Scale(100, 100, 100);
+	RenderMesh(meshList[GEO_METEOR], false);
+	modelStack.PopMatrix();
+
 	//Test mesh on screen
 	RenderMeshOnScreen(meshList[GEO_SCREEN], 40, 0, 80, 30);
 
@@ -334,10 +381,12 @@ void PlanetTwo::Render()
 	string x = "x: " + std::to_string((int)camera.position.x);
 	string y = "y: " + std::to_string((int)camera.position.y);
 	string z = "z: " + std::to_string((int)camera.position.z);
+	string health = "Health: " + std::to_string((int)healthLeft);
 	RenderTextOnScreen(meshList[GEO_TEXT], frames, Color(0, 1, 0), 2, 0, 29);
 	RenderTextOnScreen(meshList[GEO_TEXT], x, Color(0, 1, 0), 2, 0, 4);
 	RenderTextOnScreen(meshList[GEO_TEXT], y, Color(0, 1, 0), 2, 0, 3);
 	RenderTextOnScreen(meshList[GEO_TEXT], z, Color(0, 1, 0), 2, 0, 2);
+	RenderTextOnScreen(meshList[GEO_TEXT], health, Color(0, 1, 0), 2, 0, 1);
 }
 
 void PlanetTwo::RenderSkyBox()
