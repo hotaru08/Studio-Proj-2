@@ -176,6 +176,8 @@ void Planet1::Init()
     meshList[GEO_LIGHTBALL2] = MeshBuilder::GenerateSphere("LIGHTBALL2", Color(1, 1, 1), 60, 20, 1);
     meshList[GEO_LIGHTBALL3] = MeshBuilder::GenerateSphere("LIGHTBALL3", Color(1, 0, 0), 60, 20, 1);
 
+    meshList[SPHERE] = MeshBuilder::GenerateSphere("LIGHTBALL", Color(1, 1, 1), 60, 20, 1);
+
     //=====================================
     //DayTime
     //=====================================
@@ -202,6 +204,15 @@ void Planet1::Init()
     meshList[GEO_TOP] = MeshBuilder::GenerateQuad("top", Color(1, 1, 1), 1, 1);
     meshList[GEO_TOP]->textureID = LoadTGA("Image//Planet1//Top.tga");
 
+    meshList[GROUND] = MeshBuilder::GenerateQuad("ground", Color(1, 1, 1), 1, 1);
+    meshList[GROUND]->textureID = LoadTGA("Image//Planet1//ground.tga");
+
+    meshList[ALIEN] = MeshBuilder::GenerateOBJ("alien", "OBJ//alien.obj");
+    meshList[ALIEN]->textureID = LoadTGA("Image//noface.tga");
+
+    meshList[GUN] = MeshBuilder::GenerateOBJ("gun", "OBJ//gun.obj");
+    meshList[GUN]->textureID = LoadTGA("Image//gun.tga");
+
     Mtx44 projection;
     projection.SetToPerspective(45.f, 4.f / 3.f, 0.1f, 7000.0f);
     projectionStack.LoadMatrix(projection);
@@ -216,31 +227,14 @@ void Planet1::Init()
     Walking_Rotation_Left = 0.f;
     Walking_Rotation_Right = 0.f;
     RotateBody = 0.f;
+    beam = 0.f;
 
-    //interactions
-    //Flag
-    MoveFlag = 0.0f;
-    RaiseUp = false;
-    RaiseDown = false;
-
-    //Tree
-    ShakeTree = 0.0;;
-    SnowballFallY = 50.0f;
-    SnowballFallZ = 0.0f;
-    Fall = false;
-    PickUp = false;
-
-    //Day and Night
-    DayBreak = true;
-    NightFall = false;
-
-    //Talk 
-    Talk = false;
+    angley = 0;
+    angleside = 0;
 }
 
 void Planet1::Update(double dt)
 {
-    double X_Pos, Y_Pos; //get cursor position
     int width, height; //get window size
 
     glfwGetCursorPos(m_window, &X_Pos, &Y_Pos);// getting the cursor position 
@@ -290,160 +284,28 @@ void Planet1::Update(double dt)
         Walking_Rotation_Right = 0.0f;
         RotateBody = 0.0f;
 
-        MoveFlag = 0.0f;
-        RaiseDown = false;
-        RaiseUp = false;
-
-        ShakeTree = 0.0;;
-        SnowballFallY = 0.0f;
-        SnowballFallZ = 0.0f;
-        Fall = false;
-        DayBreak = true;
-        PickUp = false;
         camera.Reset();//reset camera
     }
-
-    //===================================
-    //Interactions
-    //===================================
-    //flag raising
-    static float Direction;
-
-    if (Application::IsKeyPressed('E') && camera.position.x < -100 && camera.position.x > -300
-        && camera.position.z < -150 && camera.position.z > -350)
+    bool travel = false;
+    if (Application::IsKeyPressed(VK_LBUTTON))
     {
-        if (MoveFlag < -2)
-        {
-            RaiseUp = true;
-            RaiseDown = false;
-        }
-        else if (MoveFlag >= 0)
-        {
-            RaiseUp = false;
-            RaiseDown = true;
-        }
+        travel = true;
     }
-
-    if (RaiseDown && !(Application::IsKeyPressed('E')))
+    if (travel == true)
     {
-        Direction = -1;
-        MoveFlag += (float)(10 * Direction * dt);
-
-        if (MoveFlag < -2)
-        {
-            RaiseDown = false;
-        }
+        beam += 200 * dt;
     }
-
-    if (RaiseUp && !(Application::IsKeyPressed('E')))
+    if (beam > 100)
     {
-        Direction = 1;
-        MoveFlag += (float)(10 * Direction * dt);
-
-        if (MoveFlag > 0)
-        {
-            RaiseUp = false;
-        }
+        beam = false;
     }
+    Vector3 view = (camera.target - camera.position).Normalized();
 
-    //Shake Tree
-    static float DirTree = 1;
-
-    if (camera.position.x > 400 && camera.position.x < 600
-        && camera.position.z > -100 && camera.position.z < 100
-        && Application::IsKeyPressed('E'))
-    {
-        //for the shaking of trees
-        if (ShakeTree > 10)
-        {
-            DirTree = -1;
-        }
-        else if (ShakeTree < -10)
-        {
-            DirTree = 1;
-        }
-
-        ShakeTree += (float)(40 * DirTree * dt);
-    }
-
-    //When not at original position after letting go E
-    if (!(Application::IsKeyPressed('E')))
-    {
-        if (ShakeTree > 0)
-        {
-            DirTree = -1;
-            ShakeTree += (float)(40 * DirTree * dt);
-        }
-        if (ShakeTree < 0)
-        {
-            DirTree = 1;
-            ShakeTree += (float)(40 * DirTree * dt);
-        }
-    }
-
-    //Snowball to drop when shaking
-    if (ShakeTree < -5 && ShakeTree > -10
-        || ShakeTree > 5 && ShakeTree < 10)
-    {
-        Fall = true;
-    }
-
-    if (Fall)
-    {
-        SnowballFallY -= (float)(150 * dt);
-        SnowballFallZ -= (float)(150 * dt);
-
-        if (SnowballFallY < -50)
-        {
-            SnowballFallY = -50;
-        }
-
-        if (SnowballFallZ < -200)
-        {
-            SnowballFallZ = -200;
-        }
-    }
-
-    //Changing between Day and Night
-    if (Application::IsKeyPressed('E'))
-    {
-        if (camera.position.x < -400 && camera.position.x > -600
-            && camera.position.z > -100 && camera.position.z < 100)
-        {
-            if (DayBreak)
-            {
-                DayBreak = false;
-            }
-        }
-    }
-
-    if (Application::IsKeyPressed('X'))
-    {
-        if (camera.position.x < -400 && camera.position.x > -600
-            && camera.position.z > -100 && camera.position.z < 100)
-        {
-            if (DayBreak == false)
-            {
-                DayBreak = true;
-            }
-        }
-    }
-
-    //Pick up snowball
-    if (camera.position.x > 450 && camera.position.x < 550
-        && camera.position.z  > SnowballFallZ - 50 && camera.position.z < SnowballFallZ + 50
-        && Fall && Application::IsKeyPressed(VK_LBUTTON))
-    {
-        PickUp = true;
-    }
-
-    //Talk
-    if (camera.position.x > -100 && camera.position.x < 100
-        && camera.position.z  > -100 && camera.position.z < 100
-        && Application::IsKeyPressed(VK_LBUTTON))
-    {
-        Talk = true;
-    }
+    angleside = (view.x > 0 ? 1 : -1) * (Math::RadianToDegree(acos(Vector3(0, 0, 1).Dot(Vector3(view.x, 0, view.z).Normalized()))));
+    Vector3 right = camera.view.Cross(camera.up);
+    
+    angley = Math::RadianToDegree(acos(Vector3(0, 1, 0).Dot(Vector3(0, right.y, right.z).Normalized())));
+    //angleside = camera.up.Dot(view);
 
     camera.Update(dt, (width / 2) - X_Pos, (height / 2) - Y_Pos);
 }
@@ -476,51 +338,44 @@ void Planet1::Render()
     //axes
     RenderMesh(meshList[GEO_AXES], false);
 
-    //changing day and night
-    if (DayBreak)
+    RenderSkyBox();
+
+    modelStack.PushMatrix();
+    modelStack.Translate(0, -50, 0);
+    modelStack.Rotate(180, 0, 1, 0);
+    modelStack.Scale(2000, 1, 2000);
+    modelStack.Rotate(90, 1, 0, 0);
+    RenderMesh(meshList[GROUND], false);
+    modelStack.PopMatrix();
+
+    modelStack.PushMatrix();
+    modelStack.Translate(0, -40, 0);
+    modelStack.Scale(10, 10, 10);
+    RenderMesh(meshList[ALIEN], false);
+    modelStack.PopMatrix();
+
+    modelStack.PushMatrix();
+    //modelStack.Rotate(Y_Pos, 0, 1, 0);
+    
+    modelStack.Translate(camera.position.x + (camera.target.x - camera.position.x) -0.3,
+        camera.position.y + ((camera.target.y - camera.position.y) - 1.5),
+        camera.position.z + (camera.target.z - camera.position.z));
+    modelStack.Rotate(angleside, 0,1,0);
+    //modelStack.Rotate(angley, 1,0 ,0);
+    modelStack.Scale(0.3, 0.3, 0.3);
+    RenderMesh(meshList[GUN], false);
+
+    if (Application::IsKeyPressed(VK_LBUTTON))
     {
-        //sunlight
-        light[0].power = 1.5f;
-        glUniform1f(m_parameters[U_LIGHT0_POWER], light[0].power);
-
-        //igloo night and fire light
-        light[1].power = 0.0f;
-        light[2].power = 0.0f;
-        glUniform1f(m_parameters[U_LIGHT1_POWER], light[1].power);
-        glUniform1f(m_parameters[U_LIGHT2_POWER], light[2].power);
-
-        //skybox
-        modelStack.PushMatrix();
-        RenderSkyBox();
-        modelStack.PopMatrix();
-
-        //sunlight
-        modelStack.PushMatrix();
-        modelStack.Translate(light[0].position.x, light[0].position.y, light[0].position.z);
-        RenderMesh(meshList[GEO_LIGHTBALL], Switch_LightBall);
-        modelStack.PopMatrix();
+        modelStack.Translate(0, 1, beam);
+        modelStack.Translate(0, 0, 1);
+        RenderMesh(meshList[SPHERE], false);
     }
 
-    if (!(DayBreak))
-    {
-        //sunlight
-        light[0].power = 0.0f;
-        glUniform1f(m_parameters[U_LIGHT0_POWER], light[0].power);
-
-        //igloo night and night light
-        light[1].power = 5.0f;
-        light[2].power = 0.3f;
-        glUniform1f(m_parameters[U_LIGHT1_POWER], light[1].power);
-        glUniform1f(m_parameters[U_LIGHT2_POWER], light[2].power);
-
-        //night light
-        modelStack.PushMatrix();
-        modelStack.Translate(light[2].position.x, light[2].position.y, light[2].position.z);
-        RenderMesh(meshList[GEO_LIGHTBALL3], Switch_LightBall);
-        modelStack.PopMatrix();
-    }
+    modelStack.PopMatrix();
 
     
+       
     //=================================
     //Text on the screen
     //=================================

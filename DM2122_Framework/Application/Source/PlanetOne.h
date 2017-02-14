@@ -16,6 +16,7 @@ class Planet1 : public Scene
         GEO_LIGHTBALL,
         GEO_LIGHTBALL2,
         GEO_LIGHTBALL3,
+        SPHERE,
 
         //skybox Day
         GEO_LEFT,
@@ -24,6 +25,9 @@ class Planet1 : public Scene
         GEO_BOTTOM,
         GEO_FRONT,
         GEO_BACK,
+        GROUND,
+        ALIEN,
+        GUN,
 
         GEO_TEXT,
 
@@ -110,6 +114,9 @@ private:
     float LSPEED;
     bool Switch;
     bool Switch_LightBall;
+    float beam;
+    float angley;
+    float angleside;
 
     Camera3 camera;
     MS modelStack, viewStack, projectionStack;
@@ -124,29 +131,7 @@ private:
     float Walking_Rotation_Left;
     float Walking_Rotation_Right;
     float RotateBody;
-
-    //=============================
-    //Interaction
-    //=============================
-    //flag
-    float MoveFlag;
-    bool RaiseDown;
-    bool RaiseUp;
-
-    //shake tree
-    float ShakeTree;
-    float SnowballFallY; // the speed snowball fall by
-    float SnowballFallZ; // the speed snowball fall by
-
-    bool Fall; //for snowball to fall
-    bool PickUp; //pickup snowball
-
-    //skybox
-    bool DayBreak = true;
-    bool NightFall = false;
-
-    //talk
-    bool Talk;
+    double X_Pos, Y_Pos; //get cursor position
 
     void RenderMesh(Mesh *mesh, bool enableLight);
     void RenderSkyBox();

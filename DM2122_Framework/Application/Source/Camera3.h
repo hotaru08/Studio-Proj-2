@@ -10,35 +10,24 @@ public:
 	Vector3 defaultTarget;
 	Vector3 defaultUp;
 
+    Vector3 view;
+    Vector3 right;
 	//================================
 	//collision detection
 	//================================
-	//Tree
-	Vector3 PrevPos;//track previous pos
-	Vector3 TreeMax;
-	Vector3 TreeMin;
-	Vector3 FlagMax;
-	Vector3 FlagMin;
-	Vector3 chopMax;
-	Vector3 chopMin;
-	Vector3 sledMax;
-	Vector3 sledMin;
-	Vector3 logMax;
-	Vector3 logMin;
-	Vector3 snow1Max;
-	Vector3 snow1Min;
-	Vector3 snow2Max;
-	Vector3 snow2Min;
-	Vector3 snow3Max;
-	Vector3 snow3Min;
-	Vector3 SnowmanMax;
-	Vector3 SnowmanMin;
-	Vector3 igloo1Max;
-	Vector3 igloo1Min;
-	Vector3 igloo2Max;
-	Vector3 igloo2Min;
-	Vector3 igloo3Max;
-	Vector3 igloo3Min;
+    //Objects that collides
+    static unsigned const NoObj = 1;
+    bool collideObject;
+
+    Vector3 PrevPos = { 0.f, 0.f, 0.f };//track previous pos
+    Vector3 CollisionMax[NoObj];//collision max pos for each 
+    Vector3 CollisionMin[NoObj];//collision min pos for each 
+
+    //================================
+    //bounds
+    //================================
+    float SizeOfScene = 1000.0f;
+
 
 	Camera3();
 	~Camera3();
