@@ -209,29 +209,6 @@ void PlanetTwo::Init()
 	meshList[GEO_TOP] = MeshBuilder::GenerateQuad("top", Color(1, 1, 1), 1, 1);
 	meshList[GEO_TOP]->textureID = LoadTGA("Image//Top.tga");
 
-	//=====================================
-	//Night
-	//=====================================
-	//Front skybox
-	meshList[GEO_FRONTNight] = MeshBuilder::GenerateQuad("front", Color(1, 1, 1), 1, 1);
-	meshList[GEO_FRONTNight]->textureID = LoadTGA("Image//FrontNight.tga");
-
-	//back skybox
-	meshList[GEO_BACKNight] = MeshBuilder::GenerateQuad("back", Color(1, 1, 1), 1, 1);
-	meshList[GEO_BACKNight]->textureID = LoadTGA("Image//BackNight.tga");
-
-	//Left skybox
-	meshList[GEO_LEFTNight] = MeshBuilder::GenerateQuad("left", Color(1, 1, 1), 1, 1);
-	meshList[GEO_LEFTNight]->textureID = LoadTGA("Image//LeftNight.tga");
-
-	//Right skybox
-	meshList[GEO_RIGHTNight] = MeshBuilder::GenerateQuad("right", Color(1, 1, 1), 1, 1);
-	meshList[GEO_RIGHTNight]->textureID = LoadTGA("Image//RightNight.tga");
-
-	//top skybox
-	meshList[GEO_TOPNight] = MeshBuilder::GenerateQuad("top", Color(1, 1, 1), 1, 1);
-	meshList[GEO_TOPNight]->textureID = LoadTGA("Image//TopNight.tga");
-
 	//meteor
 	meshList[GEO_METEOR] = MeshBuilder::GenerateOBJ("meteor", "OBJ//Meteor.obj");
 	meshList[GEO_METEOR]->textureID = LoadTGA("Image//meteor.tga");
@@ -268,20 +245,24 @@ void PlanetTwo::Init()
 	translateMeteor = 0;
 	meteorX = rand() % 1001 + (-500);
 	meteorZ = rand() % 1001 + (-500);
-	mineralX[5] = {};
-	mineralZ[5] = {};
+	mineralX[100] = {};
+	mineralZ[100] = {};
+	randomrotate[100] = {};
 	healthLeft = 100;
 	translatehealthpack = 0;
 	rotatehealthpack = 0;
-
-	for (int a = 0; a < 6; a++)
+	for (int a = 1; a < 100; a++)
 	{
 		mineralX[a] = rand() % 1001 + (-500);
 	}
 
-	for (int a = 0; a < 6; a++)
+	for (int a = 1; a < 100; a++)
 	{
 		mineralZ[a] = rand() % 1001 + (-500);
+	}
+	for (int a = 1; a < 100; a++)
+	{
+		randomrotate[a] = rand() % 1001 + (-500);
 	}
 }
 
@@ -427,11 +408,12 @@ void PlanetTwo::Render()
 	modelStack.PopMatrix();
 
 	//mineral1
-	for (int i = 0; i < 6; i++)
+	for (int i = 0; i < 100; i++)
 	{
 		modelStack.PushMatrix();
-		modelStack.Translate(mineralX[i], 0, mineralZ[i]);
+		modelStack.Translate(mineralX[i], -40, mineralZ[i]);
 		modelStack.Scale(20, 20, 20);
+		modelStack.Rotate(randomrotate[i], 0, 1, 0);
 		RenderMesh(meshList[GEO_MINERAL1], true);
 		modelStack.PopMatrix();
 	}
@@ -519,59 +501,6 @@ void PlanetTwo::RenderSkyBox()
 	modelStack.Translate(-0.498, 0.498, 0);
 	modelStack.Rotate(90, 0, 1, 0);
 	RenderMesh(meshList[GEO_RIGHT], false);
-	modelStack.PopMatrix();
-
-	modelStack.PopMatrix();//skybox
-}
-
-void PlanetTwo::RenderSkyBoxNight()
-{
-	//sky box
-	modelStack.PushMatrix();
-	modelStack.Translate(camera.position.x, camera.position.y, camera.position.z);
-	modelStack.Translate(0, -1250, 0);
-	modelStack.Scale(3000, 3000, 3000);
-
-	//Ground
-	modelStack.PushMatrix();
-	modelStack.Rotate(180, 0, 1, 0);
-	modelStack.Rotate(-90, 1, 0, 0);
-	RenderMesh(meshList[GEO_BOTTOM], false);
-	modelStack.PopMatrix();
-
-	//Front
-	modelStack.PushMatrix();
-	modelStack.Translate(0, 0.498, 0.498);
-	modelStack.Rotate(180, 0, 1, 0);
-	RenderMesh(meshList[GEO_FRONTNight], false);
-	modelStack.PopMatrix();
-
-	//Top
-	modelStack.PushMatrix();
-	modelStack.Rotate(180, 0, 1, 0);
-	modelStack.Translate(0, 0.98, 0);
-	modelStack.Rotate(90, 1, 0, 0);
-	RenderMesh(meshList[GEO_TOPNight], false);
-	modelStack.PopMatrix();
-
-	//Back
-	modelStack.PushMatrix();
-	modelStack.Translate(0, 0.498, -0.498);
-	RenderMesh(meshList[GEO_BACKNight], false);
-	modelStack.PopMatrix();
-
-	//Left
-	modelStack.PushMatrix();
-	modelStack.Translate(0.498, 0.4975, 0);
-	modelStack.Rotate(270, 0, 1, 0);
-	RenderMesh(meshList[GEO_LEFTNight], false);
-	modelStack.PopMatrix();
-
-	//Right
-	modelStack.PushMatrix();
-	modelStack.Translate(-0.498, 0.498, 0);
-	modelStack.Rotate(90, 0, 1, 0);
-	RenderMesh(meshList[GEO_RIGHTNight], false);
 	modelStack.PopMatrix();
 
 	modelStack.PopMatrix();//skybox
