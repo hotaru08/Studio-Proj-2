@@ -213,6 +213,10 @@ void Planet1::Init()
     meshList[GUN] = MeshBuilder::GenerateOBJ("gun", "OBJ//gun.obj");
     meshList[GUN]->textureID = LoadTGA("Image//gun.tga");
 
+    //text
+    meshList[GEO_TEXT] = MeshBuilder::GenerateText("text", 16, 16);
+    meshList[GEO_TEXT]->textureID = LoadTGA("Image//ExportedFont.tga");
+
     Mtx44 projection;
     projection.SetToPerspective(45.f, 4.f / 3.f, 0.1f, 7000.0f);
     projectionStack.LoadMatrix(projection);
@@ -233,6 +237,11 @@ void Planet1::Init()
     angleside = 0;
     travel = false;
     count = 0;
+    alienhealth = 100;
+    Aliendead = false;
+    hit = false;
+    movetoplayer = 0;
+    movetoplayerz = 0;
 }
 
 void Planet1::Update(double dt)
@@ -297,7 +306,7 @@ void Planet1::Update(double dt)
     }
     if (travel == true)
     {
-        beam += 1000 * dt;
+        beam +=  20;
     }
     
     if (travel == false && count == 1)
@@ -306,7 +315,7 @@ void Planet1::Update(double dt)
         {
             while (beam < 200)
             {
-                beam += 200 * dt;
+                beam += 20;
             }
         }
         else
@@ -328,11 +337,39 @@ void Planet1::Update(double dt)
     Vector3 view = (camera.target - camera.position).Normalized();
 
     angleside = (view.x > 0 ? 1 : -1) * (Math::RadianToDegree(acos(Vector3(0, 0, 1).Dot(Vector3(view.x, 0, view.z).Normalized()))));
-    Vector3 right = camera.view.Cross(camera.up);
+    Vector3 right = camera.view.Cross(camera.up); 
     
     angley = (view.y > 0 ? -1 : 1) * (Math::RadianToDegree(acos(Vector3(0, 0, 1).Dot(Vector3(0, view.y, view.z).Normalized()))));
     //std::cout << angley << std::endl;
-    std::cout << angleside << std::endl;
+    //std::cout << angleside << std::endl;
+
+    if (movetoplayer > camera.position.x)
+    {
+        movetoplayer -=  1; 
+    }
+
+    if (movetoplayerz > camera.position.z)
+    {
+        movetoplayerz -=  1;
+    }
+
+    if (movetoplayer < camera.position.x)
+    {
+        movetoplayer +=  1;
+    }
+
+    if (movetoplayerz < camera.position.z)
+    {
+        movetoplayerz +=  1;
+    } 
+
+    if (((int)beam - 15 == (int)movetoplayer + 25  && travel == true)|| 
+        ((int)beam - 15 == (int)movetoplayerz + 30 && travel == true) ||
+        ((int)beam - 15 == (int)movetoplayer - 25 && travel == true) ||
+        ((int)beam - 15 == (int)movetoplayerz - 40 && travel == true))
+    {
+        alienhealth -= 10;
+    }
 
     camera.Update(dt, (width / 2) - X_Pos, (height / 2) - Y_Pos);
 }
@@ -375,21 +412,25 @@ void Planet1::Render()
     RenderMesh(meshList[GROUND], false);
     modelStack.PopMatrix();
 
-    modelStack.PushMatrix();
-    modelStack.Translate(0, -40, 0);
-    modelStack.Scale(10, 10, 10);
-    RenderMesh(meshList[ALIEN], false);
-    modelStack.PopMatrix();
+    if (alienhealth > 0)
+    {
+        modelStack.PushMatrix();
+        modelStack.Translate(movetoplayer, 0, 0);
+        modelStack.Translate(0, 0, movetoplayerz);
+        modelStack.Translate(0, -40, 0);
+        modelStack.Scale(10, 10, 10);
+        RenderMesh(meshList[ALIEN], false);
+        modelStack.PopMatrix();
+    }
 
     modelStack.PushMatrix();
     //modelStack.Rotate(Y_Pos, 0, 1, 0);
-
-    modelStack.Translate(camera.position.x + (camera.target.x - camera.position.x)/* -0.3*/,
-        camera.position.y + ((camera.target.y - camera.position.y) - 1.8),
+    modelStack.Translate(camera.position.x + (camera.target.x - camera.position.x),
+        camera.position.y + ((camera.target.y - camera.position.y)),
         camera.position.z + (camera.target.z - camera.position.z));
-
     modelStack.Rotate(angleside, 0, 1, 0);
     //modelStack.Rotate(angley, 1,0,0);
+    modelStack.Translate(0,-1.8,0);
 
     // gun
     modelStack.PushMatrix();
@@ -399,7 +440,7 @@ void Planet1::Render()
 
     //bullet
     modelStack.PushMatrix();
-    modelStack.Translate(0, 0, beam);
+    modelStack.Translate(0, 0, beam - 15);
     modelStack.Translate(0, 1, 0.5);
     modelStack.Scale(0.2, 0.2, 0.2);
     RenderMesh(meshList[SPHERE], false);
@@ -411,17 +452,17 @@ void Planet1::Render()
     //=================================
     //modelStack.PushMatrix();
     //string frames = "FPS: " + std::to_string(fps);
-    //string x = "x: " + std::to_string((int)camera.position.x);
-    //string y = "y: " + std::to_string((int)camera.position.y);
-    //string z = "z: " + std::to_string((int)camera.position.z);
+    string x = "x: " + std::to_string((int)camera.position.x);
+    string y = "y: " + std::to_string((int)camera.position.y);
+    string z = "z: " + std::to_string((int)camera.position.z);
     //RenderTextOnScreen(meshList[GEO_TEXT], frames, Color(0, 0, 0), 2, 0, 29);
     //RenderTextOnScreen(meshList[GEO_TEXT], "Welcome to Chopper's Mini World!!", Color(0, 0, 0), 2, 0, 28);
     //RenderTextOnScreen(meshList[GEO_TEXT], "Interact and see what happens!", Color(0, 0, 0), 2, 0, 27);
 
     ////xyz
-    //RenderTextOnScreen(meshList[GEO_TEXT], x, Color(0, 0, 0), 2, 0, 4);
-    //RenderTextOnScreen(meshList[GEO_TEXT], y, Color(0, 0, 0), 2, 0, 3);
-    //RenderTextOnScreen(meshList[GEO_TEXT], z, Color(0, 0, 0), 2, 0, 2);
+    RenderTextOnScreen(meshList[GEO_TEXT], x, Color(1,1,1), 2, 0, 4);
+    RenderTextOnScreen(meshList[GEO_TEXT], y, Color(1,1,1), 2, 0, 3);
+    RenderTextOnScreen(meshList[GEO_TEXT], z, Color(1,1,1), 2, 0, 2);
 }
 
 void Planet1::RenderSkyBox()

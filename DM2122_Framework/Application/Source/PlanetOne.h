@@ -133,9 +133,14 @@ private:
     float RotateBody;
     double X_Pos, Y_Pos; //get cursor position
 
+    float movetoplayer;
+    float movetoplayerz;
+
     bool travel;
     int count;
-
+    int alienhealth;
+    bool Aliendead;
+    bool hit;
 
     void RenderMesh(Mesh *mesh, bool enableLight);
     void RenderSkyBox();
