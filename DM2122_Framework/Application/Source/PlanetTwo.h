@@ -128,8 +128,11 @@ private:
 	float LSPEED;
 	bool Switch;
 	bool Switch_LightBall;
+	bool shake;
 	float translateMeteor;
 	float translatehealthpack;
+	float earthquakeX;
+	float earthquakeZ;
 	float rotatehealthpack;
 	bool healthup;
 	int meteorX;

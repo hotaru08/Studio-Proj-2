@@ -242,7 +242,10 @@ void PlanetTwo::Init()
 
 	Switch = true;
 	Switch_LightBall = false;
+	shake = false;
 	translateMeteor = 0;
+	earthquakeX = 0;
+	earthquakeZ = 0;
 	meteorX = rand() % 1001 + (-500);
 	meteorZ = rand() % 1001 + (-500);
 	mineralX[100] = {};
@@ -272,8 +275,7 @@ void PlanetTwo::Update(double dt)
 	int width, height; //get window size
 	g_dElapsedTime += dt;
 	static int transDir = 1; //health pack
-
-
+	static int earthDir = 1; //health pack
 
 	rotatehealthpack += (float)(50 * dt);
 	translatehealthpack += (float)(transDir * 0.5 * dt);
@@ -309,15 +311,31 @@ void PlanetTwo::Update(double dt)
 	if (translateMeteor <= -6200)
 	{
 		translateMeteor = -6200;
+		shake = true;
 		g_dElapsedTime;
 		if (g_dElapsedTime > 10)
 		{
 			translateMeteor = 0;
 			g_dElapsedTime = 0;
+			shake = false;
 			meteorX = rand() % 600;
 			meteorZ = rand() % 600;
 		}
 	}
+
+	if (shake == true)
+	{
+		earthquakeX += (float)(earthDir * 100 * dt);
+		if (earthquakeX > 0.5)
+		{
+			earthDir = -1;
+		}
+		if (earthquakeX < -0.5)
+		{
+			earthDir = 1;
+		}
+	}
+
 	if ((translateMeteor == -6200 && healthLeft > 0) 
 		&& (camera.position.x >= meteorX - 200 && camera.position.x <= meteorX + 200)
 		&& (camera.position.z >= meteorZ - 200 && camera.position.z <= meteorZ + 200))
@@ -393,6 +411,10 @@ void PlanetTwo::Render()
 	//axes
 	RenderMesh(meshList[GEO_AXES], false);
 
+	//earthquake
+	modelStack.PushMatrix();
+	modelStack.Translate(earthquakeX, -60, -earthquakeX);
+
 	//textured ground mesh
 	modelStack.PushMatrix();
 	modelStack.Translate(0, -60, 0);
@@ -432,6 +454,8 @@ void PlanetTwo::Render()
 	modelStack.Translate(0, translatehealthpack - 1, 0);
 	modelStack.Rotate(rotatehealthpack, 0, 1, 0);
 	RenderMesh(meshList[GEO_HEALTHPACK], true);
+	modelStack.PopMatrix();
+
 	modelStack.PopMatrix();
 
 	//Test mesh on screen
