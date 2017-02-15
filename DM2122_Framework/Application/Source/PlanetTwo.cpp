@@ -266,12 +266,23 @@ void PlanetTwo::Init()
 	Switch = true;
 	Switch_LightBall = false;
 	translateMeteor = 0;
-	meteorX = rand() % 600;
-	meteorZ = rand() % 600;
+	meteorX = rand() % 1001 + (-500);
+	meteorZ = rand() % 1001 + (-500);
+	mineralX[5] = {};
+	mineralZ[5] = {};
 	healthLeft = 100;
 	translatehealthpack = 0;
 	rotatehealthpack = 0;
-	healthup = false;
+
+	for (int a = 0; a < 6; a++)
+	{
+		mineralX[a] = rand() % 1001 + (-500);
+	}
+
+	for (int a = 0; a < 6; a++)
+	{
+		mineralZ[a] = rand() % 1001 + (-500);
+	}
 }
 
 void PlanetTwo::Update(double dt)
@@ -280,6 +291,8 @@ void PlanetTwo::Update(double dt)
 	int width, height; //get window size
 	g_dElapsedTime += dt;
 	static int transDir = 1; //health pack
+
+
 
 	rotatehealthpack += (float)(50 * dt);
 	translatehealthpack += (float)(transDir * 0.5 * dt);
@@ -324,25 +337,23 @@ void PlanetTwo::Update(double dt)
 			meteorZ = rand() % 600;
 		}
 	}
-	if (translateMeteor == -6200 && healthLeft > 0)
+	if ((translateMeteor == -6200 && healthLeft > 0) 
+		&& (camera.position.x >= meteorX - 200 && camera.position.x <= meteorX + 200)
+		&& (camera.position.z >= meteorZ - 200 && camera.position.z <= meteorZ + 200))
 	{
 		*changeHealth -= 100;
 	}
 
-	if ((camera.position.x <= 20 && camera.position.x >= -20) && (camera.position.z <= 20 && camera.position.z >= -20))
+	if ((translateMeteor == -6200 && healthLeft > 0)
+		&& (camera.position.x >= meteorX - 300 && camera.position.x <= meteorX + 300)
+		&& (camera.position.z >= meteorZ - 300 && camera.position.z <= meteorZ + 300))
 	{
-		healthup = true;
-	
+		*changeHealth -= 50;
 	}
 
-	if ((healthup == true) && (healthLeft < 100))
+	if ((camera.position.x <= 20 && camera.position.x >= -20) && (camera.position.z <= 20 && camera.position.z >= -20) && (healthLeft < 100))
 	{
 		*changeHealth += 100;
-	}
-
-	if (healthLeft >= 100)
-	{
-
 	}
 
 	glfwGetCursorPos(m_window, &X_Pos, &Y_Pos);// getting the cursor position 
@@ -416,11 +427,15 @@ void PlanetTwo::Render()
 	modelStack.PopMatrix();
 
 	//mineral1
-	modelStack.PushMatrix();
-	modelStack.Translate(meteorX, 6000 + translateMeteor, meteorZ);
-	modelStack.Scale(100, 100, 100);
-	RenderMesh(meshList[GEO_METEOR], false);
-	modelStack.PopMatrix();
+	for (int i = 0; i < 6; i++)
+	{
+		modelStack.PushMatrix();
+		modelStack.Translate(mineralX[i], 0, mineralZ[i]);
+		modelStack.Scale(20, 20, 20);
+		RenderMesh(meshList[GEO_MINERAL1], true);
+		modelStack.PopMatrix();
+	}
+	
 
 	//mountaindew
 	modelStack.PushMatrix();

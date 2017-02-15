@@ -134,6 +134,8 @@ private:
 	bool healthup;
 	int meteorX;
 	int meteorZ;
+	int mineralX[5];
+	int mineralZ[5];
 	double  g_dElapsedTime;
 
 
