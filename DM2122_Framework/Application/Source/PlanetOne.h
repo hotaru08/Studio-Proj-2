@@ -133,6 +133,10 @@ private:
     float RotateBody;
     double X_Pos, Y_Pos; //get cursor position
 
+    bool travel;
+    int count;
+
+
     void RenderMesh(Mesh *mesh, bool enableLight);
     void RenderSkyBox();
     void RenderText(Mesh* mesh, std::string text, Color color);

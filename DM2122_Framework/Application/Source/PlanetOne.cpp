@@ -231,6 +231,8 @@ void Planet1::Init()
 
     angley = 0;
     angleside = 0;
+    travel = false;
+    count = 0;
 }
 
 void Planet1::Update(double dt)
@@ -286,26 +288,51 @@ void Planet1::Update(double dt)
 
         camera.Reset();//reset camera
     }
-    bool travel = false;
+
+    // gun control
     if (Application::IsKeyPressed(VK_LBUTTON))
     {
         travel = true;
+        count = 1;
     }
     if (travel == true)
     {
-        beam += 200 * dt;
+        beam += 1000 * dt;
     }
-    if (beam > 100)
+    
+    if (travel == false && count == 1)
     {
-        beam = false;
+        if (beam < 200)
+        {
+            while (beam < 200)
+            {
+                beam += 200 * dt;
+            }
+        }
+        else
+        {
+            count = 0;
+        }
     }
+    if (beam >= 200)
+    {
+        beam = 0;
+        travel = false;
+    }
+    if (travel == false)
+    {
+        beam = 0;
+    }
+
+    //gun movement
     Vector3 view = (camera.target - camera.position).Normalized();
 
     angleside = (view.x > 0 ? 1 : -1) * (Math::RadianToDegree(acos(Vector3(0, 0, 1).Dot(Vector3(view.x, 0, view.z).Normalized()))));
     Vector3 right = camera.view.Cross(camera.up);
     
-    angley = Math::RadianToDegree(acos(Vector3(0, 1, 0).Dot(Vector3(0, right.y, right.z).Normalized())));
-    //angleside = camera.up.Dot(view);
+    angley = (view.y > 0 ? -1 : 1) * (Math::RadianToDegree(acos(Vector3(0, 0, 1).Dot(Vector3(0, view.y, view.z).Normalized()))));
+    //std::cout << angley << std::endl;
+    std::cout << angleside << std::endl;
 
     camera.Update(dt, (width / 2) - X_Pos, (height / 2) - Y_Pos);
 }
@@ -356,26 +383,29 @@ void Planet1::Render()
 
     modelStack.PushMatrix();
     //modelStack.Rotate(Y_Pos, 0, 1, 0);
-    
-    modelStack.Translate(camera.position.x + (camera.target.x - camera.position.x) -0.3,
-        camera.position.y + ((camera.target.y - camera.position.y) - 1.5),
+
+    modelStack.Translate(camera.position.x + (camera.target.x - camera.position.x)/* -0.3*/,
+        camera.position.y + ((camera.target.y - camera.position.y) - 1.8),
         camera.position.z + (camera.target.z - camera.position.z));
-    modelStack.Rotate(angleside, 0,1,0);
-    //modelStack.Rotate(angley, 1,0 ,0);
+
+    modelStack.Rotate(angleside, 0, 1, 0);
+    //modelStack.Rotate(angley, 1,0,0);
+
+    // gun
+    modelStack.PushMatrix();
     modelStack.Scale(0.3, 0.3, 0.3);
     RenderMesh(meshList[GUN], false);
-
-    if (Application::IsKeyPressed(VK_LBUTTON))
-    {
-        modelStack.Translate(0, 1, beam);
-        modelStack.Translate(0, 0, 1);
-        RenderMesh(meshList[SPHERE], false);
-    }
-
     modelStack.PopMatrix();
 
-    
-       
+    //bullet
+    modelStack.PushMatrix();
+    modelStack.Translate(0, 0, beam);
+    modelStack.Translate(0, 1, 0.5);
+    modelStack.Scale(0.2, 0.2, 0.2);
+    RenderMesh(meshList[SPHERE], false);
+    modelStack.PopMatrix();
+    modelStack.PopMatrix();
+
     //=================================
     //Text on the screen
     //=================================
