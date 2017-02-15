@@ -202,13 +202,33 @@ void Space::Init()
 	meshList[GEO_TOP] = MeshBuilder::GenerateQuad("top", Color(1, 1, 1), 1, 1);
 	meshList[GEO_TOP]->textureID = LoadTGA("Image//Space//Up.tga");
 
-	//Planet4
+	//Planet4 : Blue Planet
 	meshList[PLANET4] = MeshBuilder::GenerateOBJ("planet4", "OBJ//Planet4.obj");
 	meshList[PLANET4]->textureID = LoadTGA("Image//Planet4Outside.tga");
 
-	//Planet4
+	//Planet3 : Jupiter
 	meshList[PLANET3] = MeshBuilder::GenerateOBJ("Jupiter", "OBJ//Jupiter.obj");
 	meshList[PLANET3]->textureID = LoadTGA("Image//Jupiter2.tga");
+
+	//Planet2 : Mars
+	meshList[PLANET2] = MeshBuilder::GenerateOBJ("Mars", "OBJ//Mars.obj");
+	meshList[PLANET2]->textureID = LoadTGA("Image//Mars.tga");
+
+	//Planet1 : Saturn
+	meshList[PLANET1] = MeshBuilder::GenerateOBJ("Saturn", "OBJ//Saturn.obj");
+	meshList[PLANET1]->textureID = LoadTGA("Image//Saturn.tga");
+	meshList[PLANET1]->material.kAmbient.Set(0.3f, 0.3f, 0.3f);
+	meshList[PLANET1]->material.kDiffuse.Set(0.7f, 0.7f, 0.7f);
+	meshList[PLANET1]->material.kSpecular.Set(0.1f, 0.1f, 0.1f);
+	meshList[PLANET1]->material.kShininess = 1;
+
+	//Ring
+	meshList[RING] = MeshBuilder::GenerateOBJ("Ring", "OBJ//Ring.obj");
+	meshList[RING]->textureID = LoadTGA("Image//ring.tga");
+	meshList[RING]->material.kAmbient.Set(0.3f, 0.3f, 0.3f);
+	meshList[RING]->material.kDiffuse.Set(0.7f, 0.7f, 0.7f);
+	meshList[RING]->material.kSpecular.Set(0.f, 0.f, 0.f);
+	meshList[RING]->material.kShininess = 1;
 
 	//SpaceShip
 	meshList[SpaceShip] = MeshBuilder::GenerateOBJ("SpaceShip", "OBJ//Spaceship.obj");
@@ -220,6 +240,14 @@ void Space::Init()
 
 	Switch = true;
 	Switch_LightBall = false;
+
+	//movement of the spaceship
+	pitch = 0;
+	yaw = 0;
+	row = 0;
+
+	view = 0;
+	right = 0;
 }
 
 void Space::Update(double dt)
@@ -262,6 +290,23 @@ void Space::Update(double dt)
 		Switch_LightBall = true;
 	}
 
+	//movement of spaceship
+	view = (camera.target - camera.position).Normalized();
+	right = camera.view.Cross(camera.up);
+
+	//left and right
+	yaw = (view.x > 0 ? 1 : -1) * (Math::RadianToDegree(acos(Vector3(0, 0, 1).Dot(Vector3(view.x, 0, view.z).Normalized()))));
+
+	//up and down
+	pitch = (view.y > 0 ? -1 : 1) * (Math::RadianToDegree(acos(Vector3(0, 0, 1).Dot(Vector3(0, view.y, view.z).Normalized()))));
+
+	//spaceship rotate when turn
+	row = (view.z > 0 ? 1 : -1) * (Math::RadianToDegree(acos(Vector3(1, 0, 0).Dot(Vector3(0, 0, view.z).Normalized()))));
+
+	std::cout << pitch << std::endl;
+	std::cout << yaw << std::endl;
+	std::cout << row << std::endl;
+
 	fps = 1 / dt;
 
 	camera.Update(dt, (width / 2) - X_Pos, (height / 2) - Y_Pos);
@@ -298,9 +343,14 @@ void Space::Render()
 
 	//SpaceShip
 	modelStack.PushMatrix();
-	modelStack.Translate(camera.position.x  + (camera.target.x - camera.position.x)- 0.2,
-							camera.position.y + (camera.target.y - camera.position.y) - 20, 
-							camera.position.z + (camera.target.z - camera.position.z) + 30);
+	modelStack.Translate(camera.position.x  + (camera.target.x - camera.position.x),
+							camera.position.y + (camera.target.y - camera.position.y), 
+							camera.position.z + (camera.target.z - camera.position.z));
+	//modelStack.Rotate(angley, 1,0,0);
+	
+	modelStack.Rotate(yaw, 0, 1, 0);
+	//modelStack.Rotate(row, 0, 0, 1);
+	modelStack.Translate(-0.2, -17, 40);
 	RenderMesh(meshList[SpaceShip], true);
 	modelStack.PopMatrix();
 
@@ -317,6 +367,25 @@ void Space::Render()
 	modelStack.Scale(100, 100, 100);
 	RenderMesh(meshList[PLANET3], true);
 	modelStack.PopMatrix();
+
+	//Saturn
+	modelStack.PushMatrix();
+	modelStack.Translate(500, 0, -2000);
+	modelStack.Scale(80, 80, 80);
+	RenderMesh(meshList[PLANET1], true);
+
+	modelStack.PushMatrix();
+	RenderMesh(meshList[RING], true);
+	modelStack.PopMatrix();
+
+	modelStack.PopMatrix();
+
+	//Mars
+	modelStack.PushMatrix();
+	modelStack.Translate(0, 0, 5000);
+	modelStack.Scale(60, 60, 60);
+	RenderMesh(meshList[PLANET2], true);
+	modelStack.PopMatrix();
 }
 
 void Space::RenderSkyBox()
@@ -325,11 +394,10 @@ void Space::RenderSkyBox()
 	modelStack.PushMatrix();
 	modelStack.Translate(camera.position.x, camera.position.y, camera.position.z);
 	modelStack.Translate(0, -1250, 0);
-	modelStack.Scale(10000, 10000, 10000);
+	modelStack.Scale(5000, 5000, 5000);
 
 	//Ground
 	modelStack.PushMatrix();
-	//modelStack.Rotate(180, 0, 1, 0);
 	modelStack.Rotate(-90, 1, 0, 0);
 	RenderMesh(meshList[GEO_BOTTOM], false);
 	modelStack.PopMatrix();

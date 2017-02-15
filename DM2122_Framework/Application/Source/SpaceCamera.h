@@ -10,6 +10,10 @@ public:
 	Vector3 defaultTarget;
 	Vector3 defaultUp;
 
+	Vector3 view;
+	Vector3 right;
+	Vector3 up;
+
 	//================================
 	//collision detection
 	//================================

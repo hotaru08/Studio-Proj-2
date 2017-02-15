@@ -16,8 +16,8 @@ void SpaceCamera::Init(const Vector3& pos, const Vector3& target, const Vector3&
 {
 	this->position = defaultPosition = pos;
 	this->target = defaultTarget = target;
-	Vector3 view = (target - position).Normalized();
-	Vector3 right = view.Cross(up);
+	view = (target - position).Normalized();
+	right = view.Cross(up);
 	right.Normalize();
 	this->up = defaultUp = right.Cross(view).Normalized();
 }

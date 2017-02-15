@@ -33,6 +33,7 @@ class Space : public Scene
 		PLANET2,
 		PLANET3,
 		PLANET4,
+		RING,
 
 		GEO_TEXT,
 
@@ -119,6 +120,12 @@ private:
 	float LSPEED;
 	bool Switch;
 	bool Switch_LightBall;
+	float pitch;
+	float yaw;
+	float row;
+
+	Vector3 view;
+	Vector3 right;
 
 	SpaceCamera camera;
 	MS modelStack, viewStack, projectionStack;
