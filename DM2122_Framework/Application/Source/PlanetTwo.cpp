@@ -187,27 +187,27 @@ void PlanetTwo::Init()
 	//=====================================
 	//Bottom
 	meshList[GEO_BOTTOM] = MeshBuilder::GenerateQuad("bottom", Color(1, 1, 1), 1, 1);
-	meshList[GEO_BOTTOM]->textureID = LoadTGA("Image//Bottom.tga");
+	meshList[GEO_BOTTOM]->textureID = LoadTGA("Image//Planet2//bottom.tga");
 
 	//Front skybox
 	meshList[GEO_FRONT] = MeshBuilder::GenerateQuad("front", Color(1, 1, 1), 1, 1);
-	meshList[GEO_FRONT]->textureID = LoadTGA("Image/Front.tga");
+	meshList[GEO_FRONT]->textureID = LoadTGA("Image//Planet2//front.tga");
 
 	//back skybox
 	meshList[GEO_BACK] = MeshBuilder::GenerateQuad("back", Color(1, 1, 1), 1, 1);
-	meshList[GEO_BACK]->textureID = LoadTGA("Image//Back.tga");
+	meshList[GEO_BACK]->textureID = LoadTGA("Image//Planet2//back.tga");
 
 	//Left skybox
 	meshList[GEO_LEFT] = MeshBuilder::GenerateQuad("left", Color(1, 1, 1), 1, 1);
-	meshList[GEO_LEFT]->textureID = LoadTGA("Image//Left.tga");
+	meshList[GEO_LEFT]->textureID = LoadTGA("Image//Planet2//left.tga");
 
 	//Right skybox
 	meshList[GEO_RIGHT] = MeshBuilder::GenerateQuad("right", Color(1, 1, 1), 1, 1);
-	meshList[GEO_RIGHT]->textureID = LoadTGA("Image//Right.tga");
+	meshList[GEO_RIGHT]->textureID = LoadTGA("Image//Planet2//right.tga");
 
 	//top skybox
 	meshList[GEO_TOP] = MeshBuilder::GenerateQuad("top", Color(1, 1, 1), 1, 1);
-	meshList[GEO_TOP]->textureID = LoadTGA("Image//Top.tga");
+	meshList[GEO_TOP]->textureID = LoadTGA("Image//Planet2//up.tga");
 
 	//meteor
 	meshList[GEO_METEOR] = MeshBuilder::GenerateOBJ("meteor", "OBJ//Meteor.obj");
@@ -218,11 +218,11 @@ void PlanetTwo::Init()
 	meshList[GEO_MINERAL1]->textureID = LoadTGA("Image//mineral1.tga");
 
 	//mineral2
-	meshList[GEO_MINERAL2] = MeshBuilder::GenerateOBJ("mineral2", "OBJ//mineral2.obj");
+	meshList[GEO_MINERAL2] = MeshBuilder::GenerateOBJ("mineral2", "OBJ//mineral1.obj");
 	meshList[GEO_MINERAL2]->textureID = LoadTGA("Image//mineral2.tga");
 
 	//mineral3
-	meshList[GEO_MINERAL3] = MeshBuilder::GenerateOBJ("mineral3", "OBJ//mineral3.obj");
+	meshList[GEO_MINERAL3] = MeshBuilder::GenerateOBJ("mineral3", "OBJ//mineral1.obj");
 	meshList[GEO_MINERAL3]->textureID = LoadTGA("Image//mineral3.tga");
 
 	//healthpack
@@ -252,7 +252,7 @@ void PlanetTwo::Init()
 
 	//ground
 	meshList[GROUND] = MeshBuilder::GenerateOBJ("ground", "OBJ//Land_Mesh.obj");
-	meshList[GROUND]->textureID = LoadTGA("Image//bottom.tga");
+	meshList[GROUND]->textureID = LoadTGA("Image//Planet2//bottom.tga");
 
 	//screen
 	meshList[GEO_SCREEN] = MeshBuilder::GenerateQuad("front", Color(1, 1, 1), 1, 1);
@@ -273,8 +273,8 @@ void PlanetTwo::Init()
 	meteorZ = rand() % 1001 + (-500);
 	mineralX[100] = {};
 	mineralZ[100] = {};
-	treeX[5] = {};
-	treeY[5] = {};
+	treeX[10] = {};
+	treeY[10] = {};
 	treecolour[10] = {};
 	randomrotate[100] = {};
 	healthLeft = 100;
@@ -295,22 +295,29 @@ void PlanetTwo::Init()
 	//============================================================//
 
 	//=================== RANDOM TREE SPAWN =====================//
-	for (int a = 0; a < 5; a++)
+	for (int a = 0; a < 10; a++)
 	{
 		treeX[a] = rand() % 1001 + (-500);
 	}
 
 
-	for (int a = 0; a < 5; a++)
+	for (int a = 0; a < 10; a++)
 	{
 		treeY[a] = rand() % 1001 + (-500);
 	}
 	//============================================================//
 
 	//===========RANDOM BETWEEN DIFFERENT COLOR TREES=============//
-	for (int a = 0; a < 5; a++)
+	for (int a = 0; a < 10; a++)
 	{
 		treecolour[a] = rand() % 3;
+	}
+	//============================================================//
+
+	//===========RANDOM BETWEEN DIFFERENT MINERALS=============//
+	for (int a = 0; a < 50; a++)
+	{
+		mineralcolour[a] = rand() % 3;
 	}
 	//============================================================//
 
@@ -378,12 +385,12 @@ void PlanetTwo::Update(double dt)
 
 	if (shake == true)
 	{
-		earthquakeX += (float)(earthDir * 100 * dt);
-		if (earthquakeX > 0.5)
+		earthquakeX += (float)(earthDir * 200 * dt);
+		if (earthquakeX > 1)
 		{
 			earthDir = -1;
 		}
-		if (earthquakeX < -0.5)
+		if (earthquakeX < -1)
 		{
 			earthDir = 1;
 		}
@@ -463,6 +470,7 @@ void PlanetTwo::Render()
 
 	//axes
 	RenderMesh(meshList[GEO_AXES], false);
+	RenderSkyBox();
 
 	//earthquake
 	modelStack.PushMatrix();
@@ -472,7 +480,7 @@ void PlanetTwo::Render()
 	modelStack.PushMatrix();
 	modelStack.Translate(0, -60, 0);
 	modelStack.Scale(9000, 7000, 9000);
-	RenderMesh(meshList[GROUND], true);
+	RenderMesh(meshList[GROUND], false);
 	modelStack.PopMatrix();
 
 	//meteor
@@ -483,18 +491,29 @@ void PlanetTwo::Render()
 	modelStack.PopMatrix();
 
 	//mineral1
-	for (int i = 0; i < 100; i++)
+	for (int i = 0; i < 50; i++)
 	{
 		modelStack.PushMatrix();
 		modelStack.Translate(mineralX[i], -40, mineralZ[i]);
 		modelStack.Scale(20, 20, 20);
 		modelStack.Rotate(randomrotate[i], 0, 1, 0);
-		RenderMesh(meshList[GEO_MINERAL1], true);
+		if (mineralcolour[i] == 0)
+		{
+			RenderMesh(meshList[GEO_MINERAL1], true);
+		}
+		if (mineralcolour[i] == 1)
+		{
+			RenderMesh(meshList[GEO_MINERAL2], true);
+		}
+		if (mineralcolour[i] == 2)
+		{
+			RenderMesh(meshList[GEO_MINERAL3], true);
+		}
 		modelStack.PopMatrix();
 	}
 
 	//tree
-	for (int i = 0; i < 5; i++)
+	for (int i = 0; i < 10; i++)
 	{
 			modelStack.PushMatrix();
 			modelStack.Translate(treeX[i], -40, treeY[i]);
@@ -562,44 +581,42 @@ void PlanetTwo::RenderSkyBox()
 
 	//Ground
 	modelStack.PushMatrix();
-	modelStack.Rotate(180, 0, 1, 0);
 	modelStack.Rotate(-90, 1, 0, 0);
 	RenderMesh(meshList[GEO_BOTTOM], false);
 	modelStack.PopMatrix();
 
-	//Front
+	//left
 	modelStack.PushMatrix();
 	modelStack.Translate(0, 0.498, 0.498);
 	modelStack.Rotate(180, 0, 1, 0);
-	RenderMesh(meshList[GEO_FRONT], false);
+	RenderMesh(meshList[GEO_LEFT], false);
 	modelStack.PopMatrix();
 
-	//Top
+	//top
 	modelStack.PushMatrix();
-	modelStack.Rotate(180, 0, 1, 0);
 	modelStack.Translate(0, 0.98, 0);
 	modelStack.Rotate(90, 1, 0, 0);
 	RenderMesh(meshList[GEO_TOP], false);
 	modelStack.PopMatrix();
 
-	//Back
+	//right
 	modelStack.PushMatrix();
 	modelStack.Translate(0, 0.498, -0.498);
-	RenderMesh(meshList[GEO_BACK], false);
+	RenderMesh(meshList[GEO_RIGHT], false);
 	modelStack.PopMatrix();
 
-	//Left
+	//front
 	modelStack.PushMatrix();
 	modelStack.Translate(0.498, 0.4975, 0);
 	modelStack.Rotate(270, 0, 1, 0);
-	RenderMesh(meshList[GEO_LEFT], false);
+	RenderMesh(meshList[GEO_FRONT], false);
 	modelStack.PopMatrix();
 
-	//Right
+	//back
 	modelStack.PushMatrix();
 	modelStack.Translate(-0.498, 0.498, 0);
 	modelStack.Rotate(90, 0, 1, 0);
-	RenderMesh(meshList[GEO_RIGHT], false);
+	RenderMesh(meshList[GEO_BACK], false);
 	modelStack.PopMatrix();
 
 	modelStack.PopMatrix();//skybox

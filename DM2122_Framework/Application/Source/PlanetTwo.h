@@ -136,9 +136,10 @@ private:
 	int meteorZ;
 	int mineralX[100];
 	int mineralZ[100];
-	int treeX[5];
-	int treeY[5];
+	int treeX[10];
+	int treeY[10];
 	int treecolour[10];
+	int mineralcolour[50];
 	int randomrotate[100];
 	double  g_dElapsedTime;
 

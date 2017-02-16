@@ -338,7 +338,7 @@ Vector3 Vector3::Normalized( void ) const throw( DivideByZero )
 {
 	float d = Length();
 	if(d <= Math::EPSILON && -d <= Math::EPSILON)
-	  throw DivideByZero();
+	throw DivideByZero();
 	return Vector3(x / d, y / d, z / d);
 }
 
