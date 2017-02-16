@@ -120,12 +120,17 @@ private:
 	float LSPEED;
 	bool Switch;
 	bool Switch_LightBall;
-	float pitch;
-	float yaw;
-	float row;
 
-	Vector3 view;
+	//ship
 	Vector3 right;
+	Vector3 up;
+	Vector3 view;
+	Position pos;
+
+	float angleside;
+	float angley;
+
+	Mtx44 RotationMartix;//4 x 4 matrix for spaceship rotation
 
 	SpaceCamera camera;
 	MS modelStack, viewStack, projectionStack;

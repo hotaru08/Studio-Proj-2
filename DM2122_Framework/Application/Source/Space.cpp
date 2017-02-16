@@ -168,13 +168,14 @@ void Space::Init()
 	//camera
 	camera.Init(Vector3(0, 50, -200), Vector3(1, 0, 0), Vector3(0, 1, 0));
 
-	//axis 
 	meshList[GEO_AXES] = MeshBuilder::GenerateAxes("reference", 1000, 1000, 1000);
 
 	//Lightball
 	meshList[GEO_LIGHTBALL] = MeshBuilder::GenerateSphere("LIGHTBALL", Color(1, 1, 1), 60, 20, 1);
 	meshList[GEO_LIGHTBALL2] = MeshBuilder::GenerateSphere("LIGHTBALL2", Color(1, 1, 1), 60, 20, 1);
 	meshList[GEO_LIGHTBALL3] = MeshBuilder::GenerateSphere("LIGHTBALL3", Color(1, 0, 0), 60, 20, 1);
+	meshList[GEO_TEXT] = MeshBuilder::GenerateText("text", 16, 16);
+	meshList[GEO_TEXT]->textureID = LoadTGA("Image//ExportedFont.tga");
 
 	//=====================================
 	//DayTime
@@ -240,14 +241,10 @@ void Space::Init()
 
 	Switch = true;
 	Switch_LightBall = false;
+	fps = 0;
 
-	//movement of the spaceship
-	pitch = 0;
-	yaw = 0;
-	row = 0;
-
-	view = 0;
-	right = 0;
+	//initialise matrix
+	RotationMartix = (0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1);
 }
 
 void Space::Update(double dt)
@@ -290,24 +287,29 @@ void Space::Update(double dt)
 		Switch_LightBall = true;
 	}
 
-	//movement of spaceship
 	view = (camera.target - camera.position).Normalized();
-	right = camera.view.Cross(camera.up);
+	right = (view.Cross(camera.up).Normalized());
+	up = (right.Cross(camera.view).Normalized());
 
-	//left and right
-	yaw = (view.x > 0 ? 1 : -1) * (Math::RadianToDegree(acos(Vector3(0, 0, 1).Dot(Vector3(view.x, 0, view.z).Normalized()))));
+	/*pos = (camera.position.x, camera.position.y, camera.position.z);
+	view = (camera.target - camera.position).Normalized();
+	right = (camera.view.Cross(camera.up).Normalized());
+	up = (camera.right.Cross(camera.view).Normalized());*/
 
-	//up and down
-	pitch = (view.y > 0 ? -1 : 1) * (Math::RadianToDegree(acos(Vector3(0, 0, 1).Dot(Vector3(0, view.y, view.z).Normalized()))));
+	/*Vector3 view = (camera.target - camera.position).Normalized();
 
-	//spaceship rotate when turn
-	row = (view.z > 0 ? 1 : -1) * (Math::RadianToDegree(acos(Vector3(1, 0, 0).Dot(Vector3(0, 0, view.z).Normalized()))));
+	angleside = (view.x > 0 ? 1 : -1) * (Math::RadianToDegree(acos(Vector3(0, 0, 1).Dot(Vector3(view.x, 0, view.z).Normalized()))));
+	Vector3 right = camera.view.Cross(camera.up);
 
-	std::cout << pitch << std::endl;
-	std::cout << yaw << std::endl;
-	std::cout << row << std::endl;
+	angley = (view.y > 0 ? -1 : 1) * (Math::RadianToDegree(acos(Vector3(0, 0, 1).Dot(Vector3(0, view.y, view.z).Normalized()))));*/
 
-	fps = 1 / dt;
+	//fps = 1 / dt;
+
+
+	RotationMartix = Mtx44(right.x ,right.y, right.z, 0,
+						up.x ,up.y , up.z , 0,
+						view.x, view.y , view.z , 0,
+						pos.x , pos.y , pos.z, 1);
 
 	camera.Update(dt, (width / 2) - X_Pos, (height / 2) - Y_Pos);
 }
@@ -343,13 +345,8 @@ void Space::Render()
 
 	//SpaceShip
 	modelStack.PushMatrix();
-	modelStack.Translate(camera.position.x  + (camera.target.x - camera.position.x),
-							camera.position.y + (camera.target.y - camera.position.y), 
-							camera.position.z + (camera.target.z - camera.position.z));
-	//modelStack.Rotate(angley, 1,0,0);
-	
-	modelStack.Rotate(yaw, 0, 1, 0);
-	//modelStack.Rotate(row, 0, 0, 1);
+	modelStack.Translate(camera.position.x,camera.position.y, camera.position.z);
+	modelStack.LoadMatrix(RotationMartix);//load a martix
 	modelStack.Translate(-0.2, -17, 40);
 	RenderMesh(meshList[SpaceShip], true);
 	modelStack.PopMatrix();
@@ -373,11 +370,9 @@ void Space::Render()
 	modelStack.Translate(500, 0, -2000);
 	modelStack.Scale(80, 80, 80);
 	RenderMesh(meshList[PLANET1], true);
-
 	modelStack.PushMatrix();
 	RenderMesh(meshList[RING], true);
 	modelStack.PopMatrix();
-
 	modelStack.PopMatrix();
 
 	//Mars
@@ -386,6 +381,16 @@ void Space::Render()
 	modelStack.Scale(60, 60, 60);
 	RenderMesh(meshList[PLANET2], true);
 	modelStack.PopMatrix();
+
+	
+	string x = "x: " + std::to_string((int)camera.position.x);
+	string y = "y: " + std::to_string((int)camera.position.y);
+	string z = "z: " + std::to_string((int)camera.position.z);
+	////xyz
+	RenderTextOnScreen(meshList[GEO_TEXT], x, Color(1, 1, 1), 2, 0, 4);
+	RenderTextOnScreen(meshList[GEO_TEXT], y, Color(1, 1, 1), 2, 0, 3);
+	RenderTextOnScreen(meshList[GEO_TEXT], z, Color(1, 1, 1), 2, 0, 2);
+	
 }
 
 void Space::RenderSkyBox()
@@ -432,7 +437,6 @@ void Space::RenderSkyBox()
 
 	//Right
 	modelStack.PushMatrix();
-	//modelStack.Rotate(90, 1, 0, 0);
 
 	modelStack.Translate(-0.498, 0.498, 0);
 	modelStack.Rotate(90, 0, 1, 0);
