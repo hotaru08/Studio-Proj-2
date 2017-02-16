@@ -217,6 +217,14 @@ void PlanetTwo::Init()
 	meshList[GEO_MINERAL1] = MeshBuilder::GenerateOBJ("mineral1", "OBJ//mineral1.obj");
 	meshList[GEO_MINERAL1]->textureID = LoadTGA("Image//mineral1.tga");
 
+	//mineral2
+	meshList[GEO_MINERAL2] = MeshBuilder::GenerateOBJ("mineral2", "OBJ//mineral2.obj");
+	meshList[GEO_MINERAL2]->textureID = LoadTGA("Image//mineral2.tga");
+
+	//mineral3
+	meshList[GEO_MINERAL3] = MeshBuilder::GenerateOBJ("mineral3", "OBJ//mineral3.obj");
+	meshList[GEO_MINERAL3]->textureID = LoadTGA("Image//mineral3.tga");
+
 	//healthpack
 	meshList[GEO_HEALTHPACK] = MeshBuilder::GenerateOBJ("healthpack", "OBJ//healthpack.obj");
 	meshList[GEO_HEALTHPACK]->textureID = LoadTGA("Image//healthpack.tga");
@@ -224,6 +232,19 @@ void PlanetTwo::Init()
 	//mountaindew
 	meshList[GEO_MOUNTAINDEW] = MeshBuilder::GenerateOBJ("mountaindew", "OBJ//mountaindew.obj");
 	meshList[GEO_MOUNTAINDEW]->textureID = LoadTGA("Image//mountaindew.tga");
+
+	//tree 1
+	meshList[GEO_TREE] = MeshBuilder::GenerateOBJ("tree", "OBJ//tree.obj");
+	meshList[GEO_TREE]->textureID = LoadTGA("Image//tree.tga");
+
+	//tree 2
+	meshList[GEO_TREE2] = MeshBuilder::GenerateOBJ("tree2", "OBJ//tree.obj");
+	meshList[GEO_TREE2]->textureID = LoadTGA("Image//tree2.tga");
+
+	//tree 3
+	meshList[GEO_TREE3] = MeshBuilder::GenerateOBJ("tree3", "OBJ//tree.obj");
+	meshList[GEO_TREE3]->textureID = LoadTGA("Image//tree3.tga");
+
 
 	//text
 	meshList[GEO_TEXT] = MeshBuilder::GenerateText("text", 16, 16);

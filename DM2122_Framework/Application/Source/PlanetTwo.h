@@ -25,19 +25,16 @@ class PlanetTwo : public Scene
 		GEO_FRONT,
 		GEO_BACK,
 
-		//skybox Night
-		GEO_LEFTNight,
-		GEO_RIGHTNight,
-		GEO_TOPNight,
-		GEO_FRONTNight,
-		GEO_BACKNight,
-
 		//objects
 		GEO_METEOR,
 		GEO_TREE,
+		GEO_TREE2,
+		GEO_TREE3,
 		GEO_HEALTHPACK,
 		GEO_MOUNTAINDEW,
 		GEO_MINERAL1,
+		GEO_MINERAL2,
+		GEO_MINERAL3,
 
 		GEO_SCREEN,
 		GEO_TEXT,
