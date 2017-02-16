@@ -261,6 +261,8 @@ void PlanetTwo::Init()
 	projection.SetToPerspective(45.f, 4.f / 3.f, 0.1f, 7000.0f);
 	projectionStack.LoadMatrix(projection);
 
+	srand(time(NULL));
+
 	Switch = true;
 	Switch_LightBall = false;
 	shake = false;
@@ -271,23 +273,53 @@ void PlanetTwo::Init()
 	meteorZ = rand() % 1001 + (-500);
 	mineralX[100] = {};
 	mineralZ[100] = {};
+	treeX[5] = {};
+	treeY[5] = {};
+	treecolour[10] = {};
 	randomrotate[100] = {};
 	healthLeft = 100;
 	translatehealthpack = 0;
 	rotatehealthpack = 0;
-	for (int a = 1; a < 100; a++)
+
+	//=================== RANDOM MINERAL SPAWN =====================//
+	for (int a = 0; a < 100; a++)
 	{
 		mineralX[a] = rand() % 1001 + (-500);
 	}
 
-	for (int a = 1; a < 100; a++)
+	
+	for (int a = 0; a < 100; a++)
 	{
 		mineralZ[a] = rand() % 1001 + (-500);
 	}
-	for (int a = 1; a < 100; a++)
+	//============================================================//
+
+	//=================== RANDOM TREE SPAWN =====================//
+	for (int a = 0; a < 5; a++)
+	{
+		treeX[a] = rand() % 1001 + (-500);
+	}
+
+
+	for (int a = 0; a < 5; a++)
+	{
+		treeY[a] = rand() % 1001 + (-500);
+	}
+	//============================================================//
+
+	//===========RANDOM BETWEEN DIFFERENT COLOR TREES=============//
+	for (int a = 0; a < 5; a++)
+	{
+		treecolour[a] = rand() % 3;
+	}
+	//============================================================//
+
+	//=====================random rotation========================//
+	for (int a = 0; a < 100; a++)
 	{
 		randomrotate[a] = rand() % 1001 + (-500);
 	}
+	//============================================================//
 }
 
 void PlanetTwo::Update(double dt)
@@ -459,6 +491,28 @@ void PlanetTwo::Render()
 		modelStack.Rotate(randomrotate[i], 0, 1, 0);
 		RenderMesh(meshList[GEO_MINERAL1], true);
 		modelStack.PopMatrix();
+	}
+
+	//tree
+	for (int i = 0; i < 5; i++)
+	{
+			modelStack.PushMatrix();
+			modelStack.Translate(treeX[i], -40, treeY[i]);
+			modelStack.Scale(20, 20, 20);
+			modelStack.Rotate(randomrotate[i], 0, 1, 0);
+			if (treecolour[i] == 0)
+			{
+				RenderMesh(meshList[GEO_TREE], true);
+			}
+			if (treecolour[i] == 1)
+			{
+				RenderMesh(meshList[GEO_TREE2], true);
+			}
+			if (treecolour[i] == 2)
+			{
+				RenderMesh(meshList[GEO_TREE3], true);
+			}
+			modelStack.PopMatrix();
 	}
 	
 
