@@ -237,11 +237,11 @@ void Planet1::Init()
     angleside = 0;
     travel = false;
     count = 0;
-    alienhealth = 100;
+    alienhealth = 30;
     Aliendead = false;
     hit = false;
-    movetoplayer = 0;
-    movetoplayerz = 0;
+    Enemy = (0, 0, 0);
+    Direction = (0, 0, 0);
 }
 
 void Planet1::Update(double dt)
@@ -340,35 +340,22 @@ void Planet1::Update(double dt)
     Vector3 right = camera.view.Cross(camera.up); 
     
     angley = (view.y > 0 ? -1 : 1) * (Math::RadianToDegree(acos(Vector3(0, 0, 1).Dot(Vector3(0, view.y, view.z).Normalized()))));
-    //std::cout << angley << std::endl;
-    //std::cout << angleside << std::endl;
 
-    if (movetoplayer > camera.position.x)
-    {
-        movetoplayer -=  1; 
-    }
+    Direction = camera.position - Enemy;
+    float hypotenuse = sqrt((Direction.x *Direction.x) + (Direction.z * Direction.z));
+    Direction.x /= hypotenuse;
+    Direction.z /= hypotenuse;
 
-    if (movetoplayerz > camera.position.z)
-    {
-        movetoplayerz -=  1;
-    }
+    Enemy += Direction;
 
-    if (movetoplayer < camera.position.x)
-    {
-        movetoplayer +=  1;
-    }
-
-    if (movetoplayerz < camera.position.z)
-    {
-        movetoplayerz +=  1;
-    } 
-
-    if (((int)beam - 15 == (int)movetoplayer + 25  && travel == true)|| 
-        ((int)beam - 15 == (int)movetoplayerz + 30 && travel == true) ||
-        ((int)beam - 15 == (int)movetoplayer - 25 && travel == true) ||
-        ((int)beam - 15 == (int)movetoplayerz - 40 && travel == true))
+    if (((int)beam - 15 == (int)Enemy.x + 25  && travel == true)|| 
+        ((int)beam - 15 == (int)Enemy.z + 30 && travel == true) ||
+        ((int)beam - 15 == (int)Enemy.x- 25 && travel == true) ||
+        ((int)beam - 15 == (int)Enemy.z - 40 && travel == true))
     {
         alienhealth -= 10;
+        std::cout << alienhealth << std::endl;
+
     }
 
     camera.Update(dt, (width / 2) - X_Pos, (height / 2) - Y_Pos);
@@ -415,9 +402,7 @@ void Planet1::Render()
     if (alienhealth > 0)
     {
         modelStack.PushMatrix();
-        modelStack.Translate(movetoplayer, 0, 0);
-        modelStack.Translate(0, 0, movetoplayerz);
-        modelStack.Translate(0, -40, 0);
+        modelStack.Translate(Enemy.x, -40, Enemy.z);
         modelStack.Scale(10, 10, 10);
         RenderMesh(meshList[ALIEN], false);
         modelStack.PopMatrix();

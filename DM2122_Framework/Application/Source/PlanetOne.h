@@ -133,8 +133,8 @@ private:
     float RotateBody;
     double X_Pos, Y_Pos; //get cursor position
 
-    float movetoplayer;
-    float movetoplayerz;
+    Vector3 Enemy;
+    Vector3 Direction;
 
     bool travel;
     int count;
