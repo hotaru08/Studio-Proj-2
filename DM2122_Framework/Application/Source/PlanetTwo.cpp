@@ -282,6 +282,7 @@ void PlanetTwo::Init()
 	translatehealthpack = 0;
 	rotatehealthpack = 0;
 	playerMined = false;
+	playerActivated = false;
 
 	//=================== RANDOM MINERAL SPAWN =====================//
 	for (int a = 0; a < 100; a++)
@@ -336,13 +337,25 @@ void PlanetTwo::Init()
 		randomrotate2[a] = rand() % 360;
 	}
 	//============================================================//
+
+	//=====================random scale===.=.=====================//
+	for (int a = 0; a < 100; a++)
+	{
+		randomrotate2[a] = rand() % 360;
+	}
+	//============================================================//
 }
 
 void PlanetTwo::Update(double dt)
 {
 	double X_Pos, Y_Pos; //get cursor position
 	int width, height; //get window size
-	g_dElapsedTime += dt;
+	g_dElapsedTime += dt; //meteor
+	g_dElapsedTime2 += dt; // healthpack
+	for (int i = 0; i < 100; i++) // mineral
+	{
+		g_dElapsedTimeMineral[i] += dt;
+	}
 	static int transDir = 1; //health pack
 	static int earthDir = 1; //health pack
 
@@ -397,7 +410,7 @@ void PlanetTwo::Update(double dt)
 	//===========================================================================//
 
 	//=======================EARTHQUAKE WHEN METEOR DROPS========================//
-	if (shake == true)
+	if (shake)
 	{
 		earthquakeX += (float)(earthDir * 200 * dt);
 		if (earthquakeX > 1)
@@ -429,14 +442,27 @@ void PlanetTwo::Update(double dt)
 	//===========================================================================//
 
 	//============================HEALTH PACK====================================//
-	if ((camera.position.x <= 20 && camera.position.x >= -20) && (camera.position.z <= 20 && camera.position.z >= -20) && (healthLeft < 100))
+	if ((camera.position.x <= 25 && camera.position.x >= -25) && (camera.position.z <= 25 && camera.position.z >= -25) && (healthLeft < 100))
 	{
-		*changeHealth += 100;
+		if (playerActivated == false)
+		{
+			*changeHealth += 100;
+			playerActivated = true;
+			g_dElapsedTime2 = 0;
+		}
+	}
+	if (playerActivated == true)
+	{
+		if (g_dElapsedTime2 > 10)
+		{
+			playerActivated = false;
+			g_dElapsedTime2 = 0;
+		}
 	}
 	//===========================================================================//
 
 	//==============================MINING MINERALS==============================//
-	if (playerMined == true)
+	if (playerMined)
 	{
 		for (int c = 0; c < 100; c++)
 		{
@@ -447,6 +473,24 @@ void PlanetTwo::Update(double dt)
 			{
 				mineralcolour[c] = 4;
 				playerMined = false;
+				g_dElapsedTimeMineral[c] = 0;
+			}
+
+		}
+	}
+	if (!playerMined)
+	{
+		for (int c = 0; c < 100; c++)
+		{
+			if (mineralcolour[c] == 4)
+			{
+				if (g_dElapsedTimeMineral[c] > 10)
+				{
+					mineralcolour[c] = rand() % 3;
+					mineralX[c] = rand() % 1001 + (-500);
+					mineralZ[c] = rand() % 1001 + (-500);
+					g_dElapsedTimeMineral[c] = 0;
+				}
 			}
 		}
 	}
@@ -587,12 +631,15 @@ void PlanetTwo::Render()
 	modelStack.PopMatrix();
 
 	//health pack
-	modelStack.PushMatrix();
-	modelStack.Scale(30, 30, 30);
-	modelStack.Translate(0, translatehealthpack - 1, 0);
-	modelStack.Rotate(rotatehealthpack, 0, 1, 0);
-	RenderMesh(meshList[GEO_HEALTHPACK], true);
-	modelStack.PopMatrix();
+	if (!playerActivated)
+	{
+		modelStack.PushMatrix();
+		modelStack.Scale(30, 30, 30);
+		modelStack.Translate(0, translatehealthpack - 1, 0);
+		modelStack.Rotate(rotatehealthpack, 0, 1, 0);
+		RenderMesh(meshList[GEO_HEALTHPACK], true);
+		modelStack.PopMatrix();
+	}
 
 	modelStack.PopMatrix();
 

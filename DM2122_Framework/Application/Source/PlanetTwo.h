@@ -132,6 +132,7 @@ private:
 	float earthquakeZ;
 	float rotatehealthpack;
 	bool playerMined;
+	bool playerActivated;
 	int meteorX;
 	int meteorZ;
 	int mineralX[100];
@@ -139,10 +140,13 @@ private:
 	int treeX[10];
 	int treeY[10];
 	int treecolour[10];
-	int mineralcolour[50];
+	int mineralcolour[100];
 	int randomrotate[100];
 	int randomrotate2[100];
+	int randomscale[100];
 	double  g_dElapsedTime;
+	double  g_dElapsedTime2;
+	double  g_dElapsedTimeMineral[100];
 
 
 
