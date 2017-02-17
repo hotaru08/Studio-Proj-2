@@ -178,34 +178,28 @@ void Planet1::Init()
 
     meshList[SPHERE] = MeshBuilder::GenerateSphere("LIGHTBALL", Color(1, 1, 1), 60, 20, 1);
 
-    //=====================================
-    //DayTime
-    //=====================================
     //Bottom
     meshList[GEO_BOTTOM] = MeshBuilder::GenerateQuad("bottom", Color(1, 1, 1), 1, 1);
-    meshList[GEO_BOTTOM]->textureID = LoadTGA("Image//Planet1//Bottom.tga");
+    meshList[GEO_BOTTOM]->textureID = LoadTGA("Image//Planet1//bottom.tga");
 
     //Front skybox
     meshList[GEO_FRONT] = MeshBuilder::GenerateQuad("front", Color(1, 1, 1), 1, 1);
-    meshList[GEO_FRONT]->textureID = LoadTGA("Image//Planet1//Front.tga");
+    meshList[GEO_FRONT]->textureID = LoadTGA("Image//Planet1//front.tga");
     //back skybox
     meshList[GEO_BACK] = MeshBuilder::GenerateQuad("back", Color(1, 1, 1), 1, 1);
-    meshList[GEO_BACK]->textureID = LoadTGA("Image//Planet1//Back.tga");
+    meshList[GEO_BACK]->textureID = LoadTGA("Image//Planet1//back.tga");
 
     //Left skybox
     meshList[GEO_LEFT] = MeshBuilder::GenerateQuad("left", Color(1, 1, 1), 1, 1);
-    meshList[GEO_LEFT]->textureID = LoadTGA("Image//Planet1//Left.tga");
+    meshList[GEO_LEFT]->textureID = LoadTGA("Image//Planet1//left.tga");
 
     //Right skybox
     meshList[GEO_RIGHT] = MeshBuilder::GenerateQuad("right", Color(1, 1, 1), 1, 1);
-    meshList[GEO_RIGHT]->textureID = LoadTGA("Image//Planet1//Right.tga");
+    meshList[GEO_RIGHT]->textureID = LoadTGA("Image//Planet1//right.tga");
 
     //top skybox
     meshList[GEO_TOP] = MeshBuilder::GenerateQuad("top", Color(1, 1, 1), 1, 1);
-    meshList[GEO_TOP]->textureID = LoadTGA("Image//Planet1//Top.tga");
-
-    meshList[GROUND] = MeshBuilder::GenerateQuad("ground", Color(1, 1, 1), 1, 1);
-    meshList[GROUND]->textureID = LoadTGA("Image//Planet1//ground.tga");
+    meshList[GEO_TOP]->textureID = LoadTGA("Image//Planet1//top.tga");
 
     meshList[ALIEN] = MeshBuilder::GenerateOBJ("alien", "OBJ//alien.obj");
     meshList[ALIEN]->textureID = LoadTGA("Image//noface.tga");
@@ -213,12 +207,15 @@ void Planet1::Init()
     meshList[GUN] = MeshBuilder::GenerateOBJ("gun", "OBJ//gun.obj");
     meshList[GUN]->textureID = LoadTGA("Image//gun.tga");
 
+    meshList[GROUND] = MeshBuilder::GenerateOBJ("ground", "OBJ//Planet1Ground.obj");
+    meshList[GROUND]->textureID = LoadTGA("Image//Planet1//ground.tga");
+
     //text
     meshList[GEO_TEXT] = MeshBuilder::GenerateText("text", 16, 16);
     meshList[GEO_TEXT]->textureID = LoadTGA("Image//ExportedFont.tga");
 
     Mtx44 projection;
-    projection.SetToPerspective(45.f, 4.f / 3.f, 0.1f, 7000.0f);
+    projection.SetToPerspective(45.f, 4.f / 3.f, 0.1f, 15000.0f);
     projectionStack.LoadMatrix(projection);
 
     Switch = true;
@@ -237,7 +234,7 @@ void Planet1::Init()
     angleside = 0;
     travel = false;
     count = 0;
-    alienhealth = 30;
+    alienhealth = 100;
     Aliendead = false;
     hit = false;
     Enemy = (0, 0, 0);
@@ -346,17 +343,60 @@ void Planet1::Update(double dt)
     Direction.x /= hypotenuse;
     Direction.z /= hypotenuse;
 
-    Enemy += Direction;
+    Enemy += Direction;//moves enemy
 
-    if (((int)beam - 15 == (int)Enemy.x + 25  && travel == true)|| 
-        ((int)beam - 15 == (int)Enemy.z + 30 && travel == true) ||
-        ((int)beam - 15 == (int)Enemy.x- 25 && travel == true) ||
-        ((int)beam - 15 == (int)Enemy.z - 40 && travel == true))
+    //shooting
+    Vector3 boxMin;
+    boxMin.x = (Enemy.x + Direction.x) - 50;
+    boxMin.z = (Enemy.z + Direction.z) - 50;
+
+    Vector3 boxMax;
+    boxMax.x = (Enemy.x + Direction.x) + 50;
+    boxMax.z = (Enemy.z + Direction.z) + 50;
+
+    if (beam >= (boxMin.x) && beam <= (boxMax.x)
+        && beam >= (boxMin.z) && beam <= (boxMax.z)
+        && travel)
     {
-        alienhealth -= 10;
+        alienhealth -= 5;
         std::cout << alienhealth << std::endl;
-
     }
+
+    //int boxx = Enemy.x + box.x;//updates the box coords when AI moves
+    //int boxz = Enemy.z + box.z;
+
+    /*if (boxx < 0)
+    {
+        boxx *= -1;
+    }
+    if (boxz < 0)
+    {      
+        boxz *= -1;
+    }*/
+
+    
+   /* int beamx = beam + camera.position.x;
+    int beamz = beam + camera.position.z;
+
+    if (beamx < 0)
+    {   
+        beamx *= -1;
+    }   
+    if (beamz < 0)
+    {   
+        beamz *= -1;
+    }*/
+                             
+    //if ((beam >= boxx && travel == true)|| 
+    //    (beam >= boxz && travel == true) ||
+    //    (beam <= boxx && travel == true) ||
+    //    (beam <= boxz && travel == true))
+    //{
+    //    alienhealth -= 5;
+    //    std::cout << alienhealth << std::endl;
+    //}
+
+    
 
     camera.Update(dt, (width / 2) - X_Pos, (height / 2) - Y_Pos);
 }
@@ -392,10 +432,11 @@ void Planet1::Render()
     RenderSkyBox();
 
     modelStack.PushMatrix();
-    modelStack.Translate(0, -50, 0);
+    modelStack.Translate(0, -150, 0);
+    modelStack.Scale(200, 150, 200);
+
     modelStack.Rotate(180, 0, 1, 0);
-    modelStack.Scale(2000, 1, 2000);
-    modelStack.Rotate(90, 1, 0, 0);
+    //modelStack.Rotate(90, 1, 0, 0);
     RenderMesh(meshList[GROUND], false);
     modelStack.PopMatrix();
 
@@ -455,8 +496,8 @@ void Planet1::RenderSkyBox()
     //sky box
     modelStack.PushMatrix();
     modelStack.Translate(camera.position.x, camera.position.y, camera.position.z);
-    modelStack.Translate(0, -1250, 0);
-    modelStack.Scale(3000, 3000, 3000);
+    modelStack.Translate(0, -7500, 0);
+    modelStack.Scale(15000, 15000, 15000);
 
     //Ground
     modelStack.PushMatrix();
@@ -467,38 +508,36 @@ void Planet1::RenderSkyBox()
 
     //Front
     modelStack.PushMatrix();
-    modelStack.Translate(0, 0.498, 0.498);
-    modelStack.Rotate(180, 0,0,1);
-    modelStack.Rotate(180, 0, 1, 0);
+    modelStack.Translate(-0.498, 0.498, 0);
+    modelStack.Rotate(90, 0, 1, 0);
     RenderMesh(meshList[GEO_FRONT], false);
     modelStack.PopMatrix();
 
     //Top
     modelStack.PushMatrix();
-    modelStack.Translate(0, 0.98, 0);
+    modelStack.Translate(0, 1, 0);
+    modelStack.Rotate(180, 0, 1, 0);
     modelStack.Rotate(90, 1, 0, 0);
     RenderMesh(meshList[GEO_TOP], false);
     modelStack.PopMatrix();
 
-    //Back
+    //left
     modelStack.PushMatrix();
-    modelStack.Translate(0, 0.498, -0.498);
+    modelStack.Translate(0, 0.5, -0.5);
     RenderMesh(meshList[GEO_LEFT], false);
     modelStack.PopMatrix();
 
-    //Left
+    //back
     modelStack.PushMatrix();
-    modelStack.Translate(0.498, 0.4975, 0);
+    modelStack.Translate(0.5, 0.5, 0);
     modelStack.Rotate(270, 0, 1, 0);
     RenderMesh(meshList[GEO_BACK], false);
     modelStack.PopMatrix();
 
     //Right
     modelStack.PushMatrix();
-    //modelStack.Rotate(90, 1, 0, 0);
-
-    modelStack.Translate(-0.498, 0.498, 0);
-    modelStack.Rotate(90, 0, 1, 0);
+    modelStack.Translate(0, 0.5, 0.5);
+    modelStack.Rotate(180, 0, 1, 0);
     RenderMesh(meshList[GEO_RIGHT], false);
     modelStack.PopMatrix();
 
@@ -622,6 +661,29 @@ void Planet1::RenderMesh(Mesh *mesh, bool enableLight)
     {
         glBindTexture(GL_TEXTURE_2D, 0);
     }
+}
+
+void Planet1::RenderMeshOnScreen(Mesh* mesh, int x, int y, int sizex, int sizey)
+{
+    glDisable(GL_DEPTH_TEST);
+    Mtx44 ortho;
+
+    ortho.SetToOrtho(0, 80, 0, 60, -10, 10); //size of screen UI
+    projectionStack.PushMatrix();
+    projectionStack.LoadMatrix(ortho);
+    viewStack.PushMatrix();
+    viewStack.LoadIdentity(); //No need camera for ortho mode
+    modelStack.PushMatrix();
+    modelStack.LoadIdentity();
+    modelStack.Translate(x, y, 0);
+
+    modelStack.Scale(sizex, sizey, 1);
+    //to do: scale and translate accordingly
+    RenderMesh(mesh, false); //UI should not have light
+    projectionStack.PopMatrix();
+    viewStack.PopMatrix();
+    modelStack.PopMatrix();
+    glEnable(GL_DEPTH_TEST);
 }
 
 void Planet1::Exit()

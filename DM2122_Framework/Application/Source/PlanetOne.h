@@ -2,7 +2,7 @@
 #define PLANETONE_H
 
 #include "Scene.h"
-#include "Camera3.h"
+#include "PlanetOneCamera.h"
 #include "Mesh.h"
 #include "MatrixStack.h"
 #include "Light.h"
@@ -25,9 +25,9 @@ class Planet1 : public Scene
         GEO_BOTTOM,
         GEO_FRONT,
         GEO_BACK,
-        GROUND,
         ALIEN,
         GUN,
+        GROUND,
 
         GEO_TEXT,
 
@@ -118,7 +118,7 @@ private:
     float angley;
     float angleside;
 
-    Camera3 camera;
+    PlanetOneCamera camera;
     MS modelStack, viewStack, projectionStack;
     Light light[4];
 
@@ -146,6 +146,7 @@ private:
     void RenderSkyBox();
     void RenderText(Mesh* mesh, std::string text, Color color);
     void RenderTextOnScreen(Mesh* mesh, std::string text, Color color, float size, float x, float y);
+    void RenderMeshOnScreen(Mesh* mesh, int x, int y, int sizex, int sizey);
 };
 
 #endif
