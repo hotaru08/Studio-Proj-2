@@ -182,26 +182,26 @@ void InternalShip::Init()
 	//=====================================
 	//Bottom
 	meshList[GEO_BOTTOM] = MeshBuilder::GenerateQuad("bottom", Color(1, 1, 1), 1, 1);
-	meshList[GEO_BOTTOM]->textureID = LoadTGA("Image//InternalShip//Down.tga");
+	meshList[GEO_BOTTOM]->textureID = LoadTGA("Image//Space//Down.tga");
 
 	//Front skybox
 	meshList[GEO_FRONT] = MeshBuilder::GenerateQuad("front", Color(1, 1, 1), 1, 1);
-	meshList[GEO_FRONT]->textureID = LoadTGA("Image//InternalShip//Down.tga");
+	meshList[GEO_FRONT]->textureID = LoadTGA("Image//Space//Down.tga");
 	//back skybox
 	meshList[GEO_BACK] = MeshBuilder::GenerateQuad("back", Color(1, 1, 1), 1, 1);
-	meshList[GEO_BACK]->textureID = LoadTGA("Image//InternalShip//Back.tga");
+	meshList[GEO_BACK]->textureID = LoadTGA("Image//Space//Back.tga");
 
 	//Left skybox
 	meshList[GEO_LEFT] = MeshBuilder::GenerateQuad("left", Color(1, 1, 1), 1, 1);
-	meshList[GEO_LEFT]->textureID = LoadTGA("Image//InternalShip//Left.tga");
+	meshList[GEO_LEFT]->textureID = LoadTGA("Image//Space//Left.tga");
 
 	//Right skybox
 	meshList[GEO_RIGHT] = MeshBuilder::GenerateQuad("right", Color(1, 1, 1), 1, 1);
-	meshList[GEO_RIGHT]->textureID = LoadTGA("Image//InternalShip//Right.tga");
+	meshList[GEO_RIGHT]->textureID = LoadTGA("Image//Space//Right.tga");
 
 	//top skybox
 	meshList[GEO_TOP] = MeshBuilder::GenerateQuad("top", Color(1, 1, 1), 1, 1);
-	meshList[GEO_TOP]->textureID = LoadTGA("Image//InternalShip//Up.tga");
+	meshList[GEO_TOP]->textureID = LoadTGA("Image//Space//Up.tga");
 
 	//Planet4 : Blue Planet
 	meshList[PLANET4] = MeshBuilder::GenerateOBJ("planet4", "OBJ//Planet4.obj");
@@ -232,8 +232,8 @@ void InternalShip::Init()
 	meshList[RING]->material.kShininess = 1;
 
 	//InternalShipShip
-	meshList[InternalShipShip] = MeshBuilder::GenerateOBJ("InternalShipShip", "OBJ//InternalShipship.obj");
-	meshList[InternalShipShip]->textureID = LoadTGA("Image//InternalShipship.tga");
+	meshList[SpaceShip] = MeshBuilder::GenerateOBJ("InternalShipShip", "OBJ//Spaceship.obj");
+	meshList[SpaceShip]->textureID = LoadTGA("Image//Spaceship.tga");
 
 	Mtx44 projection;
 	projection.SetToPerspective(45.f, 4.f / 3.f, 0.1f, 11000.0f);
@@ -341,7 +341,7 @@ void InternalShip::Render()
 	modelStack.PushMatrix();
 	modelStack.LoadMatrix(RotationMartix);//load a martix
 	modelStack.Translate(-0.2, -15, 40);
-	RenderMesh(meshList[InternalShipShip], true);
+	RenderMesh(meshList[SpaceShip], true);
 	modelStack.PopMatrix();
 
 	//Blue Planet

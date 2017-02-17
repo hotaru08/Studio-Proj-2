@@ -26,7 +26,7 @@ class InternalShip : public Scene
 		GEO_BACK,
 
 		//InternalShipShip
-		InternalShipShip,
+		SpaceShip,
 
 		//planets
 		PLANET1,
