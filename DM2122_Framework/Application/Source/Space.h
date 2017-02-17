@@ -1,11 +1,12 @@
-#ifndef Space_H
-#define Space_H
+#ifndef SPACE_H
+#define SPACE_H
 
 #include "Scene.h"
 #include "SpaceCamera.h"
 #include "Mesh.h"
 #include "MatrixStack.h"
 #include "Light.h"
+#include "SceneManager.h"
 
 class Space : public Scene
 {
@@ -103,6 +104,7 @@ public:
 	~Space();
 
 	float fps;
+	SceneManager Manager; //to change scene
 
 	//methods
 	virtual void Init();
@@ -124,11 +126,8 @@ private:
 	//ship
 	Vector3 right;
 	Vector3 up;
-	Vector3 view;
-	Position pos;
-
-	float angleside;
-	float angley;
+	Vector3 forward;
+	Vector3 position;//position of ship
 
 	Mtx44 RotationMartix;//4 x 4 matrix for spaceship rotation
 
@@ -136,38 +135,16 @@ private:
 	MS modelStack, viewStack, projectionStack;
 	Light light[4];
 
-	//=============================
-	//Character Animation
-	//=============================
-	float Jump_;
-	float Walking_X;
-	float Walking_Z;
-	float Walking_Rotation_Left;
-	float Walking_Rotation_Right;
-	float RotateBody;
 
-	//=============================
-	//Interaction
-	//=============================
-	//flag
-	float MoveFlag;
-	bool RaiseDown;
-	bool RaiseUp;
+	//=================================
+	//Planets
+	//=================================
+	float rotate;
+	bool PlanetNear;
+	bool Stay;
+	int count;
+	int scene;
 
-	//shake tree
-	float ShakeTree;
-	float SnowballFallY; // the speed snowball fall by
-	float SnowballFallZ; // the speed snowball fall by
-
-	bool Fall; //for snowball to fall
-	bool PickUp; //pickup snowball
-
-	//skybox
-	bool DayBreak = true;
-	bool NightFall = false;
-
-	//talk
-	bool Talk;
 
 	void RenderMesh(Mesh *mesh, bool enableLight);
 	void RenderSkyBox();

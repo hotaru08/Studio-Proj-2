@@ -166,7 +166,7 @@ void Space::Init()
 	glfwSetInputMode(m_window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);//Enable cursor
 
 	//camera
-	camera.Init(Vector3(0, 50, -200), Vector3(1, 0, 0), Vector3(0, 1, 0));
+	camera.Init(Vector3(0, 0, -1), Vector3(1, 0, 0), Vector3(0, 1, 0));
 
 	meshList[GEO_AXES] = MeshBuilder::GenerateAxes("reference", 1000, 1000, 1000);
 
@@ -174,8 +174,6 @@ void Space::Init()
 	meshList[GEO_LIGHTBALL] = MeshBuilder::GenerateSphere("LIGHTBALL", Color(1, 1, 1), 60, 20, 1);
 	meshList[GEO_LIGHTBALL2] = MeshBuilder::GenerateSphere("LIGHTBALL2", Color(1, 1, 1), 60, 20, 1);
 	meshList[GEO_LIGHTBALL3] = MeshBuilder::GenerateSphere("LIGHTBALL3", Color(1, 0, 0), 60, 20, 1);
-	meshList[GEO_TEXT] = MeshBuilder::GenerateText("text", 16, 16);
-	meshList[GEO_TEXT]->textureID = LoadTGA("Image//ExportedFont.tga");
 
 	//=====================================
 	//DayTime
@@ -235,6 +233,10 @@ void Space::Init()
 	meshList[SpaceShip] = MeshBuilder::GenerateOBJ("SpaceShip", "OBJ//Spaceship.obj");
 	meshList[SpaceShip]->textureID = LoadTGA("Image//Spaceship.tga");
 
+	//text on screen
+	meshList[GEO_TEXT] = MeshBuilder::GenerateText("text", 16, 16);
+	meshList[GEO_TEXT]->textureID = LoadTGA("Image//ExportedFont.tga");
+
 	Mtx44 projection;
 	projection.SetToPerspective(45.f, 4.f / 3.f, 0.1f, 11000.0f);
 	projectionStack.LoadMatrix(projection);
@@ -242,9 +244,14 @@ void Space::Init()
 	Switch = true;
 	Switch_LightBall = false;
 	fps = 0;
+	PlanetNear = false;
 
-	//initialise matrix
-	RotationMartix = (0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1);
+	//initialising
+	right = (camera.view.Cross(camera.up).Normalized());
+	up = (camera.right.Cross(camera.view).Normalized());
+	forward = (1, 0, 0);
+	count = 0;
+	scene = 1;
 }
 
 void Space::Update(double dt)
@@ -287,29 +294,65 @@ void Space::Update(double dt)
 		Switch_LightBall = true;
 	}
 
-	view = (camera.target - camera.position).Normalized();
-	right = (view.Cross(camera.up).Normalized());
-	up = (right.Cross(camera.view).Normalized());
+	//=======================================
+	//SpaceShip
+	//=======================================
+	position = camera.position;
+	forward = (camera.target - camera.position);
+	up = (right.Cross(forward)).Normalized();
+	right = (forward.Cross(up));
 
-	/*pos = (camera.position.x, camera.position.y, camera.position.z);
-	view = (camera.target - camera.position).Normalized();
-	right = (camera.view.Cross(camera.up).Normalized());
-	up = (camera.right.Cross(camera.view).Normalized());*/
+	forward.Normalize();
+	up.Normalize();
+	right.Normalize();
 
-	/*Vector3 view = (camera.target - camera.position).Normalized();
+	//initialise matrix
+	RotationMartix = Mtx44(right.x, right.y, right.z, 0,
+		up.x, up.y, up.z, 0,
+		forward.x, forward.y, forward.z, 0,
+		position.x, position.y, position.z, 1);
 
-	angleside = (view.x > 0 ? 1 : -1) * (Math::RadianToDegree(acos(Vector3(0, 0, 1).Dot(Vector3(view.x, 0, view.z).Normalized()))));
-	Vector3 right = camera.view.Cross(camera.up);
-
-	angley = (view.y > 0 ? -1 : 1) * (Math::RadianToDegree(acos(Vector3(0, 0, 1).Dot(Vector3(0, view.y, view.z).Normalized()))));*/
-
-	//fps = 1 / dt;
-
-
-	RotationMartix = Mtx44(right.x ,right.y, right.z, 0,
-						up.x ,up.y , up.z , 0,
-						view.x, view.y , view.z , 0,
-						pos.x , pos.y , pos.z, 1);
+	//=======================================
+	//Planets
+	//=======================================
+	
+	//Jupiter
+	if (camera.position.x >= -1300 && camera.position.x <= -300 
+		&& camera.position.y >= -630 && camera.position.y <= 630 
+		&& camera.position.z >= -220 && camera.position.z <= 1220)
+	{
+		scene = 2;
+		Manager.SetNextScene(scene);
+		PlanetNear = true;
+	}
+	//saturn
+	else if (camera.position.x >= 10 && camera.position.x <= 1100 
+		&& camera.position.y >= -300 && camera.position.y <= 300 
+		&& camera.position.z >= -2660 && camera.position.z <= -1350)
+	{
+		scene = 3;
+		PlanetNear = true;
+	}
+	//blue planet
+	else if (camera.position.x >= 2000 && camera.position.x <= 3800
+		&& camera.position.y >= -200 && camera.position.y <= 1250
+		&& camera.position.z >= 1000 && camera.position.z <= 3000)
+	{
+		scene = 4;
+		PlanetNear = true;
+	}
+	//mars
+	else if (camera.position.x >= -150 && camera.position.x <= 150 
+		&& camera.position.y >= -100 && camera.position.y <= 100 
+		&& camera.position.z >= 4850 && camera.position.z <= 5150)
+	{
+		scene = 5;
+		PlanetNear = true;
+	}
+	else
+	{
+		PlanetNear = false;
+	}
 
 	camera.Update(dt, (width / 2) - X_Pos, (height / 2) - Y_Pos);
 }
@@ -345,9 +388,8 @@ void Space::Render()
 
 	//SpaceShip
 	modelStack.PushMatrix();
-	modelStack.Translate(camera.position.x,camera.position.y, camera.position.z);
 	modelStack.LoadMatrix(RotationMartix);//load a martix
-	modelStack.Translate(-0.2, -17, 40);
+	modelStack.Translate(-0.2, -15, 40);
 	RenderMesh(meshList[SpaceShip], true);
 	modelStack.PopMatrix();
 
@@ -382,14 +424,43 @@ void Space::Render()
 	RenderMesh(meshList[PLANET2], true);
 	modelStack.PopMatrix();
 
-	
-	string x = "x: " + std::to_string((int)camera.position.x);
-	string y = "y: " + std::to_string((int)camera.position.y);
-	string z = "z: " + std::to_string((int)camera.position.z);
-	////xyz
-	RenderTextOnScreen(meshList[GEO_TEXT], x, Color(1, 1, 1), 2, 0, 4);
-	RenderTextOnScreen(meshList[GEO_TEXT], y, Color(1, 1, 1), 2, 0, 3);
-	RenderTextOnScreen(meshList[GEO_TEXT], z, Color(1, 1, 1), 2, 0, 2);
+	if (PlanetNear)
+	{
+		RenderTextOnScreen(meshList[GEO_TEXT],"Enter?", Color(1, 1, 1), 2, 0, 4);
+
+		if (Application::IsKeyPressed(VK_DOWN))
+		{
+			count = 1;
+
+		}
+		if (Application::IsKeyPressed(VK_UP))
+		{
+			count = 0;
+		}
+
+		if (count == 0)
+		{
+			RenderTextOnScreen(meshList[GEO_TEXT], ">Yes?", Color(1, 1, 1), 2, 0, 3);
+			RenderTextOnScreen(meshList[GEO_TEXT], "No?", Color(1, 1, 1), 2, 0, 2);
+		}
+		if (count == 1)
+		{
+			RenderTextOnScreen(meshList[GEO_TEXT], "Yes?", Color(1, 1, 1), 2, 0, 3);
+			RenderTextOnScreen(meshList[GEO_TEXT], ">No?", Color(1, 1, 1), 2, 0, 2);
+		}
+	}
+	else
+	{
+		PlanetNear = false;
+
+		string x = "x: " + std::to_string((int)camera.position.x);
+		string y = "y: " + std::to_string((int)camera.position.y);
+		string z = "z: " + std::to_string((int)camera.position.z);
+		RenderTextOnScreen(meshList[GEO_TEXT], x, Color(1, 1, 1), 2, 0, 4);
+		RenderTextOnScreen(meshList[GEO_TEXT], y, Color(1, 1, 1), 2, 0, 3);
+		RenderTextOnScreen(meshList[GEO_TEXT], z, Color(1, 1, 1), 2, 0, 2);
+	}
+
 	
 }
 
