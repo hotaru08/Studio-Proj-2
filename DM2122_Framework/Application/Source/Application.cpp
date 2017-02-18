@@ -10,6 +10,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 
+#include "Space.h"
 #include "PlanetOne.h"
 #include "PlanetTwo.h"
 
@@ -19,6 +20,7 @@
 GLFWwindow* m_window;
 const unsigned char FPS = 60; // FPS of this game
 const unsigned int frameTime = 1000 / FPS; // time for each frame
+static int currSceneID;//to change scene
 
 //Define an error callback
 static void error_callback(int error, const char* description)
@@ -102,16 +104,33 @@ void Application::Init()
 	}
 }
 
+void Application::SetScene(int SceneID)
+{
+	currSceneID = SceneID;
+}
+
 void Application::Run()
 {
 	//Main Loop
-	Scene *scene = new PlanetTwo();
-	//Scene *scene = new StudioProj();
-	scene->Init();
+	currSceneID = 1;
+	Scene *scene1 = new Space();
+	Scene *scene2 = new Planet1();
+	Scene *scene = scene1;
+	scene1->Init();
+	scene2->Init();
 
 	m_timer.startTimer();    // Start timer to calculate how long it takes to render this frame
 	while (!glfwWindowShouldClose(m_window) && !IsKeyPressed(VK_ESCAPE))
 	{
+		if (currSceneID == 1 && scene != scene1)
+		{
+			scene = scene1;
+		}
+		else if (currSceneID == 2 && scene != scene2)
+		{
+			scene = scene2;
+		}
+
 		scene->Update(m_timer.getElapsedTime());
 		scene->Render();
 		//Swap buffers
@@ -121,8 +140,10 @@ void Application::Run()
         m_timer.waitUntil(frameTime);       // Frame rate limiter. Limits each frame to a specified time in ms.   
 
 	} //Check if the ESC key had been pressed or if the window had been closed
-	scene->Exit();
-	delete scene;
+	scene1->Exit();
+	scene2->Exit();
+	delete scene1;
+	delete scene2;
 }
 
 void Application::Exit()

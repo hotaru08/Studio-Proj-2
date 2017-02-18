@@ -251,7 +251,6 @@ void Space::Init()
 	up = (camera.right.Cross(camera.view).Normalized());
 	forward = (1, 0, 0);
 	count = 0;
-	scene = 1;
 }
 
 void Space::Update(double dt)
@@ -281,7 +280,9 @@ void Space::Update(double dt)
 		glPolygonMode(GL_FRONT_AND_BACK, GL_LINE); //wireframe mode
 	}
 
-	//Switching on and off
+	//========================================
+	//Lights
+	//========================================
 	if (Application::IsKeyPressed('B'))
 	{
 		Switch = true;
@@ -321,33 +322,32 @@ void Space::Update(double dt)
 		&& camera.position.y >= -630 && camera.position.y <= 630 
 		&& camera.position.z >= -220 && camera.position.z <= 1220)
 	{
-		scene = 2;
-		Manager.SetNextScene(scene);
 		PlanetNear = true;
+		Application::SetScene(2);
 	}
 	//saturn
 	else if (camera.position.x >= 10 && camera.position.x <= 1100 
 		&& camera.position.y >= -300 && camera.position.y <= 300 
 		&& camera.position.z >= -2660 && camera.position.z <= -1350)
 	{
-		scene = 3;
 		PlanetNear = true;
+		//Application::SetScene(3);
 	}
 	//blue planet
 	else if (camera.position.x >= 2000 && camera.position.x <= 3800
 		&& camera.position.y >= -200 && camera.position.y <= 1250
 		&& camera.position.z >= 1000 && camera.position.z <= 3000)
 	{
-		scene = 4;
 		PlanetNear = true;
+		//Application::SetScene(4);
 	}
 	//mars
 	else if (camera.position.x >= -150 && camera.position.x <= 150 
 		&& camera.position.y >= -100 && camera.position.y <= 100 
 		&& camera.position.z >= 4850 && camera.position.z <= 5150)
 	{
-		scene = 5;
 		PlanetNear = true;
+		//Application::SetScene(5);
 	}
 	else
 	{
