@@ -116,19 +116,22 @@ void Application::Run()
 	Scene *scene1 = new Space();
 	Scene *scene2 = new Planet1();
 	Scene *scene = scene1;
-	scene1->Init();
-	scene2->Init();
+	scene->Init();
 
 	m_timer.startTimer();    // Start timer to calculate how long it takes to render this frame
 	while (!glfwWindowShouldClose(m_window) && !IsKeyPressed(VK_ESCAPE))
 	{
 		if (currSceneID == 1 && scene != scene1)
 		{
+			scene->Exit();
 			scene = scene1;
+			scene->Init();
 		}
 		else if (currSceneID == 2 && scene != scene2)
 		{
+			scene->Exit();
 			scene = scene2;
+			scene->Init();
 		}
 
 		scene->Update(m_timer.getElapsedTime());
@@ -140,8 +143,7 @@ void Application::Run()
         m_timer.waitUntil(frameTime);       // Frame rate limiter. Limits each frame to a specified time in ms.   
 
 	} //Check if the ESC key had been pressed or if the window had been closed
-	scene1->Exit();
-	scene2->Exit();
+	scene->Exit();
 	delete scene1;
 	delete scene2;
 }
