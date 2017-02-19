@@ -12,6 +12,7 @@ public:
 	void Run();
 	void Exit();
 	static bool IsKeyPressed(unsigned short key);
+	static void SetScene(int SceneID);//set and change scene
 
 private:
 

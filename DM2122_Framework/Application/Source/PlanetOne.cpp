@@ -396,6 +396,12 @@ void Planet1::Update(double dt)
     //    std::cout << alienhealth << std::endl;
     //}
 
+	
+	if ((camera.position.x > 500 && camera.position.x < 700 
+		&& camera.position.z > 500 && camera.position.z < 700))
+	{
+		Application::SetScene(1);
+	}
     
 
     camera.Update(dt, (width / 2) - X_Pos, (height / 2) - Y_Pos);
