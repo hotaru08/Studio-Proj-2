@@ -12,6 +12,7 @@
 
 #include "PlanetOne.h"
 #include "PlanetTwo.h"
+#include "Space.h"
 
 //#include "StudioProj.h"
 
@@ -105,7 +106,7 @@ void Application::Init()
 void Application::Run()
 {
 	//Main Loop
-	Scene *scene = new PlanetTwo();
+	Scene *scene = new Planet1();
 	//Scene *scene = new StudioProj();
 	scene->Init();
 
