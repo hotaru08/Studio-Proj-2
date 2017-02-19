@@ -20,6 +20,7 @@
 GLFWwindow* m_window;
 const unsigned char FPS = 60; // FPS of this game
 const unsigned int frameTime = 1000 / FPS; // time for each frame
+static int currSceneID;
 
 //Define an error callback
 static void error_callback(int error, const char* description)
@@ -101,6 +102,11 @@ void Application::Init()
 		fprintf(stderr, "Error: %s\n", glewGetErrorString(err));
 		//return -1;
 	}
+}
+
+void Application::SetScene(int SceneID)
+{
+	currSceneID = SceneID;
 }
 
 void Application::Run()
