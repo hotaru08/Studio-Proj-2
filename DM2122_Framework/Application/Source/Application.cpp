@@ -112,13 +112,29 @@ void Application::SetScene(int SceneID)
 void Application::Run()
 {
 	//Main Loop
-	Scene *scene = new Planet1();
+	currSceneID = 1;
+	Scene *scene1= new Space();
+	Scene *scene2 = new Planet1();
+	Scene *scene = scene1;
 	//Scene *scene = new StudioProj();
 	scene->Init();
 
 	m_timer.startTimer();    // Start timer to calculate how long it takes to render this frame
 	while (!glfwWindowShouldClose(m_window) && !IsKeyPressed(VK_ESCAPE))
 	{
+		if (currSceneID == 1 && scene != scene1)
+		{
+			scene2->Exit();
+			scene = scene1;
+			scene1->Init();
+		}
+		else if (currSceneID == 2 && scene != scene2)
+		{
+			scene1->Exit();
+			scene = scene2;
+			scene2->Init();
+		}
+
 		scene->Update(m_timer.getElapsedTime());
 		scene->Render();
 		//Swap buffers
