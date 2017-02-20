@@ -26,7 +26,8 @@ Space::~Space()
 
 void Space::Init()
 {
-	m_programID = LoadShaders("Shader//Texture.vertexshader", "Shader//Text.fragmentshader");	// Use our shader
+	m_programID = LoadShaders("Shader//Texture.vertexshader", "Shader//Text.fragmentshader");
+	// Use our shader
 	glUseProgram(m_programID);
 
 	// Get a handle for our "MVP" uniform
@@ -156,11 +157,16 @@ void Space::Init()
 	glUniform1f(m_parameters[U_LIGHT2_EXPONENT], light[2].exponent);
 
 	// Set background color to black
-	glClearColor(0.0f, 0.0f, 0.0f, 0.0f);
+	glClearColor(0.0f, 0.0f, 0.0f, 0.0f);
+
 	// Generate a default VAO for now
 	glGenVertexArrays(1, &m_vertexArrayID);
-	glBindVertexArray(m_vertexArrayID);
-	glEnable(GL_DEPTH_TEST);// Enable depth test	glEnable(GL_CULL_FACE);// Enable cull test	glPolygonMode(GL_FRONT_AND_BACK, GL_LINE); //wireframe mode	glPolygonMode(GL_FRONT_AND_BACK, GL_FILL); //default fill mode
+	glBindVertexArray(m_vertexArrayID);
+
+	glEnable(GL_DEPTH_TEST);// Enable depth test
+	glEnable(GL_CULL_FACE);// Enable cull test
+	glPolygonMode(GL_FRONT_AND_BACK, GL_LINE); //wireframe mode
+	glPolygonMode(GL_FRONT_AND_BACK, GL_FILL); //default fill mode
 	glEnable(GL_BLEND);//Enable blending
 	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 	glfwSetInputMode(m_window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);//Enable cursor
@@ -184,7 +190,8 @@ void Space::Init()
 
 	//Front skybox
 	meshList[GEO_FRONT] = MeshBuilder::GenerateQuad("front", Color(1, 1, 1), 1, 1);
-	meshList[GEO_FRONT]->textureID = LoadTGA("Image//Space//Down.tga");
+	meshList[GEO_FRONT]->textureID = LoadTGA("Image//Space//Down.tga");
+
 	//back skybox
 	meshList[GEO_BACK] = MeshBuilder::GenerateQuad("back", Color(1, 1, 1), 1, 1);
 	meshList[GEO_BACK]->textureID = LoadTGA("Image//Space//Back.tga");
@@ -249,7 +256,7 @@ void Space::Init()
 	//initialising
 	right = (camera.view.Cross(camera.up).Normalized());
 	up = (camera.right.Cross(camera.view).Normalized());
-	forward = (1, 0, 0);
+	forward = camera.target - camera.position;
 	count = 0;
 }
 
@@ -300,7 +307,7 @@ void Space::Update(double dt)
 	//=======================================
 	position = camera.position;
 	forward = (camera.target - camera.position);
-	up = (right.Cross(forward)).Normalized();
+	up = (right.Cross(forward));
 	right = (forward.Cross(up));
 
 	forward.Normalize();
@@ -312,7 +319,7 @@ void Space::Update(double dt)
 		up.x, up.y, up.z, 0,
 		forward.x, forward.y, forward.z, 0,
 		position.x, position.y, position.z, 1);
-
+	
 	//=======================================
 	//Planets
 	//=======================================
