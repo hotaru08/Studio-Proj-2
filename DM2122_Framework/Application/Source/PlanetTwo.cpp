@@ -283,6 +283,8 @@ void PlanetTwo::Init()
 	rotatehealthpack = 0;
 	playerMined = false;
 	playerActivated = false;
+	g_dElapsedTime = 0;
+	g_dElapsedTime2 = 0;
 
 	//=================== RANDOM MINERAL SPAWN =====================//
 	for (int a = 0; a < 100; a++)
@@ -397,9 +399,10 @@ void PlanetTwo::Update(double dt)
 	{
 		translateMeteor = -6200;
 		shake = true;
-		g_dElapsedTime;
+		std::cout << g_dElapsedTime << std::endl;
 		if (g_dElapsedTime > 10)
 		{
+			
 			translateMeteor = 0;
 			g_dElapsedTime = 0;
 			shake = false;
@@ -453,6 +456,7 @@ void PlanetTwo::Update(double dt)
 	}
 	if (playerActivated == true)
 	{
+		std::cout << g_dElapsedTime2 << std::endl;
 		if (g_dElapsedTime2 > 10)
 		{
 			playerActivated = false;
