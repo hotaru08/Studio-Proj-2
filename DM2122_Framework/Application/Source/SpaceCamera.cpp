@@ -20,6 +20,7 @@ void SpaceCamera::Init(const Vector3& pos, const Vector3& target, const Vector3&
 	right = view.Cross(up);
 	right.Normalize();
 	this->up = defaultUp = right.Cross(view).Normalized();
+
 }
 
 void SpaceCamera::Update(double dt)
@@ -202,199 +203,98 @@ void SpaceCamera::Update(double dt, double x, double y)
 	//front camera movement
 	if (Application::IsKeyPressed('W'))
 	{
+		//bounds();
+		CollisionPlanets();
 		position = position + view * CAMERA_SPEED * dt;
 		target = position + view;
 
-		//if (scene = Space())
-		//bounds();
-		//collsion();
+
 	}
 
 	//back camera movement
 	if (Application::IsKeyPressed('S'))
 	{
+		//bounds();
+		CollisionPlanets();
 		position = position - view * CAMERA_SPEED * dt;
 		target = position + view;
 		//bounds();
-		//collsion();
+		//CollisionPlanets();
 	}
 
 	//Left camera movement
 	if (Application::IsKeyPressed('A'))
 	{
+		//bounds();
+		CollisionPlanets();
 		position = position - right * CAMERA_SPEED * dt;
 		target = position + view;
-		//collsion();
+		////CollisionPlanets();
 		//bounds();
 	}
 
 	//Right camera movement
 	if (Application::IsKeyPressed('D'))
 	{
+		//bounds();
+		CollisionPlanets();
 		position = position + right * CAMERA_SPEED * dt;
 		target = position + view;
-		//collsion();
+		//CollisionPlanets();
 		//bounds();
-	}
-
-	//Zoom in
-	if (Application::IsKeyPressed('N'))
-	{
-		Vector3 direction = target - position;
-		if (direction.Length() > 5)
-		{
-			Vector3 view = (target - position).Normalized();
-			position += view * (float)(100.f * dt);
-		}
-	}
-
-	//Zoom out
-	if (Application::IsKeyPressed('M'))
-	{
-		Vector3 view = (target - position).Normalized();
-		position -= view * (float)(100.f * dt);
 	}
 }
 
-void SpaceCamera::collsion()
+void SpaceCamera::CollisionPlanets()
 {
-	//TreeMax.x = 550;
-	TreeMin.x = 450;
-	TreeMax.z = 50;
-	TreeMin.z = -50;
+	//Jupiter collision
+	ColliMax[0].x = -370;
+	ColliMax[0].y = 630;
+	ColliMax[0].z = 1220;
 
-	logMax.x = 230;
-	logMin.x = 157;
-	logMax.z = 60;
-	logMin.z = -60;
+	ColliMin[0].x = -1700;
+	ColliMin[0].y = -630;
+	ColliMin[0].z = -220;
 
-	SnowmanMax.z = 540;
-	SnowmanMin.z = 460;
-	SnowmanMax.x = 350;
-	SnowmanMin.x = 257;
+	//blue planet collision
+	ColliMax[1].x = 3550;
+	ColliMax[1].y = 1200;
+	ColliMax[1].z = 2250;
 
-	snow1Max.z = -440;
-	snow1Min.z = -540;
-	snow1Max.x = 540;
-	snow1Min.x = 340;
+	ColliMin[1].x = 2470;
+	ColliMin[1].y = -50;
+	ColliMin[1].z = 1730;
 
-	snow2Max.z = -460;
-	snow2Min.z = -530;
-	snow2Max.x = -460;
-	snow2Min.x = -540;
 
-	snow3Max.z = 520;
-	snow3Min.z = 460;
-	snow3Max.x = -370;
-	snow3Min.x = -440;
+	//Blue Planet
 
-	sledMax.z = 410;
-	sledMin.z = 290;
-	sledMax.x = -240;
-	sledMin.x = -440;
 
-	igloo1Max.x = -565;
-	igloo1Min.x = -590;
-	igloo1Max.z = 60;
-	igloo1Min.z = -120;
 
-	igloo2Max.z = -70;
-	igloo2Min.z = -210;
-	igloo2Max.x = -180;
-	igloo2Min.x = -590;
 
-	igloo3Max.z = 210;
-	igloo3Min.z = 70;
-	igloo3Max.x = -180;
-	igloo3Min.x = -590;
 
-	chopMax.z = 50;
-	chopMin.z = -50;
-	chopMax.x = 50;
-	chopMin.x = -50;
+	//Mars
 
-	//tree collision
-	if ((position.x >= TreeMin.x) && (position.x <= TreeMax.x)
-		&& (position.z >= TreeMin.z) && (position.z <= TreeMax.z))
+
+
+	if (position.x <= ColliMax[0].x && position.x >= ColliMin[0].x
+		&& position.y <= ColliMax[0].y && position.y >= ColliMin[0].y
+		&& position.z <= ColliMax[0].z && position.z >= ColliMin[0].z)
 	{
-		//detect collision
-		position.x = PrevPos.x;
-		position.z = PrevPos.z;
+		position = PrevPos;
+		std::cout << position.x << " : " << ColliMax[0].x << std::endl;
+		std::cout << position.y << " : " << ColliMax[0].y << std::endl;
+		std::cout << position.z << " : " << ColliMax[0].z << std::endl;
 	}
-	else if ((position.x >= logMin.x) && (position.x <= logMax.x)
-		&& (position.z >= logMin.z) && (position.z <= logMax.z))
+	else if (position.x <= ColliMax[1].x && position.x >= ColliMin[1].x
+		&& position.y <= ColliMax[1].y && position.y >= ColliMin[1].y
+		&& position.z <= ColliMax[1].z && position.z >= ColliMin[1].z)
 	{
-		//detect collision
-		position.x = PrevPos.x;
-		position.z = PrevPos.z;
-	}
-	else if ((position.x >= SnowmanMin.x) && (position.x <= SnowmanMax.x)
-		&& (position.z >= SnowmanMin.z) && (position.z <= SnowmanMax.z))
-	{
-		//detect collision
-		position.x = PrevPos.x;
-		position.z = PrevPos.z;
-	}
-
-	else if ((position.x >= snow1Min.x) && (position.x <= snow1Max.x)
-		&& (position.z >= snow1Min.z) && (position.z <= snow1Max.z))
-	{
-		//detect collision
-		position.x = PrevPos.x;
-		position.z = PrevPos.z;
-	}
-	else if ((position.x >= snow2Min.x) && (position.x <= snow2Max.x)
-		&& (position.z >= snow2Min.z) && (position.z <= snow2Max.z))
-	{
-		//detect collision
-		position.x = PrevPos.x;
-		position.z = PrevPos.z;
-	}
-	else if ((position.x >= snow3Min.x) && (position.x <= snow3Max.x)
-		&& (position.z >= snow3Min.z) && (position.z <= snow3Max.z))
-	{
-		//detect collision
-		position.x = PrevPos.x;
-		position.z = PrevPos.z;
-	}
-	else if ((position.x >= sledMin.x) && (position.x <= sledMax.x)
-		&& (position.z >= sledMin.z) && (position.z <= sledMax.z))
-	{
-		//detect collision
-		position.x = PrevPos.x;
-		position.z = PrevPos.z;
-	}
-	else if ((position.x >= igloo1Min.x) && (position.x <= igloo1Max.x)
-		&& (position.z >= igloo1Min.z) && (position.z <= igloo1Max.z))
-	{
-		//detect collision
-		position.x = PrevPos.x;
-		position.z = PrevPos.z;
-	}
-	else if ((position.x >= igloo2Min.x) && (position.x <= igloo2Max.x)
-		&& (position.z >= igloo2Min.z) && (position.z <= igloo2Max.z))
-	{
-		//detect collision
-		position.x = PrevPos.x;
-		position.z = PrevPos.z;
-	}
-	else if ((position.x >= igloo3Min.x) && (position.x <= igloo3Max.x)
-		&& (position.z >= igloo3Min.z) && (position.z <= igloo3Max.z))
-	{
-		//detect collision
-		position.x = PrevPos.x;
-		position.z = PrevPos.z;
-	}
-	else if ((position.x >= chopMin.x) && (position.x <= chopMax.x)
-		&& (position.z >= chopMin.z) && (position.z <= chopMax.z))
-	{
-		//detect collision
-		position.x = PrevPos.x;
-		position.z = PrevPos.z;
+		position = PrevPos;
 	}
 	else
 	{
-		PrevPos.x = position.x;
-		PrevPos.z = position.z;
+		PrevPos = position;
 	}
+
+
 }

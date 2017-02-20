@@ -53,30 +53,6 @@ void MainMenu::Init()
     m_parameters[U_LIGHT0_EXPONENT] = glGetUniformLocation(m_programID, "lights[0].exponent");
     m_parameters[U_NUMLIGHTS] = glGetUniformLocation(m_programID, "numLights");
 
-    m_parameters[U_LIGHT1_POSITION] = glGetUniformLocation(m_programID, "lights[1].position_cameraMainMenu");
-    m_parameters[U_LIGHT1_COLOR] = glGetUniformLocation(m_programID, "lights[1].color");
-    m_parameters[U_LIGHT1_POWER] = glGetUniformLocation(m_programID, "lights[1].power");
-    m_parameters[U_LIGHT1_KC] = glGetUniformLocation(m_programID, "lights[1].kC");
-    m_parameters[U_LIGHT1_KL] = glGetUniformLocation(m_programID, "lights[1].kL");
-    m_parameters[U_LIGHT1_KQ] = glGetUniformLocation(m_programID, "lights[1].kQ");
-    m_parameters[U_LIGHT1_TYPE] = glGetUniformLocation(m_programID, "lights[1].type");
-    m_parameters[U_LIGHT1_SPOTDIRECTION] = glGetUniformLocation(m_programID, "lights[1].spotDirection");
-    m_parameters[U_LIGHT1_COSCUTOFF] = glGetUniformLocation(m_programID, "lights[1].cosCutoff");
-    m_parameters[U_LIGHT1_COSINNER] = glGetUniformLocation(m_programID, "lights[1].cosInner");
-    m_parameters[U_LIGHT1_EXPONENT] = glGetUniformLocation(m_programID, "lights[1].exponent");
-
-    m_parameters[U_LIGHT2_POSITION] = glGetUniformLocation(m_programID, "lights[2].position_cameraMainMenu");
-    m_parameters[U_LIGHT2_COLOR] = glGetUniformLocation(m_programID, "lights[2].color");
-    m_parameters[U_LIGHT2_POWER] = glGetUniformLocation(m_programID, "lights[2].power");
-    m_parameters[U_LIGHT2_KC] = glGetUniformLocation(m_programID, "lights[2].kC");
-    m_parameters[U_LIGHT2_KL] = glGetUniformLocation(m_programID, "lights[2].kL");
-    m_parameters[U_LIGHT2_KQ] = glGetUniformLocation(m_programID, "lights[2].kQ");
-    m_parameters[U_LIGHT2_TYPE] = glGetUniformLocation(m_programID, "lights[2].type");
-    m_parameters[U_LIGHT2_SPOTDIRECTION] = glGetUniformLocation(m_programID, "lights[2].spotDirection");
-    m_parameters[U_LIGHT2_COSCUTOFF] = glGetUniformLocation(m_programID, "lights[2].cosCutoff");
-    m_parameters[U_LIGHT2_COSINNER] = glGetUniformLocation(m_programID, "lights[2].cosInner");
-    m_parameters[U_LIGHT2_EXPONENT] = glGetUniformLocation(m_programID, "lights[2].exponent");
-
     //Get a handle for our "colorTexture" uniform
     m_parameters[U_COLOR_TEXTURE_ENABLED] = glGetUniformLocation(m_programID, "colorTextureEnabled");
     m_parameters[U_COLOR_TEXTURE] = glGetUniformLocation(m_programID, "colorTexture");
@@ -87,9 +63,9 @@ void MainMenu::Init()
 
     //Sunlight properties
     light[0].type = Light::LIGHT_DIRECTIONAL;
-    light[0].position.Set(0, 4000, 0);
+    light[0].position.Set(0, 3000, 0);
     light[0].color.Set(1, 1, 1);
-    light[0].power = 0.5;
+    light[0].power = 1;
     light[0].kC = 1.f;
     light[0].kL = 0.01f;
     light[0].kQ = 0.001f;
@@ -97,32 +73,6 @@ void MainMenu::Init()
     light[0].cosInner = cos(Math::DegreeToRadian(30));
     light[0].exponent = 3.f;
     light[0].spotDirection.Set(0.f, 1.f, 0.f);
-
-    //Igloo Light properties
-    light[1].type = Light::LIGHT_POINT;
-    light[1].position.Set(-500, 0, 0);
-    light[1].color.Set(1, 1, 1);
-    light[1].power = 5;
-    light[1].kC = 1.f;
-    light[1].kL = 0.01f;
-    light[1].kQ = 0.001f;
-    light[1].cosCutoff = cos(Math::DegreeToRadian(45));
-    light[1].cosInner = cos(Math::DegreeToRadian(30));
-    light[1].exponent = 3.f;
-    light[1].spotDirection.Set(0.f, 1.f, 0.f);
-
-    //Night Light properties
-    light[2].type = Light::LIGHT_DIRECTIONAL;
-    light[2].position.Set(0, 3000, 0);
-    light[2].color.Set(1, 1, 1);
-    light[2].power = 1;
-    light[2].kC = 1.f;
-    light[2].kL = 0.01f;
-    light[2].kQ = 0.001f;
-    light[2].cosCutoff = cos(Math::DegreeToRadian(45));
-    light[2].cosInner = cos(Math::DegreeToRadian(30));
-    light[2].exponent = 3.f;
-    light[2].spotDirection.Set(0.f, 1.f, 0.f);
 
     // Make sure you pass uniform parameters after glUseProgram()
     glUniform1i(m_parameters[U_LIGHT0_TYPE], light[0].type);
@@ -135,26 +85,6 @@ void MainMenu::Init()
     glUniform1f(m_parameters[U_LIGHT0_COSINNER], light[0].cosInner);
     glUniform1f(m_parameters[U_LIGHT0_EXPONENT], light[0].exponent);
     glUniform1i(m_parameters[U_NUMLIGHTS], 3);
-
-    glUniform1i(m_parameters[U_LIGHT1_TYPE], light[1].type);
-    glUniform3fv(m_parameters[U_LIGHT1_COLOR], 1, &light[1].color.r);
-    glUniform1f(m_parameters[U_LIGHT1_POWER], light[1].power);
-    glUniform1f(m_parameters[U_LIGHT1_KC], light[1].kC);
-    glUniform1f(m_parameters[U_LIGHT1_KL], light[1].kL);
-    glUniform1f(m_parameters[U_LIGHT1_KQ], light[1].kQ);
-    glUniform1f(m_parameters[U_LIGHT1_COSCUTOFF], light[1].cosCutoff);
-    glUniform1f(m_parameters[U_LIGHT1_COSINNER], light[1].cosInner);
-    glUniform1f(m_parameters[U_LIGHT1_EXPONENT], light[1].exponent);
-
-    glUniform1i(m_parameters[U_LIGHT2_TYPE], light[2].type);
-    glUniform3fv(m_parameters[U_LIGHT2_COLOR], 1, &light[2].color.r);
-    glUniform1f(m_parameters[U_LIGHT2_POWER], light[2].power);
-    glUniform1f(m_parameters[U_LIGHT2_KC], light[2].kC);
-    glUniform1f(m_parameters[U_LIGHT2_KL], light[2].kL);
-    glUniform1f(m_parameters[U_LIGHT2_KQ], light[2].kQ);
-    glUniform1f(m_parameters[U_LIGHT2_COSCUTOFF], light[2].cosCutoff);
-    glUniform1f(m_parameters[U_LIGHT2_COSINNER], light[2].cosInner);
-    glUniform1f(m_parameters[U_LIGHT2_EXPONENT], light[2].exponent);
 
     // Set background color to black
     glClearColor(0.0f, 0.0f, 0.0f, 0.0f);
@@ -169,21 +99,12 @@ void MainMenu::Init()
     glPolygonMode(GL_FRONT_AND_BACK, GL_FILL); //default fill mode
     glEnable(GL_BLEND);//Enable blending
     glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-    glfwSetInputMode(m_window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);//Enable cursor
+    //glfwSetInputMode(m_window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);//Enable cursor
 
     //camera
     camera.Init(Vector3(0, 0, -1), Vector3(1, 0, 0), Vector3(0, 1, 0));
+	meshList[GEO_LIGHTBALL] = MeshBuilder::GenerateSphere("lightball", Color(1, 1, 1), 60, 20,1);
 
-    meshList[GEO_AXES] = MeshBuilder::GenerateAxes("reference", 1000, 1000, 1000);
-
-    //Lightball
-    meshList[GEO_LIGHTBALL] = MeshBuilder::GenerateSphere("LIGHTBALL", Color(1, 1, 1), 60, 20, 1);
-    meshList[GEO_LIGHTBALL2] = MeshBuilder::GenerateSphere("LIGHTBALL2", Color(1, 1, 1), 60, 20, 1);
-    meshList[GEO_LIGHTBALL3] = MeshBuilder::GenerateSphere("LIGHTBALL3", Color(1, 0, 0), 60, 20, 1);
-
-    //=====================================
-    //DayTime
-    //=====================================
     //Bottom
     meshList[GEO_BOTTOM] = MeshBuilder::GenerateQuad("bottom", Color(1, 1, 1), 1, 1);
     meshList[GEO_BOTTOM]->textureID = LoadTGA("Image//Space//Down.tga");
@@ -236,8 +157,6 @@ void MainMenu::Init()
     meshList[RING]->material.kSpecular.Set(0.f, 0.f, 0.f);
     meshList[RING]->material.kShininess = 1;
 
-    //MainMenuShip
-
     //text on screen
     meshList[GEO_TEXT] = MeshBuilder::GenerateText("text", 16, 16);
     meshList[GEO_TEXT]->textureID = LoadTGA("Image//ExportedFont.tga");
@@ -249,17 +168,10 @@ void MainMenu::Init()
     projection.SetToPerspective(45.f, 4.f / 3.f, 0.1f, 11000.0f);
     projectionStack.LoadMatrix(projection);
 
-    Switch = true;
-    Switch_LightBall = false;
-    fps = 0;
-    PlanetNear = false;
-
-    //initialising
-    right = (camera.view.Cross(camera.up).Normalized());
-    up = (camera.right.Cross(camera.view).Normalized());
-    forward = camera.target - camera.position;
-    count = 0;
+	count = 0;
+	Stay = false;
     spin = 0;
+	etime = 0;
 }
 
 void MainMenu::Update(double dt)
@@ -268,104 +180,36 @@ void MainMenu::Update(double dt)
     int width, height; //get window size
 
     glfwGetCursorPos(m_window, &X_Pos, &Y_Pos);// getting the cursor position 
-    glfwGetWindowSize(m_window, &width, &height); //get size to center cursor 
-    glfwSetCursorPos(m_window, width / 2, height / 2); //set cursor to center of screen
-
-    //modes
-    if (Application::IsKeyPressed('1'))
-    {
-        glEnable(GL_CULL_FACE);
-    }
-    if (Application::IsKeyPressed('2'))
-    {
-        glDisable(GL_CULL_FACE);
-    }
-    if (Application::IsKeyPressed('3'))
-    {
-        glPolygonMode(GL_FRONT_AND_BACK, GL_FILL); //default fill mode
-    }
-    if (Application::IsKeyPressed('4'))
-    {
-        glPolygonMode(GL_FRONT_AND_BACK, GL_LINE); //wireframe mode
-    }
-
-    //========================================
-    //Lights
-    //========================================
-    if (Application::IsKeyPressed('B'))
-    {
-        Switch = true;
-        Switch_LightBall = false;
-    }
-
-    if (Application::IsKeyPressed('V'))
-    {
-        Switch = false;
-        Switch_LightBall = true;
-    }
-
-    //=======================================
-    //MainMenuShip
-    //=======================================
-    position = camera.position;
-    forward = (camera.target - camera.position);
-    up = (right.Cross(forward));
-    right = (forward.Cross(up));
-
-    forward.Normalize();
-    up.Normalize();
-    right.Normalize();
-
-    //initialise matrix
-    RotationMartix = Mtx44(right.x, right.y, right.z, 0,
-        up.x, up.y, up.z, 0,
-        forward.x, forward.y, forward.z, 0,
-        position.x, position.y, position.z, 1);
+    glfwGetWindowSize(m_window, &width, &height); //get size to center cursor
+    //glfwSetCursorPos(m_window, width / 2, height / 2); //set cursor to center of screen
 
     //PLANET SPIN
     spin += 15 * dt;
-    //=======================================
-    //Planets
-    //=======================================
+	etime += dt;
 
-    //Jupiter
-    if (camera.position.x >= -1300 && camera.position.x <= -300
-        && camera.position.y >= -630 && camera.position.y <= 630
-        && camera.position.z >= -220 && camera.position.z <= 1220)
-    {
-        PlanetNear = true;
-        Application::SetScene(2);
-    }
-    //saturn
-    else if (camera.position.x >= 10 && camera.position.x <= 1100
-        && camera.position.y >= -300 && camera.position.y <= 300
-        && camera.position.z >= -2660 && camera.position.z <= -1350)
-    {
-        PlanetNear = true;
-        //Application::SetScene(3);
-    }
-    //blue planet
-    else if (camera.position.x >= 2000 && camera.position.x <= 3800
-        && camera.position.y >= -200 && camera.position.y <= 1250
-        && camera.position.z >= 1000 && camera.position.z <= 3000)
-    {
-        PlanetNear = true;
-        //Application::SetScene(4);
-    }
-    //mars
-    else if (camera.position.x >= -150 && camera.position.x <= 150
-        && camera.position.y >= -100 && camera.position.y <= 100
-        && camera.position.z >= 4850 && camera.position.z <= 5150)
-    {
-        PlanetNear = true;
-        //Application::SetScene(5);
-    }
-    else
-    {
-        PlanetNear = false;
-    }
+	if (Application::IsKeyPressed(VK_DOWN) && count == 0 && etime > 0.2)
+	{
+		etime = 0;
+		count = 1;
+	}
+	if (Application::IsKeyPressed(VK_DOWN) && count == 1 && etime > 0.2)
+	{
+		etime = 0;
+		count = 2;
+	}
 
-    camera.Update(dt, (width / 2) - X_Pos, (height / 2) - Y_Pos);
+	if (Application::IsKeyPressed(VK_UP) && count == 2 && etime > 0.2)
+	{
+		etime = 0;
+		count = 1;
+	}
+	if (Application::IsKeyPressed(VK_UP) && count == 1 && etime > 0.2)
+	{
+		etime = 0;
+		count = 0;
+	}
+
+	//camera.Update(dt, (width / 2) - X_Pos, (height / 2) - Y_Pos);
 }
 
 void MainMenu::Render()
@@ -384,14 +228,7 @@ void MainMenu::Render()
     Vector3 lightDirection_cameraMainMenu = viewStack.Top() * lightDir;
     glUniform3fv(m_parameters[U_LIGHT0_POSITION], 1, &lightDirection_cameraMainMenu.x);
 
-    //Passing the position of light 2 to the shader (Night)
-    Vector3 light2Dir(light[2].position.x, light[2].position.y, light[2].position.z);
-    Vector3 light2Direction_cameraMainMenu = viewStack.Top() * lightDir;
-    glUniform3fv(m_parameters[U_LIGHT2_POSITION], 1, &light2Direction_cameraMainMenu.x);
-
-    //Passing the position of point light 1 to the shader (Igloo)
-    Position light1Position_cameraMainMenu = viewStack.Top() * light[1].position;
-    glUniform3fv(m_parameters[U_LIGHT1_POSITION], 1, &light1Position_cameraMainMenu.x);
+	RenderMesh(meshList[GEO_LIGHTBALL], true);
 
     modelStack.PushMatrix();
     modelStack.Rotate(spin/10, 0, 1, 0);
@@ -434,10 +271,31 @@ void MainMenu::Render()
     modelStack.PopMatrix();
 
     RenderMeshOnScreen(meshList[TITLE], 40, 40, 50, 50);
-    RenderTextOnScreen(meshList[GEO_TEXT], "PLAY", Color(1, 1, 1), 3, 34, 30);
-    RenderTextOnScreen(meshList[GEO_TEXT], "INSTRUCTIONS", Color(1, 1, 1), 3, 23, 25);
-    RenderTextOnScreen(meshList[GEO_TEXT], "EXIT", Color(1, 1, 1), 3, 34, 20);
-
+	
+	if (count == 0)
+	{
+		std::cout << " I HATE MY LIEF " << std::endl;
+		Stay = true;
+		RenderTextOnScreen(meshList[GEO_TEXT], "PLAY", Color(1, 0.5, 0), 3, 34, 30);
+		RenderTextOnScreen(meshList[GEO_TEXT], "INSTRUCTIONS", Color(1, 1, 1), 3, 23, 25);
+		RenderTextOnScreen(meshList[GEO_TEXT], "EXIT", Color(1, 1, 1), 3, 34, 20);
+	}
+	else if (count == 1)
+	{
+		std::cout << " I HATE MY LIEF2 " << std::endl;
+		Stay = true;
+		RenderTextOnScreen(meshList[GEO_TEXT], "PLAY", Color(1, 1, 1), 3, 34, 30);
+		RenderTextOnScreen(meshList[GEO_TEXT], "INSTRUCTIONS", Color(1, 0.5, 0), 3, 23, 25);
+		RenderTextOnScreen(meshList[GEO_TEXT], "EXIT", Color(1, 1, 1), 3, 34, 20);
+	}
+	else if (count == 2)
+	{
+		std::cout << " I HATE MY LIEF3 " << std::endl;
+		Stay = true;
+		RenderTextOnScreen(meshList[GEO_TEXT], "PLAY", Color(1, 1, 1), 3, 34, 30);
+		RenderTextOnScreen(meshList[GEO_TEXT], "INSTRUCTIONS", Color(1, 1, 1), 3, 23, 25);
+		RenderTextOnScreen(meshList[GEO_TEXT], "EXIT", Color(1, 0.5, 0), 3, 34, 20);
+	}
 }
 
 void MainMenu::RenderSkyBox()
