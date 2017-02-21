@@ -119,6 +119,7 @@ void Application::Run()
 	Scene *scene0 = new MainMenu();
 	Scene *scene1= new Space();
 	Scene *scene2 = new Planet1();
+	Scene *scene3 = new PlanetTwo();
 	Scene *scene = scene0;
 	scene->Init();
 
@@ -142,6 +143,12 @@ void Application::Run()
 			scene1->Exit();
 			scene = scene2;
 			scene2->Init();
+		}
+		else if (currSceneID == 3 && scene != scene3)
+		{
+			scene2->Exit();
+			scene = scene3;
+			scene3->Init();
 		}
 
 		scene->Update(m_timer.getElapsedTime());
