@@ -26,7 +26,8 @@ InternalShip::~InternalShip()
 
 void InternalShip::Init()
 {
-	m_programID = LoadShaders("Shader//Texture.vertexshader", "Shader//Text.fragmentshader");	// Use our shader
+	m_programID = LoadShaders("Shader//Texture.vertexshader", "Shader//Text.fragmentshader");
+	// Use our shader
 	glUseProgram(m_programID);
 
 	// Get a handle for our "MVP" uniform
@@ -156,11 +157,16 @@ void InternalShip::Init()
 	glUniform1f(m_parameters[U_LIGHT2_EXPONENT], light[2].exponent);
 
 	// Set background color to black
-	glClearColor(0.0f, 0.0f, 0.0f, 0.0f);
+	glClearColor(0.0f, 0.0f, 0.0f, 0.0f);
+
 	// Generate a default VAO for now
 	glGenVertexArrays(1, &m_vertexArrayID);
-	glBindVertexArray(m_vertexArrayID);
-	glEnable(GL_DEPTH_TEST);// Enable depth test	glEnable(GL_CULL_FACE);// Enable cull test	glPolygonMode(GL_FRONT_AND_BACK, GL_LINE); //wireframe mode	glPolygonMode(GL_FRONT_AND_BACK, GL_FILL); //default fill mode
+	glBindVertexArray(m_vertexArrayID);
+
+	glEnable(GL_DEPTH_TEST);// Enable depth test
+	glEnable(GL_CULL_FACE);// Enable cull test
+	glPolygonMode(GL_FRONT_AND_BACK, GL_LINE); //wireframe mode
+	glPolygonMode(GL_FRONT_AND_BACK, GL_FILL); //default fill mode
 	glEnable(GL_BLEND);//Enable blending
 	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 	glfwSetInputMode(m_window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);//Enable cursor
@@ -177,63 +183,45 @@ void InternalShip::Init()
 	meshList[GEO_TEXT] = MeshBuilder::GenerateText("text", 16, 16);
 	meshList[GEO_TEXT]->textureID = LoadTGA("Image//ExportedFont.tga");
 
-	//=====================================
-	//DayTime
-	//=====================================
 	//Bottom
 	meshList[GEO_BOTTOM] = MeshBuilder::GenerateQuad("bottom", Color(1, 1, 1), 1, 1);
-	meshList[GEO_BOTTOM]->textureID = LoadTGA("Image//Space//Down.tga");
+	meshList[GEO_BOTTOM]->textureID = LoadTGA("Image//ship_intr.tga");
 
 	//Front skybox
 	meshList[GEO_FRONT] = MeshBuilder::GenerateQuad("front", Color(1, 1, 1), 1, 1);
-	meshList[GEO_FRONT]->textureID = LoadTGA("Image//Space//Down.tga");
+	meshList[GEO_FRONT]->textureID = LoadTGA("Image//ship_intr.tga");
+
 	//back skybox
 	meshList[GEO_BACK] = MeshBuilder::GenerateQuad("back", Color(1, 1, 1), 1, 1);
-	meshList[GEO_BACK]->textureID = LoadTGA("Image//Space//Back.tga");
+	meshList[GEO_BACK]->textureID = LoadTGA("Image//ship_intr.tga");
 
 	//Left skybox
 	meshList[GEO_LEFT] = MeshBuilder::GenerateQuad("left", Color(1, 1, 1), 1, 1);
-	meshList[GEO_LEFT]->textureID = LoadTGA("Image//Space//Left.tga");
+	meshList[GEO_LEFT]->textureID = LoadTGA("Image//ship_intr.tga");
 
 	//Right skybox
 	meshList[GEO_RIGHT] = MeshBuilder::GenerateQuad("right", Color(1, 1, 1), 1, 1);
-	meshList[GEO_RIGHT]->textureID = LoadTGA("Image//Space//Right.tga");
+	meshList[GEO_RIGHT]->textureID = LoadTGA("Image//ship_intr.tga");
 
 	//top skybox
 	meshList[GEO_TOP] = MeshBuilder::GenerateQuad("top", Color(1, 1, 1), 1, 1);
-	meshList[GEO_TOP]->textureID = LoadTGA("Image//Space//Up.tga");
+	meshList[GEO_TOP]->textureID = LoadTGA("Image//ship_intr.tga");
 
-	//Planet4 : Blue Planet
-	meshList[PLANET4] = MeshBuilder::GenerateOBJ("planet4", "OBJ//Planet4.obj");
-	meshList[PLANET4]->textureID = LoadTGA("Image//Planet4Outside.tga");
+	//Control Panel
+	meshList[GEO_PANEL] = MeshBuilder::GenerateOBJ("Panel", "OBJ//Panel.obj");
+	meshList[GEO_PANEL]->textureID = LoadTGA("Image//Panel.tga");
 
-	//Planet3 : Jupiter
-	meshList[PLANET3] = MeshBuilder::GenerateOBJ("Jupiter", "OBJ//Jupiter.obj");
-	meshList[PLANET3]->textureID = LoadTGA("Image//Jupiter2.tga");
+	//Chair
+	meshList[GEO_CHAIR] = MeshBuilder::GenerateOBJ("Panel", "OBJ//intr_chair.obj");
+	meshList[GEO_CHAIR]->textureID = LoadTGA("Image//chair.tga");
 
-	//Planet2 : Mars
-	meshList[PLANET2] = MeshBuilder::GenerateOBJ("Mars", "OBJ//Mars.obj");
-	meshList[PLANET2]->textureID = LoadTGA("Image//Mars.tga");
+	//Table
+	meshList[GEO_TABLE] = MeshBuilder::GenerateOBJ("Panel", "OBJ//intr_table.obj");
+	meshList[GEO_TABLE]->textureID = LoadTGA("Image//chair.tga");
 
-	//Planet1 : Saturn
-	meshList[PLANET1] = MeshBuilder::GenerateOBJ("Saturn", "OBJ//Saturn.obj");
-	meshList[PLANET1]->textureID = LoadTGA("Image//Saturn.tga");
-	meshList[PLANET1]->material.kAmbient.Set(0.3f, 0.3f, 0.3f);
-	meshList[PLANET1]->material.kDiffuse.Set(0.7f, 0.7f, 0.7f);
-	meshList[PLANET1]->material.kSpecular.Set(0.1f, 0.1f, 0.1f);
-	meshList[PLANET1]->material.kShininess = 1;
-
-	//Ring
-	meshList[RING] = MeshBuilder::GenerateOBJ("Ring", "OBJ//Ring.obj");
-	meshList[RING]->textureID = LoadTGA("Image//ring.tga");
-	meshList[RING]->material.kAmbient.Set(0.3f, 0.3f, 0.3f);
-	meshList[RING]->material.kDiffuse.Set(0.7f, 0.7f, 0.7f);
-	meshList[RING]->material.kSpecular.Set(0.f, 0.f, 0.f);
-	meshList[RING]->material.kShininess = 1;
-
-	//InternalShipShip
-	meshList[SpaceShip] = MeshBuilder::GenerateOBJ("InternalShipShip", "OBJ//Spaceship.obj");
-	meshList[SpaceShip]->textureID = LoadTGA("Image//Spaceship.tga");
+	//Screen
+	meshList[GEO_SCREEN] = MeshBuilder::GenerateQuad("screen", Color(1, 1, 1), 1, 1);
+	meshList[GEO_SCREEN]->textureID = LoadTGA("Image//intr_screen.tga");
 
 	Mtx44 projection;
 	projection.SetToPerspective(45.f, 4.f / 3.f, 0.1f, 11000.0f);
@@ -306,6 +294,12 @@ void InternalShip::Update(double dt)
 		position.x, position.y, position.z, 1);
 
 	camera.Update(dt, (width / 2) - X_Pos, (height / 2) - Y_Pos);
+
+	if (camera.position.x > -190 && camera.position.x < -150 &&
+		camera.position.z > -20 && camera.position.z < 20)
+		Screen = true;
+	else
+		Screen = false;
 }
 
 void InternalShip::Render()
@@ -337,48 +331,59 @@ void InternalShip::Render()
 	RenderMesh(meshList[GEO_AXES], false);
 	RenderSkyBox();
 
-	//InternalShipShip
+	//control panel
 	modelStack.PushMatrix();
-	modelStack.LoadMatrix(RotationMartix);//load a martix
-	modelStack.Translate(-0.2, -15, 40);
-	RenderMesh(meshList[SpaceShip], true);
+	modelStack.Translate(-200, -30, 0);
+	modelStack.Scale(15, 15, 15);
+	RenderMesh(meshList[GEO_PANEL], true);
 	modelStack.PopMatrix();
 
-	//Blue Planet
+	//chair
 	modelStack.PushMatrix();
-	modelStack.Translate(3000, 500, 2000);
-	modelStack.Scale(200, 200, 200);
-	RenderMesh(meshList[PLANET4], true);
+	modelStack.Translate(-240, -30, 70);
+	modelStack.Scale(15, 15, 15);
+	RenderMesh(meshList[GEO_CHAIR], true);
 	modelStack.PopMatrix();
 
-	//Jupiter
+	//table set
 	modelStack.PushMatrix();
-	modelStack.Translate(-1000, 0, 500);
-	modelStack.Scale(100, 100, 100);
-	RenderMesh(meshList[PLANET3], true);
+	modelStack.Translate(0, -30, -50);
+	modelStack.Scale(15, 20, 15);
+	RenderMesh(meshList[GEO_TABLE], true);
+	modelStack.PopMatrix();
+	modelStack.PushMatrix();
+	modelStack.PushMatrix();
+	modelStack.Translate(0, -30, -50);
+	modelStack.Scale(15, 15, 15);
+	RenderMesh(meshList[GEO_CHAIR], true);
+	modelStack.PopMatrix();
+	modelStack.Translate(70, -30, -75);
+	modelStack.Rotate(90, 0, 1, 0);
+	modelStack.PushMatrix();
+	modelStack.Scale(15, 15, 15);
+	RenderMesh(meshList[GEO_CHAIR], true);
+	modelStack.PopMatrix();
+	modelStack.Translate(0, 0, 50);
+	modelStack.PushMatrix();
+	modelStack.Scale(15, 15, 15);
+	RenderMesh(meshList[GEO_CHAIR], true);
+	modelStack.PopMatrix();
 	modelStack.PopMatrix();
 
-	//Saturn
-	modelStack.PushMatrix();
-	modelStack.Translate(500, 0, -2000);
-	modelStack.Scale(80, 80, 80);
-	RenderMesh(meshList[PLANET1], true);
-	modelStack.PushMatrix();
-	RenderMesh(meshList[RING], true);
-	modelStack.PopMatrix();
-	modelStack.PopMatrix();
-
-	//Mars
-	modelStack.PushMatrix();
-	modelStack.Translate(0, 0, 5000);
-	modelStack.Scale(60, 60, 60);
-	RenderMesh(meshList[PLANET2], true);
-	modelStack.PopMatrix();
-
+	if (Screen == true)
+	{
+		modelStack.PushMatrix();
+		modelStack.Translate(-240, 50, 0);
+		modelStack.Rotate(90, 0, 1, 0);
+		modelStack.Scale(250, 100, 1);
+		RenderMesh(meshList[GEO_SCREEN], false);
+		modelStack.PopMatrix();
+	}
 
 	string x = "x: " + std::to_string((int)camera.position.x);
 	string y = "y: " + std::to_string((int)camera.position.y);
 	string z = "z: " + std::to_string((int)camera.position.z);
+
 	////xyz
 	RenderTextOnScreen(meshList[GEO_TEXT], x, Color(1, 1, 1), 2, 0, 4);
 	RenderTextOnScreen(meshList[GEO_TEXT], y, Color(1, 1, 1), 2, 0, 3);
@@ -390,9 +395,8 @@ void InternalShip::RenderSkyBox()
 {
 	//sky box
 	modelStack.PushMatrix();
-	modelStack.Translate(camera.position.x, camera.position.y, camera.position.z);
-	modelStack.Translate(0, -1250, 0);
-	modelStack.Scale(5000, 5000, 5000);
+	modelStack.Translate(0, -30, 0);
+	modelStack.Scale(500, 150, 500);
 
 	//Ground
 	modelStack.PushMatrix();
@@ -402,7 +406,7 @@ void InternalShip::RenderSkyBox()
 
 	//Front
 	modelStack.PushMatrix();
-	modelStack.Translate(0, 0.498, 0.498);
+	modelStack.Translate(0, 0.48, 0.48);
 	modelStack.Rotate(180, 0, 0, 1);
 	modelStack.Rotate(180, 0, 1, 0);
 	RenderMesh(meshList[GEO_FRONT], false);

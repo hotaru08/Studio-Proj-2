@@ -25,15 +25,11 @@ class InternalShip : public Scene
 		GEO_FRONT,
 		GEO_BACK,
 
-		//InternalShipShip
-		SpaceShip,
-
-		//planets
-		PLANET1,
-		PLANET2,
-		PLANET3,
-		PLANET4,
-		RING,
+		//models
+		GEO_PANEL,
+		GEO_CHAIR,
+		GEO_TABLE,
+		GEO_SCREEN,
 
 		GEO_TEXT,
 
@@ -146,25 +142,9 @@ private:
 	//=============================
 	//Interaction
 	//=============================
-	//flag
-	float MoveFlag;
-	bool RaiseDown;
-	bool RaiseUp;
 
-	//shake tree
-	float ShakeTree;
-	float SnowballFallY; // the speed snowball fall by
-	float SnowballFallZ; // the speed snowball fall by
-
-	bool Fall; //for snowball to fall
-	bool PickUp; //pickup snowball
-
-	//skybox
-	bool DayBreak = true;
-	bool NightFall = false;
-
-	//talk
-	bool Talk;
+	//screen
+	bool Screen = false;
 
 	void RenderMesh(Mesh *mesh, bool enableLight);
 	void RenderSkyBox();
