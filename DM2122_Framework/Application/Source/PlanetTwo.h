@@ -6,6 +6,7 @@
 #include "Mesh.h"
 #include "MatrixStack.h"
 #include "Light.h"
+#include "Inventory.h"
 
 class PlanetTwo : public Scene
 {
@@ -147,12 +148,14 @@ private:
 	double  g_dElapsedTime;
 	double  g_dElapsedTime2;
 	double  g_dElapsedTimeMineral[100];
+	double  delaypressE;
 
 
 
 	Camera3 camera;
 	MS modelStack, viewStack, projectionStack;
 	Light light[4];
+	Inventory inven;
 
 	void RenderMesh(Mesh *mesh, bool enableLight);
 	void RenderSkyBox();

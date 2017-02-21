@@ -285,6 +285,7 @@ void PlanetTwo::Init()
 	playerActivated = false;
 	g_dElapsedTime = 0;
 	g_dElapsedTime2 = 0;
+	delaypressE = 0;
 
 	//=================== RANDOM MINERAL SPAWN =====================//
 	for (int a = 0; a < 100; a++)
@@ -322,7 +323,7 @@ void PlanetTwo::Init()
 	//===========RANDOM BETWEEN DIFFERENT MINERALS=============//
 	for (int a = 0; a < 50; a++)
 	{
-		mineralcolour[a] = rand() % 3;
+		mineralcolour[a] = rand() % 3 + 1;
 	}
 	//============================================================//
 
@@ -354,6 +355,7 @@ void PlanetTwo::Update(double dt)
 	int width, height; //get window size
 	g_dElapsedTime += dt; //meteor
 	g_dElapsedTime2 += dt; // healthpack
+	delaypressE += dt;
 	for (int i = 0; i < 100; i++) // mineral
 	{
 		g_dElapsedTimeMineral[i] += dt;
@@ -399,7 +401,7 @@ void PlanetTwo::Update(double dt)
 	{
 		translateMeteor = -6200;
 		shake = true;
-		std::cout << g_dElapsedTime << std::endl;
+		//std::cout << g_dElapsedTime << std::endl;
 		if (g_dElapsedTime > 10)
 		{
 			
@@ -456,7 +458,7 @@ void PlanetTwo::Update(double dt)
 	}
 	if (playerActivated == true)
 	{
-		std::cout << g_dElapsedTime2 << std::endl;
+		//std::cout << g_dElapsedTime2 << std::endl;
 		if (g_dElapsedTime2 > 10)
 		{
 			playerActivated = false;
@@ -470,27 +472,42 @@ void PlanetTwo::Update(double dt)
 	{
 		for (int c = 0; c < 100; c++)
 		{
-			int min = -40;
-			int max = 40;
-			if ((camera.position.x + min <= mineralX[c] + max && camera.position.x +max >= mineralX[c] + min) &&
+			int min = -30;
+			int max = 30;
+			if ((camera.position.x + min <= mineralX[c] + max && camera.position.x + max >= mineralX[c] + min) &&
 			   (camera.position.z + min <= mineralZ[c] + max && camera.position.z + max >= mineralZ[c] + min))
 			{
-				mineralcolour[c] = 4;
-				playerMined = false;
-				g_dElapsedTimeMineral[c] = 0;
+				if (mineralcolour[c] != 0)
+				{
+					if (mineralcolour[c] == 1)
+					{
+						inven.addCommon();
+					}
+					if (mineralcolour[c] == 2)
+					{
+						inven.addRare();
+					}
+					if (mineralcolour[c] == 3)
+					{
+						inven.addEpic();
+					}
+					mineralcolour[c] = 0;
+					g_dElapsedTimeMineral[c] = 0;
+					playerMined = false;
+				}
 			}
-
 		}
+
 	}
 	if (!playerMined)
 	{
 		for (int c = 0; c < 100; c++)
 		{
-			if (mineralcolour[c] == 4)
+			if (mineralcolour[c] == 0)
 			{
 				if (g_dElapsedTimeMineral[c] > 10)
 				{
-					mineralcolour[c] = rand() % 3;
+					mineralcolour[c] = rand() % 3 + 1;
 					mineralX[c] = rand() % 1001 + (-500);
 					mineralZ[c] = rand() % 1001 + (-500);
 					g_dElapsedTimeMineral[c] = 0;
@@ -582,23 +599,23 @@ void PlanetTwo::Render()
 	//mineral1
 	for (int i = 0; i < 50; i++)
 	{
-		if (mineralcolour[i] < 3)
+		if (mineralcolour[i] > 0)
 		{
 			modelStack.PushMatrix();
 			modelStack.Translate(mineralX[i], -40, mineralZ[i]);
 			modelStack.Scale(20, 20, 20);
 			modelStack.Rotate(randomrotate[i], 0, 1, 0);
-			if (mineralcolour[i] == 0)
-			{
-				RenderMesh(meshList[GEO_MINERAL1], true);
-			}
 			if (mineralcolour[i] == 1)
 			{
-				RenderMesh(meshList[GEO_MINERAL2], true);
+				RenderMesh(meshList[GEO_MINERAL3], true);
 			}
 			if (mineralcolour[i] == 2)
 			{
-				RenderMesh(meshList[GEO_MINERAL3], true);
+				RenderMesh(meshList[GEO_MINERAL2], true);
+			}
+			if (mineralcolour[i] == 3)
+			{
+				RenderMesh(meshList[GEO_MINERAL1], true);
 			}
 			modelStack.PopMatrix();
 		}
