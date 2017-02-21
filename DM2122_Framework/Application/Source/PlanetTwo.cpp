@@ -286,6 +286,8 @@ void PlanetTwo::Init()
 	g_dElapsedTime = 0;
 	g_dElapsedTime2 = 0;
 	delaypressE = 0;
+	damage = false;
+	mTime = 0;
 
 	//=================== RANDOM MINERAL SPAWN =====================//
 	for (int a = 0; a < 100; a++)
@@ -353,6 +355,8 @@ void PlanetTwo::Update(double dt)
 {
 	double X_Pos, Y_Pos; //get cursor position
 	int width, height; //get window size
+
+	healthLeft = health.getCurrentHealth();
 	g_dElapsedTime += dt; //meteor
 	g_dElapsedTime2 += dt; // healthpack
 	delaypressE += dt;
@@ -430,11 +434,12 @@ void PlanetTwo::Update(double dt)
 	//===========================================================================//
 
 	//================CHECKS PLAYERS POSITION WHEN METEOR.Y=0====================//
-	if ((translateMeteor == -6200 && healthLeft > 0) 
+	if ((translateMeteor == -6200 && healthLeft > 0)
 		&& (camera.position.x >= meteorX - 200 && camera.position.x <= meteorX + 200)
 		&& (camera.position.z >= meteorZ - 200 && camera.position.z <= meteorZ + 200))
 	{
-		*changeHealth -= 100;
+		//*changeHealth -= 100;
+		health.HealthDamageReceive(100);
 	}
 
 	// larger radius for lower damage
@@ -442,8 +447,32 @@ void PlanetTwo::Update(double dt)
 		&& (camera.position.x >= meteorX - 300 && camera.position.x <= meteorX + 300)
 		&& (camera.position.z >= meteorZ - 300 && camera.position.z <= meteorZ + 300))
 	{
-		*changeHealth -= 50;
+		//*changeHealth -= 50;
+		damage = true;
 	}
+
+	mTime += dt;
+	if (damage && mTime > 0.5)//every 0.5 seconds
+	{
+		mTime = 0;
+		health.HealthDamageReceive(10);
+	}
+	else
+	{
+		damage = false;
+	}
+
+	if (healthLeft <= 0)
+	{
+		health.isDead();
+	}
+
+	if (health.isDead())
+	{
+		healthLeft = 100;
+		Application::SetScene(1);
+	}
+	
 	//===========================================================================//
 
 	//============================HEALTH PACK====================================//
@@ -451,7 +480,8 @@ void PlanetTwo::Update(double dt)
 	{
 		if (playerActivated == false)
 		{
-			*changeHealth += 100;
+			/**changeHealth += 100;*/
+			health.AddHealth();
 			playerActivated = true;
 			g_dElapsedTime2 = 0;
 		}
@@ -548,7 +578,7 @@ void PlanetTwo::Update(double dt)
 		playerMined = false;
 	}
 
-
+	
 	fps = 1 / dt;
 
 	camera.Update(dt, (width / 2) - X_Pos, (height / 2) - Y_Pos);
