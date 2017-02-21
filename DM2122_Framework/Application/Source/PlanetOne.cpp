@@ -26,7 +26,8 @@ Planet1::~Planet1()
 
 void Planet1::Init()
 {
-    m_programID = LoadShaders("Shader//Texture.vertexshader", "Shader//Text.fragmentshader");    // Use our shader
+    m_programID = LoadShaders("Shader//Texture.vertexshader", "Shader//Text.fragmentshader");
+    // Use our shader
     glUseProgram(m_programID);
 
     // Get a handle for our "MVP" uniform
@@ -156,11 +157,16 @@ void Planet1::Init()
     glUniform1f(m_parameters[U_LIGHT2_EXPONENT], light[2].exponent);
 
     // Set background color to black
-    glClearColor(0.0f, 0.0f, 0.0f, 0.0f);
+    glClearColor(0.0f, 0.0f, 0.0f, 0.0f);
+
     // Generate a default VAO for now
     glGenVertexArrays(1, &m_vertexArrayID);
-    glBindVertexArray(m_vertexArrayID);
-    glEnable(GL_DEPTH_TEST);// Enable depth test    glEnable(GL_CULL_FACE);// Enable cull test    glPolygonMode(GL_FRONT_AND_BACK, GL_LINE); //wireframe mode    glPolygonMode(GL_FRONT_AND_BACK, GL_FILL); //default fill mode
+    glBindVertexArray(m_vertexArrayID);
+
+    glEnable(GL_DEPTH_TEST);// Enable depth test
+    //glEnable(GL_CULL_FACE);// Enable cull test
+    glPolygonMode(GL_FRONT_AND_BACK, GL_LINE); //wireframe mode
+    glPolygonMode(GL_FRONT_AND_BACK, GL_FILL); //default fill mode
     glEnable(GL_BLEND);//Enable blending
     glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
     glfwSetInputMode(m_window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);//Enable cursor
@@ -184,7 +190,8 @@ void Planet1::Init()
 
     //Front skybox
     meshList[GEO_FRONT] = MeshBuilder::GenerateQuad("front", Color(1, 1, 1), 1, 1);
-    meshList[GEO_FRONT]->textureID = LoadTGA("Image//Planet1//front.tga");
+    meshList[GEO_FRONT]->textureID = LoadTGA("Image//Planet1//front.tga");
+
     //back skybox
     meshList[GEO_BACK] = MeshBuilder::GenerateQuad("back", Color(1, 1, 1), 1, 1);
     meshList[GEO_BACK]->textureID = LoadTGA("Image//Planet1//back.tga");
@@ -215,7 +222,7 @@ void Planet1::Init()
     meshList[GEO_TEXT]->textureID = LoadTGA("Image//ExportedFont.tga");
 
     Mtx44 projection;
-    projection.SetToPerspective(45.f, 4.f / 3.f, 0.1f, 15000.0f);
+    projection.SetToPerspective(45.f, 4.f / 3.f, 0.1f, 25000.0f);
     projectionStack.LoadMatrix(projection);
 
     Switch = true;
@@ -234,11 +241,15 @@ void Planet1::Init()
     angleside = 0;
     travel = false;
     count = 0;
-    alienhealth = 100;
+    alienhealth = 30;
     Aliendead = false;
     hit = false;
     Enemy = (0, 0, 0);
     Direction = (0, 0, 0);
+    BoxMax = (0, 0, 0);
+    BoxMin = (0, 0, 0);
+    BulletMax = (0, 0, 0);
+    BulletMin = (0, 0, 0);
 }
 
 void Planet1::Update(double dt)
@@ -295,7 +306,46 @@ void Planet1::Update(double dt)
         camera.Reset();//reset camera
     }
 
-    // gun control
+    //========================================================================//
+    //Gun and shooting
+    //========================================================================//
+    //-----------------//
+    //Box around beam
+    //-----------------//
+    BulletMax.x = 0.2;
+    BulletMax.y = 0.2;
+    BulletMax.z = 0.2;
+
+    BulletMin.x = -0.2;
+    BulletMin.y = -0.2;
+    BulletMin.z = -0.2;
+
+    //-----------------//
+    //Box around enemy
+    //----------------//
+    BoxMax.x = 10;
+    BoxMax.y = 20;
+    BoxMax.z = 10;
+
+    BoxMin.x = -10;
+    BoxMin.y = -20;
+    BoxMin.z = -10;
+
+    //enemy movement
+    Direction = camera.position - Enemy;
+
+    float hypotenuse = sqrt((Direction.x *Direction.x) + (Direction.z * Direction.z));
+    Direction.x /= hypotenuse;
+    Direction.z /= hypotenuse;
+
+    Enemy += Direction;//moves enemy
+    BoxMax += Enemy;
+    BoxMin += Enemy;
+
+
+    //-----------------------//
+    //Gun
+    //-----------------------//
     if (Application::IsKeyPressed(VK_LBUTTON))
     {
         travel = true;
@@ -303,7 +353,39 @@ void Planet1::Update(double dt)
     }
     if (travel == true)
     {
-        beam +=  20;
+        beam += 7.5;
+        if (Enemy.x < -4)
+        {
+            BulletMax.x -= beam;
+            BulletMin.x -= beam;
+        }
+        else if (Enemy.x > 4)
+        {
+            BulletMax.x += beam;
+            BulletMin.x += beam;
+        }
+
+        else
+        {
+            BulletMax.x += 0;
+            BulletMin.x += 0; 
+        }
+
+        if (Enemy.z < -4)
+        {
+            BulletMax.z -= beam;
+            BulletMin.z -= beam;
+        }
+        else if (Enemy.z > 4)
+        {
+            BulletMax.z += beam;
+            BulletMin.z += beam;
+        }
+        else
+        {
+            BulletMax.z += 0;
+            BulletMin.z += 0;
+        }
     }
     
     if (travel == false && count == 1)
@@ -312,7 +394,7 @@ void Planet1::Update(double dt)
         {
             while (beam < 200)
             {
-                beam += 20;
+                beam += 7.5;
             }
         }
         else
@@ -320,7 +402,7 @@ void Planet1::Update(double dt)
             count = 0;
         }
     }
-    if (beam >= 200)
+    if (beam >= 400)
     {
         beam = 0;
         travel = false;
@@ -338,70 +420,100 @@ void Planet1::Update(double dt)
     
     angley = (view.y > 0 ? -1 : 1) * (Math::RadianToDegree(acos(Vector3(0, 0, 1).Dot(Vector3(0, view.y, view.z).Normalized()))));
 
-    Direction = camera.position - Enemy;
-    float hypotenuse = sqrt((Direction.x *Direction.x) + (Direction.z * Direction.z));
-    Direction.x /= hypotenuse;
-    Direction.z /= hypotenuse;
-
-    Enemy += Direction;//moves enemy
-
     //shooting
-    Vector3 boxMin;
-    boxMin.x = (Enemy.x + Direction.x) - 50;
-    boxMin.z = (Enemy.z + Direction.z) - 50;
-
-    Vector3 boxMax;
-    boxMax.x = (Enemy.x + Direction.x) + 50;
-    boxMax.z = (Enemy.z + Direction.z) + 50;
-
-    if (beam >= (boxMin.x) && beam <= (boxMax.x)
-        && beam >= (boxMin.z) && beam <= (boxMax.z)
-        && travel)
+    //check range
+    if (Enemy.x > 400 && Enemy.x < 800)
     {
-        alienhealth -= 5;
-        std::cout << alienhealth << std::endl;
+        BoxMax.x -= 400;
+        BoxMin.x -= 400;
     }
 
-    //int boxx = Enemy.x + box.x;//updates the box coords when AI moves
-    //int boxz = Enemy.z + box.z;
-
-    /*if (boxx < 0)
+    if (Enemy.x > 800 && Enemy.x < 1200)
     {
-        boxx *= -1;
+        BoxMax.x -= 800;
+        BoxMin.x -= 800;
     }
-    if (boxz < 0)
-    {      
-        boxz *= -1;
-    }*/
 
-    
-   /* int beamx = beam + camera.position.x;
-    int beamz = beam + camera.position.z;
+    if (Enemy.x > 1200 && Enemy.x < 1600)
+    {
+        BoxMax.x -= 1200;
+        BoxMin.x -= 1200;
+    }
 
-    if (beamx < 0)
-    {   
-        beamx *= -1;
-    }   
-    if (beamz < 0)
-    {   
-        beamz *= -1;
-    }*/
-                             
-    //if ((beam >= boxx && travel == true)|| 
-    //    (beam >= boxz && travel == true) ||
-    //    (beam <= boxx && travel == true) ||
-    //    (beam <= boxz && travel == true))
-    //{
-    //    alienhealth -= 5;
-    //    std::cout << alienhealth << std::endl;
-    //}
+    if (Enemy.z > 400 && Enemy.z < 800)
+    {
+        BoxMax.z -= 400;
+        BoxMin.z -= 400;
+    }
 
+    if (Enemy.z > 800 && Enemy.z < 1200)
+    {
+        BoxMax.z -= 800;
+        BoxMin.z -= 800;
+    }
+
+    if (Enemy.z > 1200 && Enemy.z < 1600)
+    {
+        BoxMax.z -= 1200;
+        BoxMin.z -= 1200;
+    }
+    ////negative
+    if (Enemy.x < -400 && Enemy.x > -800)
+    {
+        BoxMax.x += 400;
+        BoxMin.x += 400;
+    }
+
+    if (Enemy.x < -800 && Enemy.x > -1200)
+    {
+        BoxMax.x += 800;
+        BoxMin.x += 800;
+    }
+
+    if (Enemy.x < -1200 && Enemy.x > -1600)
+    {
+        BoxMax.x += 1200;
+        BoxMin.x += 1200;
+    }
+
+    if (Enemy.z < -400 && Enemy.z > -800)
+    {
+        BoxMax.z += 400;
+        BoxMin.z += 400;
+    }
+
+    if (Enemy.z < -800 && Enemy.z > -1200)
+    {
+        BoxMax.z += 800;
+        BoxMin.z += 800;
+    }
+
+    if (Enemy.z < -1200 && Enemy.z > -1600)
+    {
+        BoxMax.z += 1200;
+        BoxMin.z += 1200;
+    }
+
+    //std::cout << " Enemy : " << Enemy << " : " << BoxMax << " : " << BoxMin << std::endl;
+    //std::cout << " Bullet : " << beam << " : " << BulletMax << " : " << BulletMin << std::endl;
+
+    if (BulletMax.x <= BoxMax.x && BulletMin.x >= BoxMin.x
+        && BulletMax.y <= BoxMax.y && BulletMin.y >= BoxMin.y
+        && BulletMax.z <= BoxMax.z && BulletMin.z >= BoxMin.z
+         && travel == true)
+    {
+        alienhealth -= 10;
+    }
+    //std::cout << std::endl;
+
+    //std::cout << alienhealth << std::endl;
+    //std::cout << travel << std::endl;
 	
-	if ((camera.position.x > 500 && camera.position.x < 700 
-		&& camera.position.z > 500 && camera.position.z < 700))
-	{
-		Application::SetScene(1);
-	}
+	//if ((camera.position.x > 500 && camera.position.x < 700 
+	//	&& camera.position.z > 500 && camera.position.z < 700))
+	//{
+	//	Application::SetScene(1);
+	////}
     
 
     camera.Update(dt, (width / 2) - X_Pos, (height / 2) - Y_Pos);
@@ -450,6 +562,7 @@ void Planet1::Render()
     {
         modelStack.PushMatrix();
         modelStack.Translate(Enemy.x, -40, Enemy.z);
+        //modelStack.Translate(400, 0, 400);
         modelStack.Scale(10, 10, 10);
         RenderMesh(meshList[ALIEN], false);
         modelStack.PopMatrix();
@@ -479,6 +592,10 @@ void Planet1::Render()
     modelStack.PopMatrix();
     modelStack.PopMatrix();
 
+    //modelStack.PushMatrix();
+    //RenderMeshOnScreen(meshList[GUN], 50, -30, 10, 10);
+    //modelStack.PopMatrix();
+
     //=================================
     //Text on the screen
     //=================================
@@ -502,8 +619,8 @@ void Planet1::RenderSkyBox()
     //sky box
     modelStack.PushMatrix();
     modelStack.Translate(camera.position.x, camera.position.y, camera.position.z);
-    modelStack.Translate(0, -7500, 0);
-    modelStack.Scale(15000, 15000, 15000);
+    modelStack.Translate(0, -10000, 0);
+    modelStack.Scale(25000, 25000, 25000);
 
     //Ground
     modelStack.PushMatrix();

@@ -12,22 +12,18 @@ public:
 
     Vector3 view;
     Vector3 right;
+
     //================================
     //collision detection
     //================================
     //Objects that collides
     static unsigned const NoObj = 1;
-    bool collideObject;
 
     Vector3 PrevPos = { 0.f, 0.f, 0.f };//track previous pos
     Vector3 CollisionMax[NoObj];//collision max pos for each 
     Vector3 CollisionMin[NoObj];//collision min pos for each 
 
-    //================================
-    //bounds
-    //================================
-    float SizeOfScene = 1000.0f;
-
+    static int const SizeofLand = 2200;
 
     PlanetOneCamera();
     ~PlanetOneCamera();

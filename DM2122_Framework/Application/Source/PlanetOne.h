@@ -135,6 +135,10 @@ private:
 
     Vector3 Enemy;
     Vector3 Direction;
+    Vector3 BoxMax;
+    Vector3 BoxMin;
+    Vector3 BulletMax;
+    Vector3 BulletMin;
 
     bool travel;
     int count;

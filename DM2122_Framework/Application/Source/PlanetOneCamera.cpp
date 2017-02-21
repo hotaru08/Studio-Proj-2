@@ -140,31 +140,11 @@ void PlanetOneCamera::Reset()
     up = defaultUp;
 }
 
-void PlanetOneCamera::bounds()
-{
-    if (position.x > SizeOfScene)
-    {
-        position.x = SizeOfScene;
-    }
-    if (position.x < -SizeOfScene)
-    {
-        position.x = -SizeOfScene;
-    }
-    if (position.z > SizeOfScene)
-    {
-        position.z = SizeOfScene;
-    }
-    if (position.z < -SizeOfScene)
-    {
-        position.z = -SizeOfScene;
-    }
-}
-
 void PlanetOneCamera::Update(double dt, double x, double y)
 {
     double Ver = y * 0.05;
     double Horz = x * 0.05;
-    float CAMERA_SPEED = 40;
+    float CAMERA_SPEED = 100;
 
     view = (target - position).Normalized();
     right = view.Cross(up);
@@ -197,41 +177,44 @@ void PlanetOneCamera::Update(double dt, double x, double y)
     //front camera movement
     if (Application::IsKeyPressed('W'))
     {
+        bounds();
         position.y = 0;
         position = position + view * CAMERA_SPEED * dt;
         target = position + view;
-        bounds();
-        collsion();
+        //collsion();
     }
 
     //back camera movement
     if (Application::IsKeyPressed('S'))
     {
+        bounds();
+
         position.y = 0;
         position = position - view * CAMERA_SPEED * dt;
         target = position + view;
-        bounds();
-        collsion();
+        //collsion();
     }
 
     //Left camera movement
     if (Application::IsKeyPressed('A'))
     {
+        bounds();
+
         position.y = 0;
         position = position - right * CAMERA_SPEED * dt;
         target = position + view;
-        collsion();
-        bounds();
+        //collsion();
     }
 
     //Right camera movement
     if (Application::IsKeyPressed('D'))
     {
+        bounds();
+
         position.y = 0;
         position = position + right * CAMERA_SPEED * dt;
         target = position + view;
-        collsion();
-        bounds();
+        //collsion();
     }
 
     //Zoom in
@@ -253,145 +236,27 @@ void PlanetOneCamera::Update(double dt, double x, double y)
     }
 }
 
+void PlanetOneCamera::bounds()
+{
+    if (position.x > SizeofLand)
+    {
+        position.x = SizeofLand;
+    }
+    if (position.x < -SizeofLand)
+    {
+        position.x = -SizeofLand;
+    }
+    if (position.z > SizeofLand)
+    {
+        position.z = SizeofLand;
+    }
+    if (position.z < -SizeofLand)
+    {
+        position.z = -SizeofLand;
+    }
+}
+
 void PlanetOneCamera::collsion()
 {
-    //	//TreeMax.x = 550;
-    //	TreeMin.x = 450;
-    //	TreeMax.z = 50;
-    //	TreeMin.z = -50;
-    //
-    //	logMax.x = 230;
-    //	logMin.x = 157;
-    //	logMax.z = 60;
-    //	logMin.z = -60;
-    //
-    //	SnowmanMax.z = 540;
-    //	SnowmanMin.z = 460;
-    //	SnowmanMax.x = 350;
-    //	SnowmanMin.x = 257;
-    //
-    //	snow1Max.z = -440;
-    //	snow1Min.z = -540;
-    //	snow1Max.x = 540;
-    //	snow1Min.x = 340;
-    //
-    //	snow2Max.z = -460;
-    //	snow2Min.z = -530;
-    //	snow2Max.x = -460;
-    //	snow2Min.x = -540;
-    //
-    //	snow3Max.z = 520;
-    //	snow3Min.z = 460;
-    //	snow3Max.x = -370;
-    //	snow3Min.x = -440;
-    //
-    //	sledMax.z = 410;
-    //	sledMin.z = 290;
-    //	sledMax.x = -240;
-    //	sledMin.x = -440;
-    //
-    //	igloo1Max.x = -565;
-    //	igloo1Min.x = -590;
-    //	igloo1Max.z = 60;
-    //	igloo1Min.z = -120;
-    //
-    //	igloo2Max.z = -70;
-    //	igloo2Min.z = -210;
-    //	igloo2Max.x = -180;
-    //	igloo2Min.x = -590;
-    //
-    //	igloo3Max.z = 210;
-    //	igloo3Min.z = 70;
-    //	igloo3Max.x = -180;
-    //	igloo3Min.x = -590;
-    //
-    //	chopMax.z = 50;
-    //	chopMin.z = -50;
-    //	chopMax.x = 50;
-    //	chopMin.x = -50;
-    //
-    //	//tree collision
-    //	if ((position.x >= TreeMin.x) && (position.x <= TreeMax.x)
-    //		&& (position.z >= TreeMin.z) && (position.z <= TreeMax.z))
-    //	{
-    //		//detect collision
-    //		position.x = PrevPos.x;
-    //		position.z = PrevPos.z;
-    //	}
-    //	else if ((position.x >= logMin.x) && (position.x <= logMax.x)
-    //		&& (position.z >= logMin.z) && (position.z <= logMax.z))
-    //	{
-    //		//detect collision
-    //		position.x = PrevPos.x;
-    //		position.z = PrevPos.z;
-    //	}
-    //	else if ((position.x >= SnowmanMin.x) && (position.x <= SnowmanMax.x)
-    //		&& (position.z >= SnowmanMin.z) && (position.z <= SnowmanMax.z))
-    //	{
-    //		//detect collision
-    //		position.x = PrevPos.x;
-    //		position.z = PrevPos.z;
-    //	}
-    //
-    //	else if ((position.x >= snow1Min.x) && (position.x <= snow1Max.x)
-    //		&& (position.z >= snow1Min.z) && (position.z <= snow1Max.z))
-    //	{
-    //		//detect collision
-    //		position.x = PrevPos.x;
-    //		position.z = PrevPos.z;
-    //	}
-    //	else if ((position.x >= snow2Min.x) && (position.x <= snow2Max.x)
-    //		&& (position.z >= snow2Min.z) && (position.z <= snow2Max.z))
-    //	{
-    //		//detect collision
-    //		position.x = PrevPos.x;
-    //		position.z = PrevPos.z;
-    //	}
-    //	else if ((position.x >= snow3Min.x) && (position.x <= snow3Max.x)
-    //		&& (position.z >= snow3Min.z) && (position.z <= snow3Max.z))
-    //	{
-    //		//detect collision
-    //		position.x = PrevPos.x;
-    //		position.z = PrevPos.z;
-    //	}
-    //	else if ((position.x >= sledMin.x) && (position.x <= sledMax.x)
-    //		&& (position.z >= sledMin.z) && (position.z <= sledMax.z))
-    //	{
-    //		//detect collision
-    //		position.x = PrevPos.x;
-    //		position.z = PrevPos.z;
-    //	}
-    //	else if ((position.x >= igloo1Min.x) && (position.x <= igloo1Max.x)
-    //		&& (position.z >= igloo1Min.z) && (position.z <= igloo1Max.z))
-    //	{
-    //		//detect collision
-    //		position.x = PrevPos.x;
-    //		position.z = PrevPos.z;
-    //	}
-    //	else if ((position.x >= igloo2Min.x) && (position.x <= igloo2Max.x)
-    //		&& (position.z >= igloo2Min.z) && (position.z <= igloo2Max.z))
-    //	{
-    //		//detect collision
-    //		position.x = PrevPos.x;
-    //		position.z = PrevPos.z;
-    //	}
-    //	else if ((position.x >= igloo3Min.x) && (position.x <= igloo3Max.x)
-    //		&& (position.z >= igloo3Min.z) && (position.z <= igloo3Max.z))
-    //	{
-    //		//detect collision
-    //		position.x = PrevPos.x;
-    //		position.z = PrevPos.z;
-    //	}
-    //	else if ((position.x >= chopMin.x) && (position.x <= chopMax.x)
-    //		&& (position.z >= chopMin.z) && (position.z <= chopMax.z))
-    //	{
-    //		//detect collision
-    //		position.x = PrevPos.x;
-    //		position.z = PrevPos.z;
-    //	}
-    //	else
-    //	{
-    //		PrevPos.x = position.x;
-    //		PrevPos.z = position.z;
-    //	}
+   
 }
