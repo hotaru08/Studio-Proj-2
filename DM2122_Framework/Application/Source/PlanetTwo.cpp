@@ -538,9 +538,14 @@ void PlanetTwo::Update(double dt)
 	{
 		glPolygonMode(GL_FRONT_AND_BACK, GL_LINE); //wireframe mode
 	}
+
 	if (Application::IsKeyPressed('E'))
 	{
 		playerMined = true;
+	}
+	else
+	{
+		playerMined = false;
 	}
 
 
