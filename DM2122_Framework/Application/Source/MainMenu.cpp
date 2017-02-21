@@ -26,6 +26,12 @@ MainMenu::~MainMenu()
 
 void MainMenu::Init()
 {
+	//Initialize GLFW
+	if (!glfwInit())
+	{
+		exit(EXIT_FAILURE);
+	}
+
     m_programID = LoadShaders("Shader//Texture.vertexshader", "Shader//Text.fragmentshader");
     // Use our shader
     glUseProgram(m_programID);
@@ -163,15 +169,17 @@ void MainMenu::Init()
     meshList[TITLE] = MeshBuilder::GenerateQuad("title", (1,1,1), 16, 16);
     meshList[TITLE]->textureID = LoadTGA("Image//MainMenu//Title.tga");
 
-
     Mtx44 projection;
     projection.SetToPerspective(45.f, 4.f / 3.f, 0.1f, 11000.0f);
     projectionStack.LoadMatrix(projection);
 
+	GLenum err = glewInit();
+	
 	count = 0;
 	Stay = false;
     spin = 0;
 	etime = 0;
+	isExit = false;
 }
 
 void MainMenu::Update(double dt)
@@ -209,7 +217,14 @@ void MainMenu::Update(double dt)
 		count = 0;
 	}
 
-	//camera.Update(dt, (width / 2) - X_Pos, (height / 2) - Y_Pos);
+	if (Application::IsKeyPressed(VK_RETURN) && count == 0)
+	{
+		Application::SetScene(1);//change to space scene
+	}
+	if (Application::IsKeyPressed(VK_RETURN) && count == 2)
+	{
+		Exit();
+	}
 }
 
 void MainMenu::Render()
@@ -274,24 +289,18 @@ void MainMenu::Render()
 	
 	if (count == 0)
 	{
-		std::cout << " I HATE MY LIEF " << std::endl;
-		Stay = true;
 		RenderTextOnScreen(meshList[GEO_TEXT], "PLAY", Color(1, 0.5, 0), 3, 34, 30);
 		RenderTextOnScreen(meshList[GEO_TEXT], "INSTRUCTIONS", Color(1, 1, 1), 3, 23, 25);
 		RenderTextOnScreen(meshList[GEO_TEXT], "EXIT", Color(1, 1, 1), 3, 34, 20);
 	}
 	else if (count == 1)
 	{
-		std::cout << " I HATE MY LIEF2 " << std::endl;
-		Stay = true;
 		RenderTextOnScreen(meshList[GEO_TEXT], "PLAY", Color(1, 1, 1), 3, 34, 30);
 		RenderTextOnScreen(meshList[GEO_TEXT], "INSTRUCTIONS", Color(1, 0.5, 0), 3, 23, 25);
 		RenderTextOnScreen(meshList[GEO_TEXT], "EXIT", Color(1, 1, 1), 3, 34, 20);
 	}
 	else if (count == 2)
 	{
-		std::cout << " I HATE MY LIEF3 " << std::endl;
-		Stay = true;
 		RenderTextOnScreen(meshList[GEO_TEXT], "PLAY", Color(1, 1, 1), 3, 34, 30);
 		RenderTextOnScreen(meshList[GEO_TEXT], "INSTRUCTIONS", Color(1, 1, 1), 3, 23, 25);
 		RenderTextOnScreen(meshList[GEO_TEXT], "EXIT", Color(1, 0.5, 0), 3, 34, 20);
@@ -496,4 +505,5 @@ void MainMenu::Exit()
     // Cleanup VBO here
     glDeleteVertexArrays(1, &m_vertexArrayID);
     glDeleteProgram(m_programID);
+	glfwSetWindowShouldClose(m_window,GL_TRUE);
 }

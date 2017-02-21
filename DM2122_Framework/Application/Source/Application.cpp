@@ -13,6 +13,7 @@
 #include "PlanetOne.h"
 #include "PlanetTwo.h"
 #include "Space.h"
+#include "MainMenu.h"
 
 //#include "StudioProj.h"
 
@@ -33,7 +34,9 @@ static void error_callback(int error, const char* description)
 static void key_callback(GLFWwindow* window, int key, int scancode, int action, int mods)
 {
 	if (key == GLFW_KEY_ESCAPE && action == GLFW_PRESS)
-		glfwSetWindowShouldClose(window, GL_TRUE);
+	{
+		glfwSetWindowShouldClose(window, GL_TRUE); 
+	}
 }
 
 bool Application::IsKeyPressed(unsigned short key)
@@ -74,7 +77,7 @@ void Application::Init()
 
 
 	//Create a window and create its OpenGL context
-	m_window = glfwCreateWindow(800, 600, "Computer Graphics", NULL, NULL);
+	m_window = glfwCreateWindow(800, 600, "Astelassa", NULL, NULL);
 
 	//If the window couldn't be created
 	if (!m_window)
@@ -112,17 +115,23 @@ void Application::SetScene(int SceneID)
 void Application::Run()
 {
 	//Main Loop
-	currSceneID = 1;
+	currSceneID = 0;
+	Scene *scene0 = new MainMenu();
 	Scene *scene1= new Space();
 	Scene *scene2 = new Planet1();
-	Scene *scene = scene1;
-	//Scene *scene = new StudioProj();
+	Scene *scene = scene0;
 	scene->Init();
 
 	m_timer.startTimer();    // Start timer to calculate how long it takes to render this frame
 	while (!glfwWindowShouldClose(m_window) && !IsKeyPressed(VK_ESCAPE))
 	{
-		if (currSceneID == 1 && scene != scene1)
+		if (currSceneID == 0 && scene != scene0)
+		{
+			scene1->Exit();
+			scene = scene0;
+			scene0->Init();
+		}
+		else if (currSceneID == 1 && scene != scene1)
 		{
 			scene2->Exit();
 			scene = scene1;
