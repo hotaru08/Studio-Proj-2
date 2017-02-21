@@ -28,6 +28,8 @@ class Planet1 : public Scene
         ALIEN,
         GUN,
         GROUND,
+        FLAG,
+        FLAGPOLE,
 
         GEO_TEXT,
 
@@ -117,6 +119,9 @@ private:
     float beam;
     float angley;
     float angleside;
+    unsigned int NumAlien;
+    float enemyidle;
+    float changeD;
 
     PlanetOneCamera camera;
     MS modelStack, viewStack, projectionStack;
@@ -131,6 +136,7 @@ private:
     float Walking_Rotation_Left;
     float Walking_Rotation_Right;
     float RotateBody;
+    float flagdown;
     double X_Pos, Y_Pos; //get cursor position
 
     Vector3 Enemy;
@@ -145,6 +151,7 @@ private:
     int alienhealth;
     bool Aliendead;
     bool hit;
+    int Colonise[4];
 
     void RenderMesh(Mesh *mesh, bool enableLight);
     void RenderSkyBox();

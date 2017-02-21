@@ -221,6 +221,12 @@ void Planet1::Init()
     meshList[GEO_TEXT] = MeshBuilder::GenerateText("text", 16, 16);
     meshList[GEO_TEXT]->textureID = LoadTGA("Image//ExportedFont.tga");
 
+    meshList[FLAG] = MeshBuilder::GenerateOBJ("flag", "OBJ//flag.obj");
+    meshList[FLAG]->textureID = LoadTGA("Image//flag.tga");
+
+    meshList[FLAGPOLE] = MeshBuilder::GenerateOBJ("ground", "OBJ//flagpole.obj");
+    meshList[FLAGPOLE]->textureID = LoadTGA("Image//flag.tga");
+
     Mtx44 projection;
     projection.SetToPerspective(45.f, 4.f / 3.f, 0.1f, 25000.0f);
     projectionStack.LoadMatrix(projection);
@@ -244,12 +250,25 @@ void Planet1::Init()
     alienhealth = 30;
     Aliendead = false;
     hit = false;
-    Enemy = (0, 0, 0);
+
     Direction = (0, 0, 0);
     BoxMax = (0, 0, 0);
     BoxMin = (0, 0, 0);
     BulletMax = (0, 0, 0);
     BulletMin = (0, 0, 0);
+    NumAlien = 1;
+    flagdown = 0;
+    enemyidle = 0;
+    changeD = 1;
+    Colonise[5] = {};
+
+    for (int i = 0; i <= sizeof(Colonise); i++)
+    {
+        Colonise[i] = rand() % 1600;
+        Enemy = (Colonise[i], 0, Colonise[i]);
+
+    }
+    
 }
 
 void Planet1::Update(double dt)
@@ -332,13 +351,30 @@ void Planet1::Update(double dt)
     BoxMin.z = -10;
 
     //enemy movement
+
+    if (enemyidle > 5)
+    {
+        changeD = -1;
+    }
+    if (enemyidle < -5)
+    {
+        changeD = 1;
+    }
     Direction = camera.position - Enemy;
+    enemyidle += 5 * changeD * dt;
 
-    float hypotenuse = sqrt((Direction.x *Direction.x) + (Direction.z * Direction.z));
-    Direction.x /= hypotenuse;
-    Direction.z /= hypotenuse;
+    if (Direction.x > 1000 || Direction.z > 1000 || Direction.x < -1000 || Direction.z < - 1000)
+    {
+        Enemy.z += enemyidle;
+    }
+    else
+    {
+        float hypotenuse = sqrt((Direction.x *Direction.x) + (Direction.z * Direction.z));
+        Direction.x /= hypotenuse;
+        Direction.z /= hypotenuse;
 
-    Enemy += Direction;//moves enemy
+        Enemy += Direction;//moves enemy
+    }
     BoxMax += Enemy;
     BoxMin += Enemy;
 
@@ -504,6 +540,15 @@ void Planet1::Update(double dt)
     {
         alienhealth -= 10;
     }
+
+    if (alienhealth <= 0)
+    {
+        if (NumAlien != 0)
+        {
+            NumAlien -= 1;
+
+        }
+    }
     //std::cout << std::endl;
 
     //std::cout << alienhealth << std::endl;
@@ -514,6 +559,17 @@ void Planet1::Update(double dt)
 	//{
 	//	Application::SetScene(1);
 	////}
+
+    if (camera.position.x > -300 && camera.position.x < 300 && camera.position.z > -300 && camera.position.z < 300)
+    {
+        if (NumAlien == 0 && Application::IsKeyPressed('E'))
+        {
+            if (flagdown != -400)
+            {
+                flagdown -= 10;
+            }
+        }
+    }
     
 
     camera.Update(dt, (width / 2) - X_Pos, (height / 2) - Y_Pos);
@@ -554,19 +610,29 @@ void Planet1::Render()
     modelStack.Scale(200, 150, 200);
 
     modelStack.Rotate(180, 0, 1, 0);
-    //modelStack.Rotate(90, 1, 0, 0);
     RenderMesh(meshList[GROUND], false);
     modelStack.PopMatrix();
 
     if (alienhealth > 0)
     {
-        modelStack.PushMatrix();
-        modelStack.Translate(Enemy.x, -40, Enemy.z);
-        //modelStack.Translate(400, 0, 400);
-        modelStack.Scale(10, 10, 10);
-        RenderMesh(meshList[ALIEN], false);
-        modelStack.PopMatrix();
+        for (int i = 0; i < sizeof(Colonise); i++)
+        {
+            modelStack.PushMatrix();
+            modelStack.Translate(Enemy.x, -40, Enemy.z);
+
+            //modelStack.PushMatrix();
+
+            //modelStack.Translate(, 0, );
+            //modelStack.Translate(400, 0, 400);
+            modelStack.Scale(10, 10, 10);
+            RenderMesh(meshList[ALIEN], false);
+            //modelStack.PopMatrix();
+
+            modelStack.PopMatrix();
+        }
+        
     }
+    
 
     modelStack.PushMatrix();
     //modelStack.Rotate(Y_Pos, 0, 1, 0);
@@ -590,6 +656,21 @@ void Planet1::Render()
     modelStack.Scale(0.2, 0.2, 0.2);
     RenderMesh(meshList[SPHERE], false);
     modelStack.PopMatrix();
+    modelStack.PopMatrix();
+
+    //Flag
+
+    modelStack.PushMatrix();
+    modelStack.Translate(0, -100, 0);
+    modelStack.Scale(100, 100, 100);
+    RenderMesh(meshList[FLAGPOLE], false);
+    modelStack.PopMatrix();
+
+
+    modelStack.PushMatrix();
+    modelStack.Translate(0, -100 + flagdown, 0);
+    modelStack.Scale(100, 100, 100);
+    RenderMesh(meshList[FLAG], false);
     modelStack.PopMatrix();
 
     //modelStack.PushMatrix();
@@ -631,7 +712,7 @@ void Planet1::RenderSkyBox()
 
     //Front
     modelStack.PushMatrix();
-    modelStack.Translate(-0.498, 0.498, 0);
+    modelStack.Translate(-0.5, 0.5, 0);
     modelStack.Rotate(90, 0, 1, 0);
     RenderMesh(meshList[GEO_FRONT], false);
     modelStack.PopMatrix();
