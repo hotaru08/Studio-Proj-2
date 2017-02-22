@@ -23,7 +23,7 @@ public:
     Vector3 CollisionMax[NoObj];//collision max pos for each 
     Vector3 CollisionMin[NoObj];//collision min pos for each 
 
-    static int const SizeofLand = 2200;
+    static int const SizeofLand = 2000;
 
     PlanetOneCamera();
     ~PlanetOneCamera();

@@ -53,30 +53,6 @@ void Planet1::Init()
     m_parameters[U_LIGHT0_EXPONENT] = glGetUniformLocation(m_programID, "lights[0].exponent");
     m_parameters[U_NUMLIGHTS] = glGetUniformLocation(m_programID, "numLights");
 
-    m_parameters[U_LIGHT1_POSITION] = glGetUniformLocation(m_programID, "lights[1].position_cameraspace");
-    m_parameters[U_LIGHT1_COLOR] = glGetUniformLocation(m_programID, "lights[1].color");
-    m_parameters[U_LIGHT1_POWER] = glGetUniformLocation(m_programID, "lights[1].power");
-    m_parameters[U_LIGHT1_KC] = glGetUniformLocation(m_programID, "lights[1].kC");
-    m_parameters[U_LIGHT1_KL] = glGetUniformLocation(m_programID, "lights[1].kL");
-    m_parameters[U_LIGHT1_KQ] = glGetUniformLocation(m_programID, "lights[1].kQ");
-    m_parameters[U_LIGHT1_TYPE] = glGetUniformLocation(m_programID, "lights[1].type");
-    m_parameters[U_LIGHT1_SPOTDIRECTION] = glGetUniformLocation(m_programID, "lights[1].spotDirection");
-    m_parameters[U_LIGHT1_COSCUTOFF] = glGetUniformLocation(m_programID, "lights[1].cosCutoff");
-    m_parameters[U_LIGHT1_COSINNER] = glGetUniformLocation(m_programID, "lights[1].cosInner");
-    m_parameters[U_LIGHT1_EXPONENT] = glGetUniformLocation(m_programID, "lights[1].exponent");
-
-    m_parameters[U_LIGHT2_POSITION] = glGetUniformLocation(m_programID, "lights[2].position_cameraspace");
-    m_parameters[U_LIGHT2_COLOR] = glGetUniformLocation(m_programID, "lights[2].color");
-    m_parameters[U_LIGHT2_POWER] = glGetUniformLocation(m_programID, "lights[2].power");
-    m_parameters[U_LIGHT2_KC] = glGetUniformLocation(m_programID, "lights[2].kC");
-    m_parameters[U_LIGHT2_KL] = glGetUniformLocation(m_programID, "lights[2].kL");
-    m_parameters[U_LIGHT2_KQ] = glGetUniformLocation(m_programID, "lights[2].kQ");
-    m_parameters[U_LIGHT2_TYPE] = glGetUniformLocation(m_programID, "lights[2].type");
-    m_parameters[U_LIGHT2_SPOTDIRECTION] = glGetUniformLocation(m_programID, "lights[2].spotDirection");
-    m_parameters[U_LIGHT2_COSCUTOFF] = glGetUniformLocation(m_programID, "lights[2].cosCutoff");
-    m_parameters[U_LIGHT2_COSINNER] = glGetUniformLocation(m_programID, "lights[2].cosInner");
-    m_parameters[U_LIGHT2_EXPONENT] = glGetUniformLocation(m_programID, "lights[2].exponent");
-
     //Get a handle for our "colorTexture" uniform
     m_parameters[U_COLOR_TEXTURE_ENABLED] = glGetUniformLocation(m_programID, "colorTextureEnabled");
     m_parameters[U_COLOR_TEXTURE] = glGetUniformLocation(m_programID, "colorTexture");
@@ -87,9 +63,9 @@ void Planet1::Init()
 
     //Sunlight properties
     light[0].type = Light::LIGHT_DIRECTIONAL;
-    light[0].position.Set(3000, 900, 700);
-    light[0].color.Set(1, 1, 1);
-    light[0].power = 1.5;
+    light[0].position.Set(0, 1000, 0);
+    light[0].color.Set(1, 1,1);
+    light[0].power = 1;
     light[0].kC = 1.f;
     light[0].kL = 0.01f;
     light[0].kQ = 0.001f;
@@ -97,32 +73,6 @@ void Planet1::Init()
     light[0].cosInner = cos(Math::DegreeToRadian(30));
     light[0].exponent = 3.f;
     light[0].spotDirection.Set(0.f, 1.f, 0.f);
-
-    //Igloo Light properties
-    light[1].type = Light::LIGHT_POINT;
-    light[1].position.Set(-500, 0, 0);
-    light[1].color.Set(1, 1, 1);
-    light[1].power = 5;
-    light[1].kC = 1.f;
-    light[1].kL = 0.01f;
-    light[1].kQ = 0.001f;
-    light[1].cosCutoff = cos(Math::DegreeToRadian(45));
-    light[1].cosInner = cos(Math::DegreeToRadian(30));
-    light[1].exponent = 3.f;
-    light[1].spotDirection.Set(0.f, 1.f, 0.f);
-
-    //Night Light properties
-    light[2].type = Light::LIGHT_DIRECTIONAL;
-    light[2].position.Set(0, 3000, 0);
-    light[2].color.Set(1, 1, 1);
-    light[2].power = 1;
-    light[2].kC = 1.f;
-    light[2].kL = 0.01f;
-    light[2].kQ = 0.001f;
-    light[2].cosCutoff = cos(Math::DegreeToRadian(45));
-    light[2].cosInner = cos(Math::DegreeToRadian(30));
-    light[2].exponent = 3.f;
-    light[2].spotDirection.Set(0.f, 1.f, 0.f);
 
     // Make sure you pass uniform parameters after glUseProgram()
     glUniform1i(m_parameters[U_LIGHT0_TYPE], light[0].type);
@@ -134,27 +84,7 @@ void Planet1::Init()
     glUniform1f(m_parameters[U_LIGHT0_COSCUTOFF], light[0].cosCutoff);
     glUniform1f(m_parameters[U_LIGHT0_COSINNER], light[0].cosInner);
     glUniform1f(m_parameters[U_LIGHT0_EXPONENT], light[0].exponent);
-    glUniform1i(m_parameters[U_NUMLIGHTS], 3);
-
-    glUniform1i(m_parameters[U_LIGHT1_TYPE], light[1].type);
-    glUniform3fv(m_parameters[U_LIGHT1_COLOR], 1, &light[1].color.r);
-    glUniform1f(m_parameters[U_LIGHT1_POWER], light[1].power);
-    glUniform1f(m_parameters[U_LIGHT1_KC], light[1].kC);
-    glUniform1f(m_parameters[U_LIGHT1_KL], light[1].kL);
-    glUniform1f(m_parameters[U_LIGHT1_KQ], light[1].kQ);
-    glUniform1f(m_parameters[U_LIGHT1_COSCUTOFF], light[1].cosCutoff);
-    glUniform1f(m_parameters[U_LIGHT1_COSINNER], light[1].cosInner);
-    glUniform1f(m_parameters[U_LIGHT1_EXPONENT], light[1].exponent);
-
-    glUniform1i(m_parameters[U_LIGHT2_TYPE], light[2].type);
-    glUniform3fv(m_parameters[U_LIGHT2_COLOR], 1, &light[2].color.r);
-    glUniform1f(m_parameters[U_LIGHT2_POWER], light[2].power);
-    glUniform1f(m_parameters[U_LIGHT2_KC], light[2].kC);
-    glUniform1f(m_parameters[U_LIGHT2_KL], light[2].kL);
-    glUniform1f(m_parameters[U_LIGHT2_KQ], light[2].kQ);
-    glUniform1f(m_parameters[U_LIGHT2_COSCUTOFF], light[2].cosCutoff);
-    glUniform1f(m_parameters[U_LIGHT2_COSINNER], light[2].cosInner);
-    glUniform1f(m_parameters[U_LIGHT2_EXPONENT], light[2].exponent);
+    glUniform1i(m_parameters[U_NUMLIGHTS], 1);
 
     // Set background color to black
     glClearColor(0.0f, 0.0f, 0.0f, 0.0f);
@@ -227,6 +157,9 @@ void Planet1::Init()
     meshList[FLAGPOLE] = MeshBuilder::GenerateOBJ("ground", "OBJ//flagpole.obj");
     meshList[FLAGPOLE]->textureID = LoadTGA("Image//flag.tga");
 
+    meshList[SPACESHIP] = MeshBuilder::GenerateOBJ("spaceship", "OBJ//SpaceshipLanding.obj");
+    meshList[SPACESHIP]->textureID = LoadTGA("Image//spaceship.tga");
+
     Mtx44 projection;
     projection.SetToPerspective(45.f, 4.f / 3.f, 0.1f, 25000.0f);
     projectionStack.LoadMatrix(projection);
@@ -248,7 +181,11 @@ void Planet1::Init()
     travel = false;
     count = 0;
     alienhealth = 30;
-    Aliendead = false;
+    alienhealth2 = 30;
+    alienhealth3 = 30;
+    alienhealth4 = 30;
+    alienhealth5 = 30;
+
     hit = false;
 
     Direction = (0, 0, 0);
@@ -256,19 +193,32 @@ void Planet1::Init()
     BoxMin = (0, 0, 0);
     BulletMax = (0, 0, 0);
     BulletMin = (0, 0, 0);
-    NumAlien = 1;
+    NumAlien = 5;
     flagdown = 0;
     enemyidle = 0;
     changeD = 1;
-    Colonise[5] = {};
+    shipdown = 400;
+    AlienOneDead = false;
+    AlienTwoDead = false;
+    AlienThreeDead = false;
+    AlienFourDead = false;
+    AlienFiveDead = false;
 
-    for (int i = 0; i <= sizeof(Colonise); i++)
-    {
-        Colonise[i] = rand() % 1600;
-        Enemy = (Colonise[i], 0, Colonise[i]);
 
-    }
-    
+    Enemy.x = rand() % 1600;
+    Enemy.z = rand() % 1600;
+
+    Enemy2.x = rand() % 1600 + (-1600);
+    Enemy2.z = rand() % 1600;
+
+    Enemy3.x = rand() % 1600;
+    Enemy3.z = rand() % 1600 + (-1600);
+
+    Enemy4.x = rand() % 1600 + (-1600);
+    Enemy4.z = rand() % 1600 + (-1600);
+
+    Enemy5.x = rand() % 1600;
+    Enemy5.z = rand() % 1600;
 }
 
 void Planet1::Update(double dt)
@@ -350,35 +300,123 @@ void Planet1::Update(double dt)
     BoxMin.y = -20;
     BoxMin.z = -10;
 
+    BoxMax2.x = 10;
+    BoxMax2.y = 20;
+    BoxMax2.z = 10;
+
+    BoxMin2.x = -10;
+    BoxMin2.y = -20;
+    BoxMin2.z = -10;
+
+    BoxMax3.x = 10;
+    BoxMax3.y = 20;
+    BoxMax3.z = 10;
+
+    BoxMin3.x = -10;
+    BoxMin3.y = -20;
+    BoxMin3.z = -10;
+
+    BoxMax4.x = 10;
+    BoxMax4.y = 20;
+    BoxMax4.z = 10;
+
+    BoxMin4.x = -10;
+    BoxMin4.y = -20;
+    BoxMin4.z = -10;
+
+    BoxMax5.x = 10;
+    BoxMax5.y = 20;
+    BoxMax5.z = 10;
+
+    BoxMin5.x = -10;
+    BoxMin5.y = -20;
+    BoxMin5.z = -10;
+
+    shooting();
+
+    //gun movement
+    Vector3 view = (camera.target - camera.position).Normalized();
+
+    angleside = (view.x > 0 ? 1 : -1) * (Math::RadianToDegree(acos(Vector3(0, 0, 1).Dot(Vector3(view.x, 0, view.z).Normalized()))));
+    Vector3 right = camera.view.Cross(camera.up); 
+    
+    angley = (view.y > 0 ? -1 : 1) * (Math::RadianToDegree(acos(Vector3(0, 0, 1).Dot(Vector3(0, view.y, view.z).Normalized()))));
+
     //enemy movement
 
-    if (enemyidle > 5)
+    if (enemyidle > 2)
     {
         changeD = -1;
     }
-    if (enemyidle < -5)
+    if (enemyidle < -2)
     {
         changeD = 1;
     }
-    Direction = camera.position - Enemy;
-    enemyidle += 5 * changeD * dt;
 
-    if (Direction.x > 1000 || Direction.z > 1000 || Direction.x < -1000 || Direction.z < - 1000)
+    enemyidle += 0.1 * changeD;
+    AlienOne();
+    AlienTwo();
+    AlienThree();
+    AlienFour();
+    AlienFive();
+
+    if (alienhealth <= 0 && AlienOneDead == false)
     {
-        Enemy.z += enemyidle;
+        NumAlien -= 1;
+        AlienOneDead = true;
     }
-    else
+
+    if (alienhealth2 <= 0 && AlienTwoDead == false)
     {
-        float hypotenuse = sqrt((Direction.x *Direction.x) + (Direction.z * Direction.z));
-        Direction.x /= hypotenuse;
-        Direction.z /= hypotenuse;
-
-        Enemy += Direction;//moves enemy
+        NumAlien -= 1;
+        AlienTwoDead = true;
     }
-    BoxMax += Enemy;
-    BoxMin += Enemy;
 
+    if (alienhealth3 <= 0 && AlienThreeDead == false)
+    {
+        NumAlien -= 1;
+        AlienThreeDead = true;
+    }
 
+    if (alienhealth4 <= 0 && AlienFourDead == false)
+    {
+        NumAlien -= 1;
+        AlienFourDead = true;
+    }
+
+    if (alienhealth5 <= 0 && AlienFiveDead == false)
+    {
+        NumAlien -= 1;
+        AlienFiveDead = true;
+    }
+	
+	//if ((camera.position.x > 500 && camera.position.x < 700 
+	//	&& camera.position.z > 500 && camera.position.z < 700))
+	//{
+	//	Application::SetScene(1);
+	////}
+
+    if (camera.position.x > -300 && camera.position.x < 300 && camera.position.z > -300 && camera.position.z < 300)
+    {
+        if (NumAlien == 0 && Application::IsKeyPressed('E'))
+        {
+            if (flagdown != -400)
+            {
+                flagdown -= 10;
+            }
+        }
+    }
+
+    if (shipdown != -50)
+    {
+        shipdown -= 1;
+    }
+
+    camera.Update(dt, (width / 2) - X_Pos, (height / 2) - Y_Pos);
+}
+
+void Planet1::shooting()
+{
     //-----------------------//
     //Gun
     //-----------------------//
@@ -404,7 +442,7 @@ void Planet1::Update(double dt)
         else
         {
             BulletMax.x += 0;
-            BulletMin.x += 0; 
+            BulletMin.x += 0;
         }
 
         if (Enemy.z < -4)
@@ -423,7 +461,7 @@ void Planet1::Update(double dt)
             BulletMin.z += 0;
         }
     }
-    
+
     if (travel == false && count == 1)
     {
         if (beam < 200)
@@ -447,14 +485,28 @@ void Planet1::Update(double dt)
     {
         beam = 0;
     }
+}
 
-    //gun movement
-    Vector3 view = (camera.target - camera.position).Normalized();
+void Planet1::AlienOne()
+{
+    //Alien 1
 
-    angleside = (view.x > 0 ? 1 : -1) * (Math::RadianToDegree(acos(Vector3(0, 0, 1).Dot(Vector3(view.x, 0, view.z).Normalized()))));
-    Vector3 right = camera.view.Cross(camera.up); 
-    
-    angley = (view.y > 0 ? -1 : 1) * (Math::RadianToDegree(acos(Vector3(0, 0, 1).Dot(Vector3(0, view.y, view.z).Normalized()))));
+    Direction = camera.position - Enemy;
+
+    if (Direction.x > 1000 || Direction.z > 1000 || Direction.x < -1000 || Direction.z < -1000)
+    {
+        Enemy.z += enemyidle;
+    }
+    else
+    {
+        float hypotenuse = sqrt((Direction.x *Direction.x) + (Direction.z * Direction.z));
+        Direction.x /= hypotenuse;
+        Direction.z /= hypotenuse;
+        Enemy += Direction;//moves enemy
+    }
+
+    BoxMax += Enemy;
+    BoxMin += Enemy;
 
     //shooting
     //check range
@@ -536,43 +588,438 @@ void Planet1::Update(double dt)
     if (BulletMax.x <= BoxMax.x && BulletMin.x >= BoxMin.x
         && BulletMax.y <= BoxMax.y && BulletMin.y >= BoxMin.y
         && BulletMax.z <= BoxMax.z && BulletMin.z >= BoxMin.z
-         && travel == true)
+        && travel == true)
     {
         alienhealth -= 10;
     }
+}
 
-    if (alienhealth <= 0)
+void Planet1::AlienTwo()
+{
+    //Alien 2
+
+    Direction = camera.position - Enemy2;
+
+    if (Direction.x > 1000 || Direction.z > 1000 || Direction.x < -1000 || Direction.z < -1000)
     {
-        if (NumAlien != 0)
-        {
-            NumAlien -= 1;
-
-        }
+        Enemy2.x += enemyidle;
     }
-    //std::cout << std::endl;
-
-    //std::cout << alienhealth << std::endl;
-    //std::cout << travel << std::endl;
-	
-	//if ((camera.position.x > 500 && camera.position.x < 700 
-	//	&& camera.position.z > 500 && camera.position.z < 700))
-	//{
-	//	Application::SetScene(1);
-	////}
-
-    if (camera.position.x > -300 && camera.position.x < 300 && camera.position.z > -300 && camera.position.z < 300)
+    else
     {
-        if (NumAlien == 0 && Application::IsKeyPressed('E'))
-        {
-            if (flagdown != -400)
-            {
-                flagdown -= 10;
-            }
-        }
+        float hypotenuse = sqrt((Direction.x *Direction.x) + (Direction.z * Direction.z));
+        Direction.x /= hypotenuse;
+        Direction.z /= hypotenuse;
+        Enemy2 += Direction;//moves Enemy2
     }
-    
 
-    camera.Update(dt, (width / 2) - X_Pos, (height / 2) - Y_Pos);
+    BoxMax2 += Enemy2;
+    BoxMin2 += Enemy2;
+
+    //shooting
+    //check range
+    if (Enemy2.x > 400 && Enemy2.x < 800)
+    {
+        BoxMax2.x -= 400;
+        BoxMin2.x -= 400;
+    }
+
+    if (Enemy2.x > 800 && Enemy2.x < 1200)
+    {
+        BoxMax2.x -= 800;
+        BoxMin2.x -= 800;
+    }
+
+    if (Enemy2.x > 1200 && Enemy2.x < 1600)
+    {
+        BoxMax2.x -= 1200;
+        BoxMin2.x -= 1200;
+    }
+
+    if (Enemy2.z > 400 && Enemy2.z < 800)
+    {
+        BoxMax2.z -= 400;
+        BoxMin2.z -= 400;
+    }
+
+    if (Enemy2.z > 800 && Enemy2.z < 1200)
+    {
+        BoxMax2.z -= 800;
+        BoxMin2.z -= 800;
+    }
+
+    if (Enemy2.z > 1200 && Enemy2.z < 1600)
+    {
+        BoxMax2.z -= 1200;
+        BoxMin2.z -= 1200;
+    }
+    ////negative
+    if (Enemy2.x < -400 && Enemy2.x > -800)
+    {
+        BoxMax2.x += 400;
+        BoxMin2.x += 400;
+    }
+
+    if (Enemy2.x < -800 && Enemy2.x > -1200)
+    {
+        BoxMax2.x += 800;
+        BoxMin2.x += 800;
+    }
+
+    if (Enemy2.x < -1200 && Enemy2.x > -1600)
+    {
+        BoxMax2.x += 1200;
+        BoxMin2.x += 1200;
+    }
+
+    if (Enemy2.z < -400 && Enemy2.z > -800)
+    {
+        BoxMax2.z += 400;
+        BoxMin2.z += 400;
+    }
+
+    if (Enemy2.z < -800 && Enemy2.z > -1200)
+    {
+        BoxMax2.z += 800;
+        BoxMin2.z += 800;
+    }
+
+    if (Enemy2.z < -1200 && Enemy2.z > -1600)
+    {
+        BoxMax2.z += 1200;
+        BoxMin2.z += 1200;
+    }
+
+    //std::cout << " Enemy2 : " << Enemy2 << " : " << BoxMax2 << " : " << BoxMin2 << std::endl;
+    //std::cout << " Bullet : " << beam << " : " << BulletMax << " : " << BulletMin << std::endl;
+
+    if (BulletMax.x <= BoxMax2.x && BulletMin.x >= BoxMin2.x
+        && BulletMax.y <= BoxMax2.y && BulletMin.y >= BoxMin2.y
+        && BulletMax.z <= BoxMax2.z && BulletMin.z >= BoxMin2.z
+        && travel == true)
+    {
+        alienhealth2 -= 10;
+    }
+}
+
+void Planet1::AlienThree()
+{
+    //Alien 3
+
+    Direction = camera.position - Enemy3;
+
+    if (Direction.x > 1000 || Direction.z > 1000 || Direction.x < -1000 || Direction.z < -1000)
+    {
+        Enemy3.x -= enemyidle;
+    }
+    else
+    {
+        float hypotenuse = sqrt((Direction.x *Direction.x) + (Direction.z * Direction.z));
+        Direction.x /= hypotenuse;
+        Direction.z /= hypotenuse;
+        Enemy3 += Direction;//moves Enemy3
+    }
+
+    BoxMax3 += Enemy3;
+    BoxMin3 += Enemy3;
+
+    //shooting
+    //check range
+    if (Enemy3.x > 400 && Enemy3.x < 800)
+    {
+        BoxMax3.x -= 400;
+        BoxMin3.x -= 400;
+    }
+
+    if (Enemy3.x > 800 && Enemy3.x < 1200)
+    {
+        BoxMax3.x -= 800;
+        BoxMin3.x -= 800;
+    }
+
+    if (Enemy3.x > 1200 && Enemy3.x < 1600)
+    {
+        BoxMax3.x -= 1200;
+        BoxMin3.x -= 1200;
+    }
+
+    if (Enemy3.z > 400 && Enemy3.z < 800)
+    {
+        BoxMax3.z -= 400;
+        BoxMin3.z -= 400;
+    }
+
+    if (Enemy3.z > 800 && Enemy3.z < 1200)
+    {
+        BoxMax3.z -= 800;
+        BoxMin3.z -= 800;
+    }
+
+    if (Enemy3.z > 1200 && Enemy3.z < 1600)
+    {
+        BoxMax3.z -= 1200;
+        BoxMin3.z -= 1200;
+    }
+    ////negative
+    if (Enemy3.x < -400 && Enemy3.x > -800)
+    {
+        BoxMax3.x += 400;
+        BoxMin3.x += 400;
+    }
+
+    if (Enemy3.x < -800 && Enemy3.x > -1200)
+    {
+        BoxMax3.x += 800;
+        BoxMin3.x += 800;
+    }
+
+    if (Enemy3.x < -1200 && Enemy3.x > -1600)
+    {
+        BoxMax3.x += 1200;
+        BoxMin3.x += 1200;
+    }
+
+    if (Enemy3.z < -400 && Enemy3.z > -800)
+    {
+        BoxMax3.z += 400;
+        BoxMin3.z += 400;
+    }
+
+    if (Enemy3.z < -800 && Enemy3.z > -1200)
+    {
+        BoxMax3.z += 800;
+        BoxMin3.z += 800;
+    }
+
+    if (Enemy3.z < -1200 && Enemy3.z > -1600)
+    {
+        BoxMax3.z += 1200;
+        BoxMin3.z += 1200;
+    }
+
+    //std::cout << " Enemy3 : " << Enemy3 << " : " << BoxMax3 << " : " << BoxMin3 << std::endl;
+    //std::cout << " Bullet : " << beam << " : " << BulletMax << " : " << BulletMin << std::endl;
+
+    if (BulletMax.x <= BoxMax3.x && BulletMin.x >= BoxMin3.x
+        && BulletMax.y <= BoxMax3.y && BulletMin.y >= BoxMin3.y
+        && BulletMax.z <= BoxMax3.z && BulletMin.z >= BoxMin3.z
+        && travel == true)
+    {
+        alienhealth3 -= 10;
+    }
+}
+
+void Planet1::AlienFour()
+{
+    //Alien 4
+
+    Direction = camera.position - Enemy4;
+
+    if (Direction.x > 1000 || Direction.z > 1000 || Direction.x < -1000 || Direction.z < -1000)
+    {
+        Enemy4.z -= enemyidle;
+    }
+    else
+    {
+        float hypotenuse = sqrt((Direction.x *Direction.x) + (Direction.z * Direction.z));
+        Direction.x /= hypotenuse;
+        Direction.z /= hypotenuse;
+        Enemy4 += Direction;//moves Enemy4
+    }
+
+    BoxMax4 += Enemy4;
+    BoxMin4 += Enemy4;
+
+    //shooting
+    //check range
+    if (Enemy4.x > 400 && Enemy4.x < 800)
+    {
+        BoxMax4.x -= 400;
+        BoxMin4.x -= 400;
+    }
+
+    if (Enemy4.x > 800 && Enemy4.x < 1200)
+    {
+        BoxMax4.x -= 800;
+        BoxMin4.x -= 800;
+    }
+
+    if (Enemy4.x > 1200 && Enemy4.x < 1600)
+    {
+        BoxMax4.x -= 1200;
+        BoxMin4.x -= 1200;
+    }
+
+    if (Enemy4.z > 400 && Enemy4.z < 800)
+    {
+        BoxMax4.z -= 400;
+        BoxMin4.z -= 400;
+    }
+
+    if (Enemy4.z > 800 && Enemy4.z < 1200)
+    {
+        BoxMax4.z -= 800;
+        BoxMin4.z -= 800;
+    }
+
+    if (Enemy4.z > 1200 && Enemy4.z < 1600)
+    {
+        BoxMax4.z -= 1200;
+        BoxMin4.z -= 1200;
+    }
+    ////negative
+    if (Enemy4.x < -400 && Enemy4.x > -800)
+    {
+        BoxMax4.x += 400;
+        BoxMin4.x += 400;
+    }
+
+    if (Enemy4.x < -800 && Enemy4.x > -1200)
+    {
+        BoxMax4.x += 800;
+        BoxMin4.x += 800;
+    }
+
+    if (Enemy4.x < -1200 && Enemy4.x > -1600)
+    {
+        BoxMax4.x += 1200;
+        BoxMin4.x += 1200;
+    }
+
+    if (Enemy4.z < -400 && Enemy4.z > -800)
+    {
+        BoxMax4.z += 400;
+        BoxMin4.z += 400;
+    }
+
+    if (Enemy4.z < -800 && Enemy4.z > -1200)
+    {
+        BoxMax4.z += 800;
+        BoxMin4.z += 800;
+    }
+
+    if (Enemy4.z < -1200 && Enemy4.z > -1600)
+    {
+        BoxMax4.z += 1200;
+        BoxMin4.z += 1200;
+    }
+
+    //std::cout << " Enemy4 : " << Enemy4 << " : " << BoxMax4 << " : " << BoxMin4 << std::endl;
+    //std::cout << " Bullet : " << beam << " : " << BulletMax << " : " << BulletMin << std::endl;
+
+    if (BulletMax.x <= BoxMax4.x && BulletMin.x >= BoxMin4.x
+        && BulletMax.y <= BoxMax4.y && BulletMin.y >= BoxMin4.y
+        && BulletMax.z <= BoxMax4.z && BulletMin.z >= BoxMin4.z
+        && travel == true)
+    {
+        alienhealth4 -= 10;
+    }
+}
+
+void Planet1::AlienFive()
+{
+    //Alien 5
+
+    Direction = camera.position - Enemy5;
+
+    if (Direction.x > 1000 || Direction.z > 1000 || Direction.x < -1000 || Direction.z < -1000)
+    {
+        Enemy5.z += enemyidle;
+    }
+    else
+    {
+        float hypotenuse = sqrt((Direction.x *Direction.x) + (Direction.z * Direction.z));
+        Direction.x /= hypotenuse;
+        Direction.z /= hypotenuse;
+        Enemy5 += Direction;//moves Enemy5
+    }
+
+    BoxMax5 += Enemy5;
+    BoxMin5 += Enemy5;
+
+    //shooting
+    //check range
+    if (Enemy5.x > 400 && Enemy5.x < 800)
+    {
+        BoxMax5.x -= 400;
+        BoxMin5.x -= 400;
+    }
+
+    if (Enemy5.x > 800 && Enemy5.x < 1200)
+    {
+        BoxMax5.x -= 800;
+        BoxMin5.x -= 800;
+    }
+
+    if (Enemy5.x > 1200 && Enemy5.x < 1600)
+    {
+        BoxMax5.x -= 1200;
+        BoxMin5.x -= 1200;
+    }
+
+    if (Enemy5.z > 400 && Enemy5.z < 800)
+    {
+        BoxMax5.z -= 400;
+        BoxMin5.z -= 400;
+    }
+
+    if (Enemy5.z > 800 && Enemy5.z < 1200)
+    {
+        BoxMax5.z -= 800;
+        BoxMin5.z -= 800;
+    }
+
+    if (Enemy5.z > 1200 && Enemy5.z < 1600)
+    {
+        BoxMax5.z -= 1200;
+        BoxMin5.z -= 1200;
+    }
+    ////negative
+    if (Enemy5.x < -400 && Enemy5.x > -800)
+    {
+        BoxMax5.x += 400;
+        BoxMin5.x += 400;
+    }
+
+    if (Enemy5.x < -800 && Enemy5.x > -1200)
+    {
+        BoxMax5.x += 800;
+        BoxMin5.x += 800;
+    }
+
+    if (Enemy5.x < -1200 && Enemy5.x > -1600)
+    {
+        BoxMax5.x += 1200;
+        BoxMin5.x += 1200;
+    }
+
+    if (Enemy5.z < -400 && Enemy5.z > -800)
+    {
+        BoxMax5.z += 400;
+        BoxMin5.z += 400;
+    }
+
+    if (Enemy5.z < -800 && Enemy5.z > -1200)
+    {
+        BoxMax5.z += 800;
+        BoxMin5.z += 800;
+    }
+
+    if (Enemy5.z < -1200 && Enemy5.z > -1600)
+    {
+        BoxMax5.z += 1200;
+        BoxMin5.z += 1200;
+    }
+
+    //std::cout << " Enemy5 : " << Enemy5 << " : " << BoxMax5 << " : " << BoxMin5 << std::endl;
+    //std::cout << " Bullet : " << beam << " : " << BulletMax << " : " << BulletMin << std::endl;
+
+    if (BulletMax.x <= BoxMax5.x && BulletMin.x >= BoxMin5.x
+        && BulletMax.y <= BoxMax5.y && BulletMin.y >= BoxMin5.y
+        && BulletMax.z <= BoxMax5.z && BulletMin.z >= BoxMin5.z
+        && travel == true)
+    {
+        alienhealth5 -= 10;
+    }
 }
 
 void Planet1::Render()
@@ -591,48 +1038,20 @@ void Planet1::Render()
     Vector3 lightDirection_cameraspace = viewStack.Top() * lightDir;
     glUniform3fv(m_parameters[U_LIGHT0_POSITION], 1, &lightDirection_cameraspace.x);
 
-    //Passing the position of light 2 to the shader (Night)
-    Vector3 light2Dir(light[2].position.x, light[2].position.y, light[2].position.z);
-    Vector3 light2Direction_cameraspace = viewStack.Top() * lightDir;
-    glUniform3fv(m_parameters[U_LIGHT2_POSITION], 1, &light2Direction_cameraspace.x);
-
-    //Passing the position of point light 1 to the shader (Igloo)
-    Position light1Position_cameraspace = viewStack.Top() * light[1].position;
-    glUniform3fv(m_parameters[U_LIGHT1_POSITION], 1, &light1Position_cameraspace.x);
-
     //axes
     RenderMesh(meshList[GEO_AXES], false);
 
     RenderSkyBox();
 
     modelStack.PushMatrix();
-    modelStack.Translate(0, -150, 0);
-    modelStack.Scale(200, 150, 200);
+    modelStack.Translate(0, -100, 0);
+    modelStack.Scale(150, 100, 150);
 
     modelStack.Rotate(180, 0, 1, 0);
     RenderMesh(meshList[GROUND], false);
     modelStack.PopMatrix();
 
-    if (alienhealth > 0)
-    {
-        for (int i = 0; i < sizeof(Colonise); i++)
-        {
-            modelStack.PushMatrix();
-            modelStack.Translate(Enemy.x, -40, Enemy.z);
-
-            //modelStack.PushMatrix();
-
-            //modelStack.Translate(, 0, );
-            //modelStack.Translate(400, 0, 400);
-            modelStack.Scale(10, 10, 10);
-            RenderMesh(meshList[ALIEN], false);
-            //modelStack.PopMatrix();
-
-            modelStack.PopMatrix();
-        }
-        
-    }
-    
+    RenderAlien();
 
     modelStack.PushMatrix();
     //modelStack.Rotate(Y_Pos, 0, 1, 0);
@@ -646,7 +1065,7 @@ void Planet1::Render()
     // gun
     modelStack.PushMatrix();
     modelStack.Scale(0.3, 0.3, 0.3);
-    RenderMesh(meshList[GUN], false);
+    RenderMesh(meshList[GUN], true);
     modelStack.PopMatrix();
 
     //bullet
@@ -654,7 +1073,7 @@ void Planet1::Render()
     modelStack.Translate(0, 0, beam - 15);
     modelStack.Translate(0, 1, 0.5);
     modelStack.Scale(0.2, 0.2, 0.2);
-    RenderMesh(meshList[SPHERE], false);
+    RenderMesh(meshList[SPHERE], true);
     modelStack.PopMatrix();
     modelStack.PopMatrix();
 
@@ -663,15 +1082,25 @@ void Planet1::Render()
     modelStack.PushMatrix();
     modelStack.Translate(0, -100, 0);
     modelStack.Scale(100, 100, 100);
-    RenderMesh(meshList[FLAGPOLE], false);
+    RenderMesh(meshList[FLAGPOLE], true);
     modelStack.PopMatrix();
 
 
     modelStack.PushMatrix();
     modelStack.Translate(0, -100 + flagdown, 0);
     modelStack.Scale(100, 100, 100);
-    RenderMesh(meshList[FLAG], false);
+    RenderMesh(meshList[FLAG], true);
     modelStack.PopMatrix();
+
+    std::cout << NumAlien << std::endl;
+    if (NumAlien == 0)
+    {
+        modelStack.PushMatrix();
+        modelStack.Translate(-600, shipdown, 600);
+        modelStack.Scale(50, 50, 50);
+        RenderMesh(meshList[SPACESHIP], true);
+        modelStack.PopMatrix();
+    }
 
     //modelStack.PushMatrix();
     //RenderMeshOnScreen(meshList[GUN], 50, -30, 10, 10);
@@ -695,13 +1124,61 @@ void Planet1::Render()
     RenderTextOnScreen(meshList[GEO_TEXT], z, Color(1,1,1), 2, 0, 2);
 }
 
+void Planet1::RenderAlien()
+{
+    if (alienhealth > 0)
+    {
+        modelStack.PushMatrix();
+        modelStack.Translate(Enemy.x, -40, Enemy.z);
+        modelStack.Scale(10, 10, 10);
+        RenderMesh(meshList[ALIEN], true);
+        modelStack.PopMatrix();
+    }
+
+    if (alienhealth2 > 0)
+    {
+        modelStack.PushMatrix();
+        modelStack.Translate(Enemy2.x, -40, Enemy2.z);
+        modelStack.Scale(10, 10, 10);
+        RenderMesh(meshList[ALIEN], true);
+        modelStack.PopMatrix();
+    }
+
+    if (alienhealth3 > 0)
+    {
+        modelStack.PushMatrix();
+        modelStack.Translate(Enemy3.x, -40, Enemy3.z);
+        modelStack.Scale(10, 10, 10);
+        RenderMesh(meshList[ALIEN], true);
+        modelStack.PopMatrix();
+    }
+
+    if (alienhealth4 > 0)
+    {
+        modelStack.PushMatrix();
+        modelStack.Translate(Enemy4.x, -40, Enemy4.z);
+        modelStack.Scale(10, 10, 10);
+        RenderMesh(meshList[ALIEN], true);
+        modelStack.PopMatrix();
+    }
+
+    if (alienhealth5 > 0)
+    {
+        modelStack.PushMatrix();
+        modelStack.Translate(Enemy5.x, -40, Enemy5.z);
+        modelStack.Scale(10, 10, 10);
+        RenderMesh(meshList[ALIEN], true);
+        modelStack.PopMatrix();
+    }
+}
+
 void Planet1::RenderSkyBox()
 {
     //sky box
     modelStack.PushMatrix();
     modelStack.Translate(camera.position.x, camera.position.y, camera.position.z);
-    modelStack.Translate(0, -10000, 0);
-    modelStack.Scale(25000, 25000, 25000);
+    modelStack.Translate(0, -6000, 0);
+    modelStack.Scale(15000, 15000, 15000);
 
     //Ground
     modelStack.PushMatrix();

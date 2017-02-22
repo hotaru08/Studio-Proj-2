@@ -6,6 +6,9 @@
 #include "Mesh.h"
 #include "MatrixStack.h"
 #include "Light.h"
+#include <vector>
+
+using std::vector;
 
 class Planet1 : public Scene
 {
@@ -30,6 +33,7 @@ class Planet1 : public Scene
         GROUND,
         FLAG,
         FLAGPOLE,
+        SPACESHIP,
 
         GEO_TEXT,
 
@@ -137,21 +141,57 @@ private:
     float Walking_Rotation_Right;
     float RotateBody;
     float flagdown;
+    float shipdown;
     double X_Pos, Y_Pos; //get cursor position
 
     Vector3 Enemy;
+    Vector3 Enemy2;
+    Vector3 Enemy3;
+    Vector3 Enemy4;
+    Vector3 Enemy5;
+
     Vector3 Direction;
     Vector3 BoxMax;
     Vector3 BoxMin;
+
+    Vector3 BoxMax2;
+    Vector3 BoxMin2;
+
+    Vector3 BoxMax3;
+    Vector3 BoxMin3;
+
+    Vector3 BoxMax4;
+    Vector3 BoxMin4;
+
+    Vector3 BoxMax5;
+    Vector3 BoxMin5;
+
     Vector3 BulletMax;
     Vector3 BulletMin;
 
     bool travel;
     int count;
     int alienhealth;
-    bool Aliendead;
+    int alienhealth2;
+    int alienhealth3;
+    int alienhealth4;
+    int alienhealth5;
     bool hit;
-    int Colonise[4];
+
+    void AlienOne();
+    void AlienTwo();
+    void AlienThree();
+    void AlienFour();
+    void AlienFive();
+
+    bool AlienOneDead;
+    bool AlienTwoDead;
+    bool AlienThreeDead;
+    bool AlienFourDead;
+    bool AlienFiveDead;
+
+    void shooting();
+    void RenderAlien();
 
     void RenderMesh(Mesh *mesh, bool enableLight);
     void RenderSkyBox();
