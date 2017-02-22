@@ -65,7 +65,7 @@ void Space::Init()
 	light[0].type = Light::LIGHT_DIRECTIONAL;
 	light[0].position.Set(0, 4000, 0);
 	light[0].color.Set(1, 1, 1);
-	light[0].power = 0.5;
+	light[0].power = 1;
 	light[0].kC = 1.f;
 	light[0].kL = 0.01f;
 	light[0].kQ = 0.001f;
@@ -84,7 +84,7 @@ void Space::Init()
 	glUniform1f(m_parameters[U_LIGHT0_COSCUTOFF], light[0].cosCutoff);
 	glUniform1f(m_parameters[U_LIGHT0_COSINNER], light[0].cosInner);
 	glUniform1f(m_parameters[U_LIGHT0_EXPONENT], light[0].exponent);
-	glUniform1i(m_parameters[U_NUMLIGHTS], 3);
+	glUniform1i(m_parameters[U_NUMLIGHTS], 1);
 
 	// Set background color to black
 	glClearColor(0.0f, 0.0f, 0.0f, 0.0f);
@@ -105,9 +105,6 @@ void Space::Init()
 	camera.Init(Vector3(0, 0, -1), Vector3(1, 0, 0), Vector3(0, 1, 0));
 
 	//Lightball
-	meshList[GEO_LIGHTBALL] = MeshBuilder::GenerateSphere("LIGHTBALL", Color(1, 1, 1), 60, 20, 1);
-	meshList[GEO_LIGHTBALL2] = MeshBuilder::GenerateSphere("LIGHTBALL2", Color(1, 1, 1), 60, 20, 1);
-	meshList[GEO_LIGHTBALL3] = MeshBuilder::GenerateSphere("LIGHTBALL3", Color(1, 0, 0), 60, 20, 1);
 
 	//=====================================
 	//DayTime
@@ -249,7 +246,6 @@ void Space::Update(double dt)
 		up.x, up.y, up.z, 0,
 		forward.x, forward.y, forward.z, 0,
 		position.x, position.y, position.z, 1); // update forward only 
-
 	
 	//=======================================
 	//Planets
@@ -342,8 +338,6 @@ void Space::Update(double dt)
 	{
 		Application::SetScene(4);
 	}
-
-	
 
 	camera.Update(dt, (width / 2) - X_Pos, (height / 2) - Y_Pos);
 }

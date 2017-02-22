@@ -99,7 +99,7 @@ void SpaceCamera::Update(double dt, double x, double y)
 
 void SpaceCamera::CollisionPlanets()
 {
-	//Jupiter collision
+	//Jupiter
 	ColliMax[0].x = -370;
 	ColliMax[0].y = 630;
 	ColliMax[0].z = 1150;
@@ -108,12 +108,12 @@ void SpaceCamera::CollisionPlanets()
 	ColliMin[0].y = -630;
 	ColliMin[0].z = -220;
 
-	//blue planet collision
+	//blue planet
 	ColliMax[1].x = 3650;
 	ColliMax[1].y = 1000;
 	ColliMax[1].z = 2750;
 
-	ColliMin[1].x = 2530;
+	ColliMin[1].x = 220;
 	ColliMin[1].y = -50;
 	ColliMin[1].z = 1200;
 

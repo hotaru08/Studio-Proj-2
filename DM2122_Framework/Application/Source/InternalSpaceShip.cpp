@@ -65,18 +65,6 @@ void InternalShip::Init()
 	m_parameters[U_LIGHT1_COSINNER] = glGetUniformLocation(m_programID, "lights[1].cosInner");
 	m_parameters[U_LIGHT1_EXPONENT] = glGetUniformLocation(m_programID, "lights[1].exponent");
 
-	m_parameters[U_LIGHT2_POSITION] = glGetUniformLocation(m_programID, "lights[2].position_cameraInternalShip");
-	m_parameters[U_LIGHT2_COLOR] = glGetUniformLocation(m_programID, "lights[2].color");
-	m_parameters[U_LIGHT2_POWER] = glGetUniformLocation(m_programID, "lights[2].power");
-	m_parameters[U_LIGHT2_KC] = glGetUniformLocation(m_programID, "lights[2].kC");
-	m_parameters[U_LIGHT2_KL] = glGetUniformLocation(m_programID, "lights[2].kL");
-	m_parameters[U_LIGHT2_KQ] = glGetUniformLocation(m_programID, "lights[2].kQ");
-	m_parameters[U_LIGHT2_TYPE] = glGetUniformLocation(m_programID, "lights[2].type");
-	m_parameters[U_LIGHT2_SPOTDIRECTION] = glGetUniformLocation(m_programID, "lights[2].spotDirection");
-	m_parameters[U_LIGHT2_COSCUTOFF] = glGetUniformLocation(m_programID, "lights[2].cosCutoff");
-	m_parameters[U_LIGHT2_COSINNER] = glGetUniformLocation(m_programID, "lights[2].cosInner");
-	m_parameters[U_LIGHT2_EXPONENT] = glGetUniformLocation(m_programID, "lights[2].exponent");
-
 	//Get a handle for our "colorTexture" uniform
 	m_parameters[U_COLOR_TEXTURE_ENABLED] = glGetUniformLocation(m_programID, "colorTextureEnabled");
 	m_parameters[U_COLOR_TEXTURE] = glGetUniformLocation(m_programID, "colorTexture");
@@ -86,8 +74,8 @@ void InternalShip::Init()
 	m_parameters[U_TEXT_COLOR] = glGetUniformLocation(m_programID, "textColor");
 
 	//Sunlight properties
-	light[0].type = Light::LIGHT_DIRECTIONAL;
-	light[0].position.Set(0, 4000, 0);
+	light[0].type = Light::LIGHT_POINT;
+	light[0].position.Set(0, 140, 0);
 	light[0].color.Set(1, 1, 1);
 	light[0].power = 0.5;
 	light[0].kC = 1.f;
@@ -100,9 +88,9 @@ void InternalShip::Init()
 
 	//Igloo Light properties
 	light[1].type = Light::LIGHT_POINT;
-	light[1].position.Set(-500, 0, 0);
-	light[1].color.Set(1, 1, 1);
-	light[1].power = 5;
+	light[1].position.Set(-230, 0, 0);
+	light[1].color.Set(0.686, 0.933, 0.933);
+	light[1].power = 2;
 	light[1].kC = 1.f;
 	light[1].kL = 0.01f;
 	light[1].kQ = 0.001f;
@@ -110,19 +98,6 @@ void InternalShip::Init()
 	light[1].cosInner = cos(Math::DegreeToRadian(30));
 	light[1].exponent = 3.f;
 	light[1].spotDirection.Set(0.f, 1.f, 0.f);
-
-	//Night Light properties
-	light[2].type = Light::LIGHT_DIRECTIONAL;
-	light[2].position.Set(0, 3000, 0);
-	light[2].color.Set(1, 1, 1);
-	light[2].power = 1;
-	light[2].kC = 1.f;
-	light[2].kL = 0.01f;
-	light[2].kQ = 0.001f;
-	light[2].cosCutoff = cos(Math::DegreeToRadian(45));
-	light[2].cosInner = cos(Math::DegreeToRadian(30));
-	light[2].exponent = 3.f;
-	light[2].spotDirection.Set(0.f, 1.f, 0.f);
 
 	// Make sure you pass uniform parameters after glUseProgram()
 	glUniform1i(m_parameters[U_LIGHT0_TYPE], light[0].type);
@@ -146,16 +121,6 @@ void InternalShip::Init()
 	glUniform1f(m_parameters[U_LIGHT1_COSINNER], light[1].cosInner);
 	glUniform1f(m_parameters[U_LIGHT1_EXPONENT], light[1].exponent);
 
-	glUniform1i(m_parameters[U_LIGHT2_TYPE], light[2].type);
-	glUniform3fv(m_parameters[U_LIGHT2_COLOR], 1, &light[2].color.r);
-	glUniform1f(m_parameters[U_LIGHT2_POWER], light[2].power);
-	glUniform1f(m_parameters[U_LIGHT2_KC], light[2].kC);
-	glUniform1f(m_parameters[U_LIGHT2_KL], light[2].kL);
-	glUniform1f(m_parameters[U_LIGHT2_KQ], light[2].kQ);
-	glUniform1f(m_parameters[U_LIGHT2_COSCUTOFF], light[2].cosCutoff);
-	glUniform1f(m_parameters[U_LIGHT2_COSINNER], light[2].cosInner);
-	glUniform1f(m_parameters[U_LIGHT2_EXPONENT], light[2].exponent);
-
 	// Set background color to black
 	glClearColor(0.0f, 0.0f, 0.0f, 0.0f);
 
@@ -164,22 +129,13 @@ void InternalShip::Init()
 	glBindVertexArray(m_vertexArrayID);
 
 	glEnable(GL_DEPTH_TEST);// Enable depth test
-	glEnable(GL_CULL_FACE);// Enable cull test
-	glPolygonMode(GL_FRONT_AND_BACK, GL_LINE); //wireframe mode
-	glPolygonMode(GL_FRONT_AND_BACK, GL_FILL); //default fill mode
 	glEnable(GL_BLEND);//Enable blending
 	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 	glfwSetInputMode(m_window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);//Enable cursor
 
 	//camera
-	camera.Init(Vector3(0, 0, -1), Vector3(1, 0, 0), Vector3(0, 1, 0));
+	camera.Init(Vector3(140, 0, 0), Vector3(1, 0, 0), Vector3(0, 1, 0));
 
-	meshList[GEO_AXES] = MeshBuilder::GenerateAxes("reference", 1000, 1000, 1000);
-
-	//Lightball
-	meshList[GEO_LIGHTBALL] = MeshBuilder::GenerateSphere("LIGHTBALL", Color(1, 1, 1), 60, 20, 1);
-	meshList[GEO_LIGHTBALL2] = MeshBuilder::GenerateSphere("LIGHTBALL2", Color(1, 1, 1), 60, 20, 1);
-	meshList[GEO_LIGHTBALL3] = MeshBuilder::GenerateSphere("LIGHTBALL3", Color(1, 0, 0), 60, 20, 1);
 	meshList[GEO_TEXT] = MeshBuilder::GenerateText("text", 16, 16);
 	meshList[GEO_TEXT]->textureID = LoadTGA("Image//ExportedFont.tga");
 
@@ -223,18 +179,13 @@ void InternalShip::Init()
 	meshList[GEO_SCREEN] = MeshBuilder::GenerateQuad("screen", Color(1, 1, 1), 1, 1);
 	meshList[GEO_SCREEN]->textureID = LoadTGA("Image//intr_screen.tga");
 
+	//lamp
+	meshList[GEO_LAMP] = MeshBuilder::GenerateOBJ("Panel", "OBJ//lamp.obj");
+	meshList[GEO_LAMP]->textureID = LoadTGA("Image//ship_intr.tga");
+
 	Mtx44 projection;
 	projection.SetToPerspective(45.f, 4.f / 3.f, 0.1f, 11000.0f);
 	projectionStack.LoadMatrix(projection);
-
-	Switch = true;
-	Switch_LightBall = false;
-	fps = 0;
-
-	//initialising
-	right = (camera.view.Cross(camera.up));
-	up = (camera.right.Cross(camera.view));
-	forward = (1, 0, 0);
 }
 
 void InternalShip::Update(double dt)
@@ -246,60 +197,13 @@ void InternalShip::Update(double dt)
 	glfwGetWindowSize(m_window, &width, &height); //get size to center cursor 
 	glfwSetCursorPos(m_window, width / 2, height / 2); //set cursor to center of screen
 
-	//modes
-	if (Application::IsKeyPressed('1'))
-	{
-		glEnable(GL_CULL_FACE);
-	}
-	if (Application::IsKeyPressed('2'))
-	{
-		glDisable(GL_CULL_FACE);
-	}
-	if (Application::IsKeyPressed('3'))
-	{
-		glPolygonMode(GL_FRONT_AND_BACK, GL_FILL); //default fill mode
-	}
-	if (Application::IsKeyPressed('4'))
-	{
-		glPolygonMode(GL_FRONT_AND_BACK, GL_LINE); //wireframe mode
-	}
-
-	//Switching on and off
-	if (Application::IsKeyPressed('B'))
-	{
-		Switch = true;
-		Switch_LightBall = false;
-	}
-
-	if (Application::IsKeyPressed('V'))
-	{
-		Switch = false;
-		Switch_LightBall = true;
-	}
-
-	//updating
-	position = camera.position;
-	forward = (camera.target - camera.position);
-	up = (right.Cross(forward));
-	right = (forward.Cross(up));
-
-	forward.Normalize();
-	up.Normalize();
-	right.Normalize();
-
-	//initialise matrix
-	RotationMartix = Mtx44(right.x, right.y, right.z, 0,
-		up.x, up.y, up.z, 0,
-		forward.x, forward.y, forward.z, 0,
-		position.x, position.y, position.z, 1);
-
-	camera.Update(dt, (width / 2) - X_Pos, (height / 2) - Y_Pos);
-
 	if (camera.position.x > -190 && camera.position.x < -150 &&
 		camera.position.z > -20 && camera.position.z < 20)
 		Screen = true;
 	else
 		Screen = false;
+
+	camera.Update(dt, (width / 2) - X_Pos, (height / 2) - Y_Pos);
 }
 
 void InternalShip::Render()
@@ -313,22 +217,14 @@ void InternalShip::Render()
 		camera.target.z, camera.up.x, camera.up.y, camera.up.z);
 	modelStack.LoadIdentity();
 
-	//Passing the position of light 0 to the shader (Day)
+	//Passing the position of light 0 to the shader
 	Vector3 lightDir(light[0].position.x, light[0].position.y, light[0].position.z);
-	Vector3 lightDirection_cameraInternalShip = viewStack.Top() * lightDir;
-	glUniform3fv(m_parameters[U_LIGHT0_POSITION], 1, &lightDirection_cameraInternalShip.x);
+	Position light1Position_cameraspace = viewStack.Top() * light[1].position;
+	glUniform3fv(m_parameters[U_LIGHT0_POSITION], 1, &light1Position_cameraspace.x);
 
-	//Passing the position of light 2 to the shader (Night)
-	Vector3 light2Dir(light[2].position.x, light[2].position.y, light[2].position.z);
-	Vector3 light2Direction_cameraInternalShip = viewStack.Top() * lightDir;
-	glUniform3fv(m_parameters[U_LIGHT2_POSITION], 1, &light2Direction_cameraInternalShip.x);
-
-	//Passing the position of point light 1 to the shader (Igloo)
-	Position light1Position_cameraInternalShip = viewStack.Top() * light[1].position;
-	glUniform3fv(m_parameters[U_LIGHT1_POSITION], 1, &light1Position_cameraInternalShip.x);
-
-	//axes
-	RenderMesh(meshList[GEO_AXES], false);
+	//Passing the position of point light 1 to the shader
+	Position light1Position_cameraspace1 = viewStack.Top() * light[1].position;
+	glUniform3fv(m_parameters[U_LIGHT1_POSITION], 1, &light1Position_cameraspace1.x);
 	RenderSkyBox();
 
 	//control panel
@@ -373,6 +269,12 @@ void InternalShip::Render()
 	RenderMesh(meshList[GEO_CHAIR], true);
 	modelStack.PopMatrix();
 
+	modelStack.PushMatrix();
+	modelStack.Translate(-60,130,-150);
+	modelStack.Scale(50,50,50);
+	RenderMesh(meshList[GEO_LAMP], true);
+	modelStack.PopMatrix();
+
 	modelStack.PopMatrix();
 
 	if (Screen == true)
@@ -384,16 +286,6 @@ void InternalShip::Render()
 		RenderMesh(meshList[GEO_SCREEN], false);
 		modelStack.PopMatrix();
 	}
-
-	string x = "x: " + std::to_string((int)camera.position.x);
-	string y = "y: " + std::to_string((int)camera.position.y);
-	string z = "z: " + std::to_string((int)camera.position.z);
-
-	////xyz
-	RenderTextOnScreen(meshList[GEO_TEXT], x, Color(1, 1, 1), 2, 0, 4);
-	RenderTextOnScreen(meshList[GEO_TEXT], y, Color(1, 1, 1), 2, 0, 3);
-	RenderTextOnScreen(meshList[GEO_TEXT], z, Color(1, 1, 1), 2, 0, 2);
-
 }
 
 void InternalShip::RenderSkyBox()
@@ -530,7 +422,7 @@ void InternalShip::RenderMesh(Mesh *mesh, bool enableLight)
 	glUniformMatrix4fv(m_parameters[U_MVP], 1, GL_FALSE, &MVP.a[0]);
 	modelView = viewStack.Top() * modelStack.Top();
 	glUniformMatrix4fv(m_parameters[U_MODELVIEW], 1, GL_FALSE, &modelView.a[0]);
-	if (enableLight && Switch)
+	if (enableLight)
 	{
 		glUniform1i(m_parameters[U_LIGHTENABLED], 1);
 		modelView_inverse_transpose = modelView.GetInverse().GetTranspose();

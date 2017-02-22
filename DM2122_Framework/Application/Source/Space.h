@@ -14,9 +14,6 @@ class Space : public Scene
 	{
 		//shapes
 		GEO_AXES,
-		GEO_LIGHTBALL,
-		GEO_LIGHTBALL2,
-		GEO_LIGHTBALL3,
 
 		//skybox
 		GEO_LEFT,
@@ -65,30 +62,6 @@ class Space : public Scene
 		U_LIGHT0_COSINNER,
 		U_LIGHT0_EXPONENT,
 
-		U_LIGHT1_POSITION,
-		U_LIGHT1_COLOR,
-		U_LIGHT1_POWER,
-		U_LIGHT1_KC,
-		U_LIGHT1_KL,
-		U_LIGHT1_KQ,
-		U_LIGHT1_TYPE,
-		U_LIGHT1_SPOTDIRECTION,
-		U_LIGHT1_COSCUTOFF,
-		U_LIGHT1_COSINNER,
-		U_LIGHT1_EXPONENT,
-
-		U_LIGHT2_POSITION,
-		U_LIGHT2_COLOR,
-		U_LIGHT2_POWER,
-		U_LIGHT2_KC,
-		U_LIGHT2_KL,
-		U_LIGHT2_KQ,
-		U_LIGHT2_TYPE,
-		U_LIGHT2_SPOTDIRECTION,
-		U_LIGHT2_COSCUTOFF,
-		U_LIGHT2_COSINNER,
-		U_LIGHT2_EXPONENT,
-
 		U_NUMLIGHTS,
 		U_COLOR_TEXTURE_ENABLED,
 		U_COLOR_TEXTURE,
@@ -133,11 +106,9 @@ private:
 	MS modelStack, viewStack, projectionStack;
 	Light light[4];
 
-
 	//=================================
 	//Planets
 	//=================================
-	float rotate;
 	bool PlanetNear;
 	bool Stay;
 	int count;
