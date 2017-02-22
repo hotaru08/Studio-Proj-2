@@ -14,6 +14,7 @@
 #include "PlanetTwo.h"
 #include "Space.h"
 #include "MainMenu.h"
+#include "InternalSpaceShip.h"
 
 //#include "StudioProj.h"
 
@@ -120,6 +121,7 @@ void Application::Run()
 	Scene *scene1= new Space();
 	Scene *scene2 = new Planet1();
 	Scene *scene3 = new PlanetTwo();
+	Scene *scene4 = new InternalShip();
 	Scene *scene = scene0;
 	scene->Init();
 
@@ -146,9 +148,15 @@ void Application::Run()
 		}
 		else if (currSceneID == 3 && scene != scene3)
 		{
-			scene2->Exit();
+			scene1->Exit();
 			scene = scene3;
 			scene3->Init();
+		}
+		else if (currSceneID == 4 && scene != scene4)
+		{
+			scene3->Exit();
+			scene = scene4;
+			scene4->Init();
 		}
 
 		scene->Update(m_timer.getElapsedTime());

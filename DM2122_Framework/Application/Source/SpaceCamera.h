@@ -29,9 +29,7 @@ public:
 	SpaceCamera();
 	~SpaceCamera();
 	virtual void Init(const Vector3& pos, const Vector3& target, const Vector3& up);
-	virtual void Update(double dt);
 	virtual void Reset();
-	void bounds();
 	void Update(double dt, double x, double y); //for mouse detection
 };
 

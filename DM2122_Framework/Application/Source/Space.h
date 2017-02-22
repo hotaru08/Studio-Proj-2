@@ -104,7 +104,6 @@ public:
 	~Space();
 
 	float fps;
-	SceneManager Manager; //to change scene
 
 	//methods
 	virtual void Init();
@@ -119,7 +118,6 @@ private:
 	unsigned m_programID;
 	unsigned m_parameters[U_TOTAL];
 
-	float LSPEED;
 	bool Switch;
 	bool Switch_LightBall;
 
@@ -143,8 +141,7 @@ private:
 	bool PlanetNear;
 	bool Stay;
 	int count;
-	int scene;
-
+	float Ro;
 
 	void RenderMesh(Mesh *mesh, bool enableLight);
 	void RenderSkyBox();

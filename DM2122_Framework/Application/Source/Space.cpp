@@ -53,30 +53,6 @@ void Space::Init()
 	m_parameters[U_LIGHT0_EXPONENT] = glGetUniformLocation(m_programID, "lights[0].exponent");
 	m_parameters[U_NUMLIGHTS] = glGetUniformLocation(m_programID, "numLights");
 
-	m_parameters[U_LIGHT1_POSITION] = glGetUniformLocation(m_programID, "lights[1].position_cameraspace");
-	m_parameters[U_LIGHT1_COLOR] = glGetUniformLocation(m_programID, "lights[1].color");
-	m_parameters[U_LIGHT1_POWER] = glGetUniformLocation(m_programID, "lights[1].power");
-	m_parameters[U_LIGHT1_KC] = glGetUniformLocation(m_programID, "lights[1].kC");
-	m_parameters[U_LIGHT1_KL] = glGetUniformLocation(m_programID, "lights[1].kL");
-	m_parameters[U_LIGHT1_KQ] = glGetUniformLocation(m_programID, "lights[1].kQ");
-	m_parameters[U_LIGHT1_TYPE] = glGetUniformLocation(m_programID, "lights[1].type");
-	m_parameters[U_LIGHT1_SPOTDIRECTION] = glGetUniformLocation(m_programID, "lights[1].spotDirection");
-	m_parameters[U_LIGHT1_COSCUTOFF] = glGetUniformLocation(m_programID, "lights[1].cosCutoff");
-	m_parameters[U_LIGHT1_COSINNER] = glGetUniformLocation(m_programID, "lights[1].cosInner");
-	m_parameters[U_LIGHT1_EXPONENT] = glGetUniformLocation(m_programID, "lights[1].exponent");
-
-	m_parameters[U_LIGHT2_POSITION] = glGetUniformLocation(m_programID, "lights[2].position_cameraspace");
-	m_parameters[U_LIGHT2_COLOR] = glGetUniformLocation(m_programID, "lights[2].color");
-	m_parameters[U_LIGHT2_POWER] = glGetUniformLocation(m_programID, "lights[2].power");
-	m_parameters[U_LIGHT2_KC] = glGetUniformLocation(m_programID, "lights[2].kC");
-	m_parameters[U_LIGHT2_KL] = glGetUniformLocation(m_programID, "lights[2].kL");
-	m_parameters[U_LIGHT2_KQ] = glGetUniformLocation(m_programID, "lights[2].kQ");
-	m_parameters[U_LIGHT2_TYPE] = glGetUniformLocation(m_programID, "lights[2].type");
-	m_parameters[U_LIGHT2_SPOTDIRECTION] = glGetUniformLocation(m_programID, "lights[2].spotDirection");
-	m_parameters[U_LIGHT2_COSCUTOFF] = glGetUniformLocation(m_programID, "lights[2].cosCutoff");
-	m_parameters[U_LIGHT2_COSINNER] = glGetUniformLocation(m_programID, "lights[2].cosInner");
-	m_parameters[U_LIGHT2_EXPONENT] = glGetUniformLocation(m_programID, "lights[2].exponent");
-
 	//Get a handle for our "colorTexture" uniform
 	m_parameters[U_COLOR_TEXTURE_ENABLED] = glGetUniformLocation(m_programID, "colorTextureEnabled");
 	m_parameters[U_COLOR_TEXTURE] = glGetUniformLocation(m_programID, "colorTexture");
@@ -98,32 +74,6 @@ void Space::Init()
 	light[0].exponent = 3.f;
 	light[0].spotDirection.Set(0.f, 1.f, 0.f);
 
-	//Igloo Light properties
-	light[1].type = Light::LIGHT_POINT;
-	light[1].position.Set(-500, 0, 0);
-	light[1].color.Set(1, 1, 1);
-	light[1].power = 5;
-	light[1].kC = 1.f;
-	light[1].kL = 0.01f;
-	light[1].kQ = 0.001f;
-	light[1].cosCutoff = cos(Math::DegreeToRadian(45));
-	light[1].cosInner = cos(Math::DegreeToRadian(30));
-	light[1].exponent = 3.f;
-	light[1].spotDirection.Set(0.f, 1.f, 0.f);
-
-	//Night Light properties
-	light[2].type = Light::LIGHT_DIRECTIONAL;
-	light[2].position.Set(0, 3000, 0);
-	light[2].color.Set(1, 1, 1);
-	light[2].power = 1;
-	light[2].kC = 1.f;
-	light[2].kL = 0.01f;
-	light[2].kQ = 0.001f;
-	light[2].cosCutoff = cos(Math::DegreeToRadian(45));
-	light[2].cosInner = cos(Math::DegreeToRadian(30));
-	light[2].exponent = 3.f;
-	light[2].spotDirection.Set(0.f, 1.f, 0.f);
-
 	// Make sure you pass uniform parameters after glUseProgram()
 	glUniform1i(m_parameters[U_LIGHT0_TYPE], light[0].type);
 	glUniform3fv(m_parameters[U_LIGHT0_COLOR], 1, &light[0].color.r);
@@ -135,26 +85,6 @@ void Space::Init()
 	glUniform1f(m_parameters[U_LIGHT0_COSINNER], light[0].cosInner);
 	glUniform1f(m_parameters[U_LIGHT0_EXPONENT], light[0].exponent);
 	glUniform1i(m_parameters[U_NUMLIGHTS], 3);
-
-	glUniform1i(m_parameters[U_LIGHT1_TYPE], light[1].type);
-	glUniform3fv(m_parameters[U_LIGHT1_COLOR], 1, &light[1].color.r);
-	glUniform1f(m_parameters[U_LIGHT1_POWER], light[1].power);
-	glUniform1f(m_parameters[U_LIGHT1_KC], light[1].kC);
-	glUniform1f(m_parameters[U_LIGHT1_KL], light[1].kL);
-	glUniform1f(m_parameters[U_LIGHT1_KQ], light[1].kQ);
-	glUniform1f(m_parameters[U_LIGHT1_COSCUTOFF], light[1].cosCutoff);
-	glUniform1f(m_parameters[U_LIGHT1_COSINNER], light[1].cosInner);
-	glUniform1f(m_parameters[U_LIGHT1_EXPONENT], light[1].exponent);
-
-	glUniform1i(m_parameters[U_LIGHT2_TYPE], light[2].type);
-	glUniform3fv(m_parameters[U_LIGHT2_COLOR], 1, &light[2].color.r);
-	glUniform1f(m_parameters[U_LIGHT2_POWER], light[2].power);
-	glUniform1f(m_parameters[U_LIGHT2_KC], light[2].kC);
-	glUniform1f(m_parameters[U_LIGHT2_KL], light[2].kL);
-	glUniform1f(m_parameters[U_LIGHT2_KQ], light[2].kQ);
-	glUniform1f(m_parameters[U_LIGHT2_COSCUTOFF], light[2].cosCutoff);
-	glUniform1f(m_parameters[U_LIGHT2_COSINNER], light[2].cosInner);
-	glUniform1f(m_parameters[U_LIGHT2_EXPONENT], light[2].exponent);
 
 	// Set background color to black
 	glClearColor(0.0f, 0.0f, 0.0f, 0.0f);
@@ -252,13 +182,12 @@ void Space::Init()
 	PlanetNear = false;
 	count = 0;
 	Stay = false;
-	Enter = false;
+	Ro = 0;
 
 	//initialising
 	right = (camera.view.Cross(camera.up).Normalized());
 	up = (camera.right.Cross(camera.view).Normalized());
 	forward = camera.target - camera.position;
-	
 }
 
 void Space::Update(double dt)
@@ -325,7 +254,8 @@ void Space::Update(double dt)
 	//=======================================
 	//Planets
 	//=======================================
-	
+	Ro += 10 * dt;
+
 	//Jupiter
 	if (camera.position.x >= -1800 && camera.position.x <= -300 
 		&& camera.position.y >= -700 && camera.position.y <= 700 
@@ -413,6 +343,8 @@ void Space::Update(double dt)
 		Application::SetScene(4);
 	}
 
+	
+
 	camera.Update(dt, (width / 2) - X_Pos, (height / 2) - Y_Pos);
 }
 
@@ -432,15 +364,6 @@ void Space::Render()
 	Vector3 lightDirection_cameraspace = viewStack.Top() * lightDir;
 	glUniform3fv(m_parameters[U_LIGHT0_POSITION], 1, &lightDirection_cameraspace.x);
 
-	//Passing the position of light 2 to the shader (Night)
-	Vector3 light2Dir(light[2].position.x, light[2].position.y, light[2].position.z);
-	Vector3 light2Direction_cameraspace = viewStack.Top() * lightDir;
-	glUniform3fv(m_parameters[U_LIGHT2_POSITION], 1, &light2Direction_cameraspace.x);
-
-	//Passing the position of point light 1 to the shader (Igloo)
-	Position light1Position_cameraspace = viewStack.Top() * light[1].position;
-	glUniform3fv(m_parameters[U_LIGHT1_POSITION], 1, &light1Position_cameraspace.x);
-
 	RenderSkyBox();
 
 	//SpaceShip
@@ -454,6 +377,7 @@ void Space::Render()
 	modelStack.PushMatrix();
 	modelStack.Translate(3000,500,2000);
 	modelStack.Scale(200, 200, 200);
+	modelStack.Rotate(Ro, 1, 0, 1);
 	RenderMesh(meshList[PLANET4], true);
 	modelStack.PopMatrix();
 
@@ -461,6 +385,7 @@ void Space::Render()
 	modelStack.PushMatrix();
 	modelStack.Translate(-1000, 0, 500);
 	modelStack.Scale(100, 100, 100);
+	modelStack.Rotate(Ro, 0, 1, 0);
 	RenderMesh(meshList[PLANET3], true);
 	modelStack.PopMatrix();
 
@@ -468,16 +393,21 @@ void Space::Render()
 	modelStack.PushMatrix();
 	modelStack.Translate(500, 0, -2000);
 	modelStack.Scale(80, 80, 80);
+	modelStack.Rotate(Ro, 1, 0, 0);
 	RenderMesh(meshList[PLANET1], true);
+
 	modelStack.PushMatrix();
+	modelStack.Rotate(Ro, 1, 0, 1);
 	RenderMesh(meshList[RING], true);
 	modelStack.PopMatrix();
+
 	modelStack.PopMatrix();
 
 	//Mars
 	modelStack.PushMatrix();
 	modelStack.Translate(0, 0, 5000);
 	modelStack.Scale(60, 60, 60);
+	modelStack.Rotate(Ro, 0, 1, 1);
 	RenderMesh(meshList[PLANET2], true);
 	modelStack.PopMatrix();
 
@@ -524,8 +454,6 @@ void Space::Render()
 		RenderTextOnScreen(meshList[GEO_TEXT], y, Color(1, 1, 1), 2, 0, 3);
 		RenderTextOnScreen(meshList[GEO_TEXT], z, Color(1, 1, 1), 2, 0, 2);
 	}
-
-	
 }
 
 void Space::RenderSkyBox()
@@ -534,7 +462,7 @@ void Space::RenderSkyBox()
 	modelStack.PushMatrix();
 	modelStack.Translate(camera.position.x, camera.position.y, camera.position.z);
 	modelStack.Translate(0, -1250, 0);
-	modelStack.Scale(5000, 5000, 5000);
+	modelStack.Scale(5500, 5500, 5500);
 
 	//Ground
 	modelStack.PushMatrix();
