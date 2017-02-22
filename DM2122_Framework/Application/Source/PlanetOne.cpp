@@ -114,6 +114,13 @@ void Planet1::Init()
 
     meshList[SPHERE] = MeshBuilder::GenerateSphere("LIGHTBALL", Color(1, 1, 1), 60, 20, 1);
 
+    meshList[HEALTH] = MeshBuilder::GenerateQuad("health", Color(1, 1, 1), 1, 1);
+    meshList[HEALTH]->textureID = LoadTGA("Image//healthbar.tga");
+    meshList[HEALTHPING] = MeshBuilder::GenerateQuad("health", Color(1, 1, 1), 1, 1);
+    meshList[HEALTHPING]->textureID = LoadTGA("Image//healthping.tga");
+    meshList[PORTRAIT] = MeshBuilder::GenerateQuad("portrait", Color(1, 1, 1), 1, 1);
+    meshList[PORTRAIT]->textureID = LoadTGA("Image//characterportrait.tga");
+
     //Bottom
     meshList[GEO_BOTTOM] = MeshBuilder::GenerateQuad("bottom", Color(1, 1, 1), 1, 1);
     meshList[GEO_BOTTOM]->textureID = LoadTGA("Image//Planet1//bottom.tga");
@@ -198,6 +205,10 @@ void Planet1::Init()
     enemyidle = 0;
     changeD = 1;
     shipdown = 400;
+
+    healthleft = H->getCurrentHealth();
+
+    flagcapture = false;
     AlienOneDead = false;
     AlienTwoDead = false;
     AlienThreeDead = false;
@@ -389,12 +400,6 @@ void Planet1::Update(double dt)
         NumAlien -= 1;
         AlienFiveDead = true;
     }
-	
-	//if ((camera.position.x > 500 && camera.position.x < 700 
-	//	&& camera.position.z > 500 && camera.position.z < 700))
-	//{
-	//	Application::SetScene(1);
-	////}
 
     if (camera.position.x > -300 && camera.position.x < 300 && camera.position.z > -300 && camera.position.z < 300)
     {
@@ -404,12 +409,23 @@ void Planet1::Update(double dt)
             {
                 flagdown -= 10;
             }
+            else
+            {
+                flagcapture = true;
+            }
         }
     }
 
     if (shipdown != -50)
     {
         shipdown -= 1;
+    }
+
+    if ((camera.position.x > -1000 && camera.position.x < 0 
+    	&& camera.position.z > 0 && camera.position.z < 1000)
+        && flagcapture == true && Application::IsKeyPressed('E'))
+    {
+    	Application::SetScene(1);
     }
 
     camera.Update(dt, (width / 2) - X_Pos, (height / 2) - Y_Pos);
@@ -1092,7 +1108,6 @@ void Planet1::Render()
     RenderMesh(meshList[FLAG], true);
     modelStack.PopMatrix();
 
-    std::cout << NumAlien << std::endl;
     if (NumAlien == 0)
     {
         modelStack.PushMatrix();
@@ -1111,17 +1126,23 @@ void Planet1::Render()
     //=================================
     //modelStack.PushMatrix();
     //string frames = "FPS: " + std::to_string(fps);
-    string x = "x: " + std::to_string((int)camera.position.x);
-    string y = "y: " + std::to_string((int)camera.position.y);
-    string z = "z: " + std::to_string((int)camera.position.z);
-    //RenderTextOnScreen(meshList[GEO_TEXT], frames, Color(0, 0, 0), 2, 0, 29);
-    //RenderTextOnScreen(meshList[GEO_TEXT], "Welcome to Chopper's Mini World!!", Color(0, 0, 0), 2, 0, 28);
-    //RenderTextOnScreen(meshList[GEO_TEXT], "Interact and see what happens!", Color(0, 0, 0), 2, 0, 27);
-
+    //string x = "x: " + std::to_string((int)camera.position.x);
+    //string y = "y: " + std::to_string((int)camera.position.y);
+    //string z = "z: " + std::to_string((int)camera.position.z);
+    string NumAlienCounter = "Number of Aliens left: " + std::to_string((int)NumAlien);
     ////xyz
-    RenderTextOnScreen(meshList[GEO_TEXT], x, Color(1,1,1), 2, 0, 4);
-    RenderTextOnScreen(meshList[GEO_TEXT], y, Color(1,1,1), 2, 0, 3);
-    RenderTextOnScreen(meshList[GEO_TEXT], z, Color(1,1,1), 2, 0, 2);
+    //RenderTextOnScreen(meshList[GEO_TEXT], x, Color(1,1,1), 2, 0, 4);
+    //RenderTextOnScreen(meshList[GEO_TEXT], y, Color(1,1,1), 2, 0, 3);
+    //RenderTextOnScreen(meshList[GEO_TEXT], z, Color(1, 1, 1), 2, 0, 2);
+    RenderTextOnScreen(meshList[GEO_TEXT], NumAlienCounter, Color(1, 1, 1), 2, 0, 0);
+    RenderMeshOnScreen(meshList[HEALTH], 20, 50, 40, 40);
+    RenderMeshOnScreen(meshList[PORTRAIT], 20, 50, 40, 40);
+
+    for (int i = 0; i <= healthleft /10; i++)
+    {
+        RenderMeshOnScreen(meshList[HEALTHPING], 14 + i*2, 54, 5, 6);
+    }
+
 }
 
 void Planet1::RenderAlien()

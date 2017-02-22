@@ -7,6 +7,7 @@
 #include "MatrixStack.h"
 #include "Light.h"
 #include <vector>
+#include "Health.h"
 
 using std::vector;
 
@@ -34,6 +35,9 @@ class Planet1 : public Scene
         FLAG,
         FLAGPOLE,
         SPACESHIP,
+        HEALTH,
+        HEALTHPING,
+        PORTRAIT,
 
         GEO_TEXT,
 
@@ -177,6 +181,7 @@ private:
     int alienhealth4;
     int alienhealth5;
     bool hit;
+    bool flagcapture;
 
     void AlienOne();
     void AlienTwo();
@@ -189,6 +194,9 @@ private:
     bool AlienThreeDead;
     bool AlienFourDead;
     bool AlienFiveDead;
+
+    Health *H = new Health();
+    int healthleft;
 
     void shooting();
     void RenderAlien();
