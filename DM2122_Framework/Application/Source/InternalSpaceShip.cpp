@@ -212,11 +212,11 @@ void InternalShip::Init()
 	meshList[GEO_PANEL]->textureID = LoadTGA("Image//Panel.tga");
 
 	//Chair
-	meshList[GEO_CHAIR] = MeshBuilder::GenerateOBJ("Panel", "OBJ//intr_chair.obj");
+	meshList[GEO_CHAIR] = MeshBuilder::GenerateOBJ("Panel", "OBJ//chairShip.obj");
 	meshList[GEO_CHAIR]->textureID = LoadTGA("Image//chair.tga");
 
 	//Table
-	meshList[GEO_TABLE] = MeshBuilder::GenerateOBJ("Panel", "OBJ//intr_table.obj");
+	meshList[GEO_TABLE] = MeshBuilder::GenerateOBJ("Panel", "OBJ//table.obj");
 	meshList[GEO_TABLE]->textureID = LoadTGA("Image//chair.tga");
 
 	//Screen
@@ -333,47 +333,52 @@ void InternalShip::Render()
 
 	//control panel
 	modelStack.PushMatrix();
-	modelStack.Translate(-200, -30, 0);
+	modelStack.Translate(-200, -40, 0);
 	modelStack.Scale(15, 15, 15);
 	RenderMesh(meshList[GEO_PANEL], true);
 	modelStack.PopMatrix();
 
 	//chair
 	modelStack.PushMatrix();
-	modelStack.Translate(-240, -30, 70);
+	modelStack.Translate(-240, -40, 70);
 	modelStack.Scale(15, 15, 15);
 	RenderMesh(meshList[GEO_CHAIR], true);
 	modelStack.PopMatrix();
 
 	//table set
 	modelStack.PushMatrix();
-	modelStack.Translate(0, -30, -50);
+	modelStack.Translate(0, -40, -50);
 	modelStack.Scale(15, 20, 15);
 	RenderMesh(meshList[GEO_TABLE], true);
 	modelStack.PopMatrix();
+
 	modelStack.PushMatrix();
+
 	modelStack.PushMatrix();
-	modelStack.Translate(0, -30, -50);
+	modelStack.Translate(0, -40, -50);
 	modelStack.Scale(15, 15, 15);
 	RenderMesh(meshList[GEO_CHAIR], true);
 	modelStack.PopMatrix();
-	modelStack.Translate(70, -30, -75);
+
+	modelStack.Translate(70, -40, -75);
 	modelStack.Rotate(90, 0, 1, 0);
 	modelStack.PushMatrix();
 	modelStack.Scale(15, 15, 15);
 	RenderMesh(meshList[GEO_CHAIR], true);
 	modelStack.PopMatrix();
+
 	modelStack.Translate(0, 0, 50);
 	modelStack.PushMatrix();
 	modelStack.Scale(15, 15, 15);
 	RenderMesh(meshList[GEO_CHAIR], true);
 	modelStack.PopMatrix();
+
 	modelStack.PopMatrix();
 
 	if (Screen == true)
 	{
 		modelStack.PushMatrix();
-		modelStack.Translate(-240, 50, 0);
+		modelStack.Translate(-240, 60, 0);
 		modelStack.Rotate(90, 0, 1, 0);
 		modelStack.Scale(250, 100, 1);
 		RenderMesh(meshList[GEO_SCREEN], false);
@@ -395,7 +400,7 @@ void InternalShip::RenderSkyBox()
 {
 	//sky box
 	modelStack.PushMatrix();
-	modelStack.Translate(0, -30, 0);
+	modelStack.Translate(0, -40, 0);
 	modelStack.Scale(500, 150, 500);
 
 	//Ground

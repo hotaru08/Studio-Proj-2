@@ -164,7 +164,7 @@ void Space::Init()
 	glBindVertexArray(m_vertexArrayID);
 
 	glEnable(GL_DEPTH_TEST);// Enable depth test
-	glEnable(GL_CULL_FACE);// Enable cull test
+	//glEnable(GL_CULL_FACE);// Enable cull test
 	glPolygonMode(GL_FRONT_AND_BACK, GL_LINE); //wireframe mode
 	glPolygonMode(GL_FRONT_AND_BACK, GL_FILL); //default fill mode
 	glEnable(GL_BLEND);//Enable blending
@@ -173,8 +173,6 @@ void Space::Init()
 
 	//camera
 	camera.Init(Vector3(0, 0, -1), Vector3(1, 0, 0), Vector3(0, 1, 0));
-
-	meshList[GEO_AXES] = MeshBuilder::GenerateAxes("reference", 1000, 1000, 1000);
 
 	//Lightball
 	meshList[GEO_LIGHTBALL] = MeshBuilder::GenerateSphere("LIGHTBALL", Color(1, 1, 1), 60, 20, 1);
@@ -252,12 +250,15 @@ void Space::Init()
 	Switch_LightBall = false;
 	fps = 0;
 	PlanetNear = false;
+	count = 0;
+	Stay = false;
+	Enter = false;
 
 	//initialising
 	right = (camera.view.Cross(camera.up).Normalized());
 	up = (camera.right.Cross(camera.view).Normalized());
 	forward = camera.target - camera.position;
-	count = 0;
+	
 }
 
 void Space::Update(double dt)
@@ -272,7 +273,7 @@ void Space::Update(double dt)
 	//modes
 	if (Application::IsKeyPressed('1'))
 	{
-		glEnable(GL_CULL_FACE);
+		//glEnable(GL_CULL_FACE);
 	}
 	if (Application::IsKeyPressed('2'))
 	{
@@ -318,19 +319,31 @@ void Space::Update(double dt)
 	RotationMartix = Mtx44(right.x, right.y, right.z, 0,
 		up.x, up.y, up.z, 0,
 		forward.x, forward.y, forward.z, 0,
-		position.x, position.y, position.z, 1);
+		position.x, position.y, position.z, 1); // update forward only 
+
 	
 	//=======================================
 	//Planets
 	//=======================================
 	
 	//Jupiter
-	if (camera.position.x >= -1300 && camera.position.x <= -300 
-		&& camera.position.y >= -630 && camera.position.y <= 630 
-		&& camera.position.z >= -220 && camera.position.z <= 1220)
+	if (camera.position.x >= -1800 && camera.position.x <= -300 
+		&& camera.position.y >= -700 && camera.position.y <= 700 
+		&& camera.position.z >= -300 && camera.position.z <= 1300)
 	{
 		PlanetNear = true;
-		Application::SetScene(2);
+
+		if (Application::IsKeyPressed(VK_RETURN))
+		{
+			if (count == 0)
+			{
+				Application::SetScene(2);
+			}
+			else if (count == 1)
+			{
+				Stay = true;
+			}
+		}
 	}
 	//saturn
 	else if (camera.position.x >= 10 && camera.position.x <= 1100 
@@ -338,15 +351,37 @@ void Space::Update(double dt)
 		&& camera.position.z >= -2660 && camera.position.z <= -1350)
 	{
 		PlanetNear = true;
-		//Application::SetScene(3);
+
+		if (Application::IsKeyPressed(VK_RETURN))
+		{
+			if (count == 0)
+			{
+				Application::SetScene(3);
+			}
+			else if (count == 1)
+			{
+				Stay = true;
+			}
+		}
 	}
 	//blue planet
 	else if (camera.position.x >= 2000 && camera.position.x <= 3800
-		&& camera.position.y >= -200 && camera.position.y <= 1250
+		&& camera.position.y >= -200 && camera.position.y <= 1300
 		&& camera.position.z >= 1000 && camera.position.z <= 3000)
 	{
 		PlanetNear = true;
-		//Application::SetScene(4);
+
+		if (Application::IsKeyPressed(VK_RETURN))
+		{
+			if (count == 0)
+			{
+				//Application::SetScene(2);
+			}
+			else if (count == 1)
+			{
+				Stay = true;
+			}
+		}
 	}
 	//mars
 	else if (camera.position.x >= -150 && camera.position.x <= 150 
@@ -354,11 +389,28 @@ void Space::Update(double dt)
 		&& camera.position.z >= 4850 && camera.position.z <= 5150)
 	{
 		PlanetNear = true;
-		//Application::SetScene(5);
+
+		if (Application::IsKeyPressed(VK_RETURN))
+		{
+			if (count == 0)
+			{
+				//Application::SetScene(2);
+			}
+			else if (count == 1)
+			{
+				Stay = true;
+			}
+		}
 	}
 	else
 	{
 		PlanetNear = false;
+		Stay = false;
+	}
+
+	if (Application::IsKeyPressed('0'))
+	{
+		Application::SetScene(4);
 	}
 
 	camera.Update(dt, (width / 2) - X_Pos, (height / 2) - Y_Pos);
@@ -389,8 +441,6 @@ void Space::Render()
 	Position light1Position_cameraspace = viewStack.Top() * light[1].position;
 	glUniform3fv(m_parameters[U_LIGHT1_POSITION], 1, &light1Position_cameraspace.x);
 
-	//axes
-	RenderMesh(meshList[GEO_AXES], false);
 	RenderSkyBox();
 
 	//SpaceShip
@@ -433,12 +483,9 @@ void Space::Render()
 
 	if (PlanetNear)
 	{
-		RenderTextOnScreen(meshList[GEO_TEXT],"Enter?", Color(1, 1, 1), 2, 0, 4);
-
 		if (Application::IsKeyPressed(VK_DOWN))
 		{
 			count = 1;
-
 		}
 		if (Application::IsKeyPressed(VK_UP))
 		{
@@ -447,18 +494,28 @@ void Space::Render()
 
 		if (count == 0)
 		{
+			RenderTextOnScreen(meshList[GEO_TEXT], "Enter?", Color(1, 1, 1), 2, 0, 4);
 			RenderTextOnScreen(meshList[GEO_TEXT], ">Yes?", Color(1, 1, 1), 2, 0, 3);
 			RenderTextOnScreen(meshList[GEO_TEXT], "No?", Color(1, 1, 1), 2, 0, 2);
 		}
 		if (count == 1)
 		{
-			RenderTextOnScreen(meshList[GEO_TEXT], "Yes?", Color(1, 1, 1), 2, 0, 3);
-			RenderTextOnScreen(meshList[GEO_TEXT], ">No?", Color(1, 1, 1), 2, 0, 2);
+			if (Stay)
+			{
+				RenderTextOnScreen(meshList[GEO_TEXT], "Welps, okay then.", Color(1, 1, 1), 2, 0, 2);
+			}
+			else
+			{
+				RenderTextOnScreen(meshList[GEO_TEXT], "Enter?", Color(1, 1, 1), 2, 0, 4);
+				RenderTextOnScreen(meshList[GEO_TEXT], "Yes?", Color(1, 1, 1), 2, 0, 3);
+				RenderTextOnScreen(meshList[GEO_TEXT], ">No?", Color(1, 1, 1), 2, 0, 2);
+			}
 		}
 	}
 	else
 	{
 		PlanetNear = false;
+		count = 0;
 
 		string x = "x: " + std::to_string((int)camera.position.x);
 		string y = "y: " + std::to_string((int)camera.position.y);

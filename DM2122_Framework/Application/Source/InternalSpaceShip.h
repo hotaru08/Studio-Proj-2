@@ -2,7 +2,7 @@
 #define InternalShip_H
 
 #include "Scene.h"
-#include "SpaceCamera.h"
+#include "ShipCamera.h"
 #include "Mesh.h"
 #include "MatrixStack.h"
 #include "Light.h"
@@ -125,7 +125,7 @@ private:
 
 	Mtx44 RotationMartix;//4 x 4 matrix for InternalShipship rotation
 
-	SpaceCamera camera;
+	ShipCamera camera;
 	MS modelStack, viewStack, projectionStack;
 	Light light[4];
 
