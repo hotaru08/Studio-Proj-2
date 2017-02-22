@@ -10,24 +10,23 @@ public:
 	Vector3 defaultTarget;
 	Vector3 defaultUp;
 
-    Vector3 view;
-    Vector3 right;
+	Vector3 view;
+	Vector3 right;
 	//================================
 	//collision detection
 	//================================
-    //Objects that collides
-    static unsigned const NoObj = 1;
-    bool collideObject;
+	//Objects that collides
+	static unsigned const NoObj = 1;
+	bool collideObject;
 
-    Vector3 PrevPos = { 0.f, 0.f, 0.f };//track previous pos
-    Vector3 CollisionMax[NoObj];//collision max pos for each 
-    Vector3 CollisionMin[NoObj];//collision min pos for each 
+	Vector3 PrevPos = { 0.f, 0.f, 0.f };//track previous pos
+	Vector3 CollisionMax[NoObj];//collision max pos for each 
+	Vector3 CollisionMin[NoObj];//collision min pos for each 
 
-    //================================
-    //bounds
-    //================================
-    float SizeOfScene = 1000.0f;
-
+	//================================
+	//bounds
+	//================================
+	float SizeOfScene = 1000.0f;
 
 	Camera3();
 	~Camera3();
@@ -36,7 +35,9 @@ public:
 	virtual void Reset();
 	void bounds();
 	void Update(double dt, double x, double y); //for mouse detection
-	void collsion();
+	void collision(int x[10], int z[10]);
+
+	int coordtreeX[10], coordtreeZ[10], treeMin, treeMax;
 };
 
 #endif

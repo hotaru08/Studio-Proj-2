@@ -8,6 +8,7 @@
 #include "Light.h"
 #include "Inventory.h"
 #include "Health.h"
+#include "Inventory.h"
 
 class PlanetTwo : public Scene
 {
@@ -135,6 +136,7 @@ private:
 	float rotatehealthpack;
 	bool playerMined;
 	bool playerActivated;
+	bool checkCollide;
 	int meteorX;
 	int meteorZ;
 	int mineralX[100];

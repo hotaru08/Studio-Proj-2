@@ -547,6 +547,13 @@ void PlanetTwo::Update(double dt)
 	}
 	//===========================================================================//
 
+	//==============================TREE COLLISION==============================//
+	if (checkCollide = true)
+	{
+		camera.collision(treeX, treeY);
+	}
+	//===========================================================================//
+
 	glfwGetCursorPos(m_window, &X_Pos, &Y_Pos);// getting the cursor position 
 	glfwGetWindowSize(m_window, &width, &height); //get size to center cursor 
 	glfwSetCursorPos(m_window, width / 2, height / 2); //set cursor to center of screen
@@ -577,7 +584,22 @@ void PlanetTwo::Update(double dt)
 	{
 		playerMined = false;
 	}
-
+	if (Application::IsKeyPressed('W'))
+	{
+		checkCollide = true;
+	}
+	if (Application::IsKeyPressed('S'))
+	{
+		checkCollide = true;
+	}
+	if (Application::IsKeyPressed('A'))
+	{
+		checkCollide = true;
+	}
+	if (Application::IsKeyPressed('D'))
+	{
+		checkCollide = true;
+	}
 	
 	fps = 1 / dt;
 

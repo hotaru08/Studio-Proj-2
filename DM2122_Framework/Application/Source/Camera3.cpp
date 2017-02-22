@@ -4,6 +4,10 @@
 
 Camera3::Camera3()
 {
+	coordtreeX[10] = {};
+	coordtreeZ[10] = {};
+	treeMin = 30;
+	treeMax = 30;
 }
 
 Camera3::~Camera3()
@@ -23,7 +27,7 @@ void Camera3::Init(const Vector3& pos, const Vector3& target, const Vector3& up)
 
 void Camera3::Update(double dt)
 {
-	float CAMERA_SPEED = 120.0f * dt;
+	float CAMERA_SPEED = 150.0f * dt;
 	float rotateAngle = 0;
 
 	Mtx44 rotation;
@@ -33,33 +37,33 @@ void Camera3::Update(double dt)
 	//Left camera movement
 	if (Application::IsKeyPressed('A'))
 	{
+		bounds();
 		position = position - right * CAMERA_SPEED;
 		target = position + view;
-		bounds();
 	}
 
 	//Right camera movement
 	if (Application::IsKeyPressed('D'))
 	{
+		bounds();
 		position = position + right * CAMERA_SPEED;
 		target = position + view;
-		bounds();
 	}
 
 	//front camera movement
 	if (Application::IsKeyPressed('W'))
 	{
+		bounds();
 		position = position + view * CAMERA_SPEED;
 		target = position + view;
-		bounds();
 	}
 
 	//back camera movement
 	if (Application::IsKeyPressed('S'))
 	{
+		bounds();
 		position = position - view * CAMERA_SPEED;
 		target = position + view;
-		bounds();
 	}
 
 	//Left
@@ -81,7 +85,7 @@ void Camera3::Update(double dt)
 		view = rotation * view;
 		target = position + view;
 	}
-	
+
 	//Up
 	if (Application::IsKeyPressed('T'))
 	{
@@ -140,24 +144,67 @@ void Camera3::Reset()
 	up = defaultUp;
 }
 
+void Camera3::collision(int x[10], int z[10])
+{
+
+	for (int i = 0; i < 10; i++)
+	{
+		coordtreeX[i] = x[i];
+		coordtreeZ[i] = z[i];
+	}
+}
+
 void Camera3::bounds()
 {
 	if (position.x > SizeOfScene)
 	{
-        position.x = SizeOfScene;
+		position.x = SizeOfScene;
 	}
-    if (position.x < -SizeOfScene)
+	if (position.x < -SizeOfScene)
 	{
-        position.x = -SizeOfScene;
+		position.x = -SizeOfScene;
 	}
-    if (position.z > SizeOfScene)
+	if (position.z > SizeOfScene)
 	{
-        position.z = SizeOfScene;
+		position.z = SizeOfScene;
 	}
-    if (position.z < -SizeOfScene)
+	if (position.z < -SizeOfScene)
 	{
-        position.z = -SizeOfScene;
+		position.z = -SizeOfScene;
 	}
+
+	//Check for Collision
+	bool collided = false;
+	for (int i = 0; i < 10 && collided == false; i++)
+	{
+		/*std::cout << "Position: " << "X: " << position.x << " Z: " << position.z << std::endl;
+		std::cout << "Previous: " << "X: " << PrevPos.x << " Z: " << PrevPos.z << std::endl;*/
+		if ((position.x <= coordtreeX[i] + treeMax && position.x >= coordtreeX[i] - treeMin) &&
+			(position.z <= coordtreeZ[i] + treeMax && position.z >= coordtreeZ[i] - treeMin))
+		{
+			/*std::cout << "In IF Position: " << "X: " << position.x << " Z: " << position.z << std::endl;
+			std::cout << "In IF Previous: " << "X: " << PrevPos.x << " Z: " << PrevPos.z << std::endl;*/
+			position = PrevPos;
+			/*std::cout << "Tree " << i << std::endl;*/
+			/*std::cout << "tree0x: " << coordtreeX[0] << std::endl;
+			std::cout << "tree1x: " << coordtreeX[1] << std::endl;
+			std::cout << "tree2x: " << coordtreeX[2] << std::endl;
+			std::cout << "tree3x: " << coordtreeX[3] << std::endl;
+			std::cout << "tree4x: " << coordtreeX[4] << std::endl;
+			std::cout << "tree5x: " << coordtreeX[5] << std::endl;
+			std::cout << "tree6x: " << coordtreeX[6] << std::endl;
+			std::cout << "tree7x: " << coordtreeX[7] << std::endl;
+			std::cout << "tree8x: " << coordtreeX[8] << std::endl;
+			std::cout << "tree9x: " << coordtreeX[9] << std::endl;
+			std::cout << "pos X: " << position.x << std::endl;
+			std::cout << "prevpos X: " << PrevPos.x << std::endl;*/
+			/*std::cout << "collided" << std::endl;*/
+			collided = true;
+			//break;
+		}
+	}
+	PrevPos = position;
+
 }
 
 void Camera3::Update(double dt, double x, double y)
@@ -170,6 +217,8 @@ void Camera3::Update(double dt, double x, double y)
 	right = view.Cross(up);
 	Mtx44 pitch;
 	Mtx44 yaw;
+
+
 
 	//look up n down
 	pitch.SetToRotation(Ver, right.x, right.y, right.z);
@@ -191,47 +240,51 @@ void Camera3::Update(double dt, double x, double y)
 
 	if (Application::IsKeyPressed(VK_RBUTTON))
 	{
-		CAMERA_SPEED *= 3;
+		CAMERA_SPEED *= 6;
 	}
 
 	//front camera movement
 	if (Application::IsKeyPressed('W'))
 	{
+
+		bounds();
+
 		position.y = 0;
 		position = position + view * CAMERA_SPEED * dt;
 		target = position + view;
-		bounds();
-		collsion();
+
 	}
 
 	//back camera movement
 	if (Application::IsKeyPressed('S'))
 	{
+		bounds();
+
 		position.y = 0;
 		position = position - view * CAMERA_SPEED * dt;
 		target = position + view;
-		bounds();
-		collsion();
+
 	}
 
 	//Left camera movement
 	if (Application::IsKeyPressed('A'))
 	{
+		bounds();
+
 		position.y = 0;
 		position = position - right * CAMERA_SPEED * dt;
 		target = position + view;
-		collsion();
-		bounds();
 	}
 
 	//Right camera movement
 	if (Application::IsKeyPressed('D'))
 	{
+		bounds();
+
 		position.y = 0;
 		position = position + right * CAMERA_SPEED * dt;
 		target = position + view;
-		collsion();
-		bounds();
+
 	}
 
 	//Zoom in
@@ -253,145 +306,3 @@ void Camera3::Update(double dt, double x, double y)
 	}
 }
 
-void Camera3::collsion()
-{
-//	//TreeMax.x = 550;
-//	TreeMin.x = 450;
-//	TreeMax.z = 50;
-//	TreeMin.z = -50;
-//
-//	logMax.x = 230;
-//	logMin.x = 157;
-//	logMax.z = 60;
-//	logMin.z = -60;
-//
-//	SnowmanMax.z = 540;
-//	SnowmanMin.z = 460;
-//	SnowmanMax.x = 350;
-//	SnowmanMin.x = 257;
-//
-//	snow1Max.z = -440;
-//	snow1Min.z = -540;
-//	snow1Max.x = 540;
-//	snow1Min.x = 340;
-//
-//	snow2Max.z = -460;
-//	snow2Min.z = -530;
-//	snow2Max.x = -460;
-//	snow2Min.x = -540;
-//
-//	snow3Max.z = 520;
-//	snow3Min.z = 460;
-//	snow3Max.x = -370;
-//	snow3Min.x = -440;
-//
-//	sledMax.z = 410;
-//	sledMin.z = 290;
-//	sledMax.x = -240;
-//	sledMin.x = -440;
-//
-//	igloo1Max.x = -565;
-//	igloo1Min.x = -590;
-//	igloo1Max.z = 60;
-//	igloo1Min.z = -120;
-//
-//	igloo2Max.z = -70;
-//	igloo2Min.z = -210;
-//	igloo2Max.x = -180;
-//	igloo2Min.x = -590;
-//
-//	igloo3Max.z = 210;
-//	igloo3Min.z = 70;
-//	igloo3Max.x = -180;
-//	igloo3Min.x = -590;
-//
-//	chopMax.z = 50;
-//	chopMin.z = -50;
-//	chopMax.x = 50;
-//	chopMin.x = -50;
-//
-//	//tree collision
-//	if ((position.x >= TreeMin.x) && (position.x <= TreeMax.x)
-//		&& (position.z >= TreeMin.z) && (position.z <= TreeMax.z))
-//	{
-//		//detect collision
-//		position.x = PrevPos.x;
-//		position.z = PrevPos.z;
-//	}
-//	else if ((position.x >= logMin.x) && (position.x <= logMax.x)
-//		&& (position.z >= logMin.z) && (position.z <= logMax.z))
-//	{
-//		//detect collision
-//		position.x = PrevPos.x;
-//		position.z = PrevPos.z;
-//	}
-//	else if ((position.x >= SnowmanMin.x) && (position.x <= SnowmanMax.x)
-//		&& (position.z >= SnowmanMin.z) && (position.z <= SnowmanMax.z))
-//	{
-//		//detect collision
-//		position.x = PrevPos.x;
-//		position.z = PrevPos.z;
-//	}
-//
-//	else if ((position.x >= snow1Min.x) && (position.x <= snow1Max.x)
-//		&& (position.z >= snow1Min.z) && (position.z <= snow1Max.z))
-//	{
-//		//detect collision
-//		position.x = PrevPos.x;
-//		position.z = PrevPos.z;
-//	}
-//	else if ((position.x >= snow2Min.x) && (position.x <= snow2Max.x)
-//		&& (position.z >= snow2Min.z) && (position.z <= snow2Max.z))
-//	{
-//		//detect collision
-//		position.x = PrevPos.x;
-//		position.z = PrevPos.z;
-//	}
-//	else if ((position.x >= snow3Min.x) && (position.x <= snow3Max.x)
-//		&& (position.z >= snow3Min.z) && (position.z <= snow3Max.z))
-//	{
-//		//detect collision
-//		position.x = PrevPos.x;
-//		position.z = PrevPos.z;
-//	}
-//	else if ((position.x >= sledMin.x) && (position.x <= sledMax.x)
-//		&& (position.z >= sledMin.z) && (position.z <= sledMax.z))
-//	{
-//		//detect collision
-//		position.x = PrevPos.x;
-//		position.z = PrevPos.z;
-//	}
-//	else if ((position.x >= igloo1Min.x) && (position.x <= igloo1Max.x)
-//		&& (position.z >= igloo1Min.z) && (position.z <= igloo1Max.z))
-//	{
-//		//detect collision
-//		position.x = PrevPos.x;
-//		position.z = PrevPos.z;
-//	}
-//	else if ((position.x >= igloo2Min.x) && (position.x <= igloo2Max.x)
-//		&& (position.z >= igloo2Min.z) && (position.z <= igloo2Max.z))
-//	{
-//		//detect collision
-//		position.x = PrevPos.x;
-//		position.z = PrevPos.z;
-//	}
-//	else if ((position.x >= igloo3Min.x) && (position.x <= igloo3Max.x)
-//		&& (position.z >= igloo3Min.z) && (position.z <= igloo3Max.z))
-//	{
-//		//detect collision
-//		position.x = PrevPos.x;
-//		position.z = PrevPos.z;
-//	}
-//	else if ((position.x >= chopMin.x) && (position.x <= chopMax.x)
-//		&& (position.z >= chopMin.z) && (position.z <= chopMax.z))
-//	{
-//		//detect collision
-//		position.x = PrevPos.x;
-//		position.z = PrevPos.z;
-//	}
-//	else
-//	{
-//		PrevPos.x = position.x;
-//		PrevPos.z = position.z;
-//	}
-}
