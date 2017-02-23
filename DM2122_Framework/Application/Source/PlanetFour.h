@@ -36,6 +36,9 @@ class PlanetFour : public Scene
 		GEO_TEXT,
 		GROUND,
 
+		//objects
+		GEO_WALL,
+
 		NUM_GEOMETRY,
 	};
 
@@ -126,6 +129,7 @@ private:
 
 	void RenderMesh(Mesh *mesh, bool enableLight);
 	void RenderSkyBox();
+	void RenderMaze();
 	void RenderSkyBoxNight();
 	void RenderText(Mesh* mesh, std::string text, Color color);
 	void RenderTextOnScreen(Mesh* mesh, std::string text, Color color, float size, float x, float y);

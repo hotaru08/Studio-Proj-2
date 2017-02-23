@@ -26,7 +26,8 @@ PlanetFour::~PlanetFour()
 
 void PlanetFour::Init()
 {
-	m_programID = LoadShaders("Shader//Texture.vertexshader", "Shader//Text.fragmentshader");	// Use our shader
+	m_programID = LoadShaders("Shader//Texture.vertexshader", "Shader//Text.fragmentshader");
+	// Use our shader
 	glUseProgram(m_programID);
 
 	// Get a handle for our "MVP" uniform
@@ -156,11 +157,16 @@ void PlanetFour::Init()
 	glUniform1f(m_parameters[U_LIGHT2_EXPONENT], light[2].exponent);
 
 	// Set background color to black
-	glClearColor(0.0f, 0.0f, 0.0f, 0.0f);
+	glClearColor(0.0f, 0.0f, 0.0f, 0.0f);
+
 	// Generate a default VAO for now
 	glGenVertexArrays(1, &m_vertexArrayID);
-	glBindVertexArray(m_vertexArrayID);
-	glEnable(GL_DEPTH_TEST);// Enable depth test	glEnable(GL_CULL_FACE);// Enable cull test	glPolygonMode(GL_FRONT_AND_BACK, GL_LINE); //wireframe mode	glPolygonMode(GL_FRONT_AND_BACK, GL_FILL); //default fill mode
+	glBindVertexArray(m_vertexArrayID);
+
+	glEnable(GL_DEPTH_TEST);// Enable depth test
+	glEnable(GL_CULL_FACE);// Enable cull test
+	glPolygonMode(GL_FRONT_AND_BACK, GL_LINE); //wireframe mode
+	glPolygonMode(GL_FRONT_AND_BACK, GL_FILL); //default fill mode
 	glEnable(GL_BLEND);//Enable blending
 	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 	glfwSetInputMode(m_window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);//Enable cursor
@@ -185,7 +191,8 @@ void PlanetFour::Init()
 
 	//Front skybox
 	meshList[GEO_FRONT] = MeshBuilder::GenerateQuad("front", Color(1, 1, 1), 1, 1);
-	meshList[GEO_FRONT]->textureID = LoadTGA("Image/Front.tga");
+	meshList[GEO_FRONT]->textureID = LoadTGA("Image/Front.tga");
+
 	//back skybox
 	meshList[GEO_BACK] = MeshBuilder::GenerateQuad("back", Color(1, 1, 1), 1, 1);
 	meshList[GEO_BACK]->textureID = LoadTGA("Image//Back.tga");
@@ -207,7 +214,8 @@ void PlanetFour::Init()
 	//=====================================
 	//Front skybox
 	meshList[GEO_FRONTNight] = MeshBuilder::GenerateQuad("front", Color(1, 1, 1), 1, 1);
-	meshList[GEO_FRONTNight]->textureID = LoadTGA("Image//FrontNight.tga");
+	meshList[GEO_FRONTNight]->textureID = LoadTGA("Image//FrontNight.tga");
+
 	//back skybox
 	meshList[GEO_BACKNight] = MeshBuilder::GenerateQuad("back", Color(1, 1, 1), 1, 1);
 	meshList[GEO_BACKNight]->textureID = LoadTGA("Image//BackNight.tga");
@@ -234,6 +242,10 @@ void PlanetFour::Init()
 
 	//screen
 	meshList[GEO_SCREEN] = MeshBuilder::GenerateQuad("front", Color(1, 1, 1), 1, 1);
+
+	//wall
+	meshList[GEO_WALL] = MeshBuilder::GenerateOBJ("Wall", "OBJ//Maze_Wall.obj");
+	meshList[GEO_WALL]->textureID = LoadTGA("Image//Maze_Wall.tga");
 
 	Mtx44 projection;
 	projection.SetToPerspective(45.f, 4.f / 3.f, 0.1f, 7000.0f);
@@ -323,6 +335,8 @@ void PlanetFour::Render()
 	RenderMesh(meshList[GROUND], true);
 	modelStack.PopMatrix();
 
+	RenderMaze();
+
 	//Test mesh on screen
 	RenderMeshOnScreen(meshList[GEO_SCREEN], 40, 0, 80, 30);
 
@@ -338,6 +352,143 @@ void PlanetFour::Render()
 	RenderTextOnScreen(meshList[GEO_TEXT], x, Color(0, 1, 0), 2, 0, 4);
 	RenderTextOnScreen(meshList[GEO_TEXT], y, Color(0, 1, 0), 2, 0, 3);
 	RenderTextOnScreen(meshList[GEO_TEXT], z, Color(0, 1, 0), 2, 0, 2);
+}
+
+void PlanetFour::RenderMaze()
+{
+	modelStack.PushMatrix();
+	modelStack.Translate(0, -80, 0);
+
+	//Surrounding Wall
+	modelStack.PushMatrix();
+	modelStack.Translate(-500, 0, -600);
+	for (int z = 0; z < 4; z++)
+	{
+		for (int x = 0; x < 6; x++)
+		{
+			modelStack.PushMatrix();
+			modelStack.Scale(50, 40, 40);
+			RenderMesh(meshList[GEO_WALL], true);
+			modelStack.PopMatrix();
+			modelStack.Translate(200, 0, 0);
+		}
+		modelStack.Rotate(270, 0, 1, 0);
+		modelStack.Translate(110, 0, 75);
+	}
+	modelStack.PopMatrix();
+
+	//remaining wall
+	modelStack.PushMatrix();
+	modelStack.Translate(400, 0, -300);
+	modelStack.Rotate(90, 0, 1, 0);
+	for (int x = 0; x < 4; x++)
+	{
+		modelStack.PushMatrix();
+		modelStack.Scale(50, 40, 40);
+		RenderMesh(meshList[GEO_WALL], true);
+		modelStack.PopMatrix();
+		modelStack.Translate(-200, 0, 0);
+	}
+	modelStack.PopMatrix();
+	modelStack.PushMatrix();
+	modelStack.Translate(100, 0, -400);
+	for (int x = 0; x < 2; x++)
+	{
+		modelStack.PushMatrix();
+		modelStack.Scale(50, 40, 40);
+		RenderMesh(meshList[GEO_WALL], true);
+		modelStack.PopMatrix();
+		modelStack.Translate(200, 0, 0);
+	}
+	modelStack.PopMatrix();
+	modelStack.PushMatrix();
+	modelStack.Translate(0, 0, -500);
+	modelStack.Rotate(90, 0, 1, 0);
+	modelStack.Scale(50, 40, 40);
+	RenderMesh(meshList[GEO_WALL], true);
+	modelStack.PopMatrix();
+	modelStack.PushMatrix();
+	modelStack.Translate(300, 0, 400);
+	for (int x = 0; x < 3; x++)
+	{
+		modelStack.PushMatrix();
+		modelStack.Scale(50, 40, 40);
+		RenderMesh(meshList[GEO_WALL], true);
+		modelStack.PopMatrix();
+		modelStack.Translate(-200, 0, 0);
+	}
+	modelStack.PopMatrix();
+	modelStack.PushMatrix();
+	modelStack.Translate(200, 0, 300);
+	modelStack.Rotate(90, 0, 1, 0);
+	for (int x = 0; x < 3; x++)
+	{
+		modelStack.PushMatrix();
+		modelStack.Scale(50, 40, 40);
+		RenderMesh(meshList[GEO_WALL], true);
+		modelStack.PopMatrix();
+		modelStack.Translate(200, 0, 0);
+	}
+	modelStack.PopMatrix();
+	modelStack.PushMatrix();
+	modelStack.Translate(100, 0, -200);
+	modelStack.Scale(50, 40, 40);
+	RenderMesh(meshList[GEO_WALL], true);
+	modelStack.PopMatrix();
+	modelStack.PushMatrix();
+	modelStack.Translate(0, 0, -100);
+	modelStack.Rotate(90, 0, 1, 0);
+	for (int x = 0; x < 2; x++)
+	{
+		modelStack.PushMatrix();
+		modelStack.Scale(50, 40, 40);
+		RenderMesh(meshList[GEO_WALL], true);
+		modelStack.PopMatrix();
+		modelStack.Translate(-200, 0, 0);
+	}
+	modelStack.PopMatrix();
+	modelStack.PushMatrix();
+	modelStack.Translate(-100, 0, 200);
+	for (int x = 0; x < 2; x++)
+	{
+		modelStack.PushMatrix();
+		modelStack.Scale(50, 40, 40);
+		RenderMesh(meshList[GEO_WALL], true);
+		modelStack.PopMatrix();
+		modelStack.Translate(-200, 0, 0);
+	}
+	modelStack.PopMatrix();
+	modelStack.PushMatrix(); //start
+	modelStack.Translate(-400, 0, 300);
+	modelStack.Rotate(90, 0, 1, 0);
+	modelStack.Scale(50, 40, 40);
+	RenderMesh(meshList[GEO_WALL], true);
+	modelStack.PopMatrix();
+	modelStack.PushMatrix();
+	modelStack.Translate(-500, 0, 0);
+	for (int x = 0; x < 2; x++)
+	{
+		modelStack.PushMatrix();
+		modelStack.Scale(50, 40, 40);
+		RenderMesh(meshList[GEO_WALL], true);
+		modelStack.PopMatrix();
+		modelStack.Translate(200, 0, 0);
+	}
+	modelStack.PopMatrix();
+	modelStack.PushMatrix();
+	modelStack.Translate(-200, 0, -100);
+	modelStack.Rotate(90, 0, 1, 0);
+	for (int x = 0; x < 2; x++)
+	{
+		modelStack.PushMatrix();
+		modelStack.Scale(50, 40, 40);
+		RenderMesh(meshList[GEO_WALL], true);
+		modelStack.PopMatrix();
+		modelStack.Translate(200, 0, 0);
+	}
+	modelStack.PopMatrix();
+
+	modelStack.PopMatrix(); //Render Maze
 }
 
 void PlanetFour::RenderSkyBox()
