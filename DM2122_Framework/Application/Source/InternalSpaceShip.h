@@ -11,12 +11,6 @@ class InternalShip : public Scene
 {
 	enum GEOMETRY_TYPE
 	{
-		//shapes
-		GEO_AXES,
-		GEO_LIGHTBALL,
-		GEO_LIGHTBALL2,
-		GEO_LIGHTBALL3,
-
 		//skybox
 		GEO_LEFT,
 		GEO_RIGHT,
@@ -30,7 +24,7 @@ class InternalShip : public Scene
 		GEO_CHAIR,
 		GEO_TABLE,
 		GEO_SCREEN,
-
+		GEO_LAMP,
 		GEO_TEXT,
 
 		NUM_GEOMETRY,
@@ -72,18 +66,6 @@ class InternalShip : public Scene
 		U_LIGHT1_COSINNER,
 		U_LIGHT1_EXPONENT,
 
-		U_LIGHT2_POSITION,
-		U_LIGHT2_COLOR,
-		U_LIGHT2_POWER,
-		U_LIGHT2_KC,
-		U_LIGHT2_KL,
-		U_LIGHT2_KQ,
-		U_LIGHT2_TYPE,
-		U_LIGHT2_SPOTDIRECTION,
-		U_LIGHT2_COSCUTOFF,
-		U_LIGHT2_COSINNER,
-		U_LIGHT2_EXPONENT,
-
 		U_NUMLIGHTS,
 		U_COLOR_TEXTURE_ENABLED,
 		U_COLOR_TEXTURE,
@@ -98,8 +80,6 @@ public:
 	InternalShip();
 	~InternalShip();
 
-	float fps;
-
 	//methods
 	virtual void Init();
 	virtual void Update(double dt);
@@ -113,35 +93,9 @@ private:
 	unsigned m_programID;
 	unsigned m_parameters[U_TOTAL];
 
-	float LSPEED;
-	bool Switch;
-	bool Switch_LightBall;
-
-	//ship
-	Vector3 right;
-	Vector3 up;
-	Vector3 forward;
-	Vector3 position;//position of ship
-
-	Mtx44 RotationMartix;//4 x 4 matrix for InternalShipship rotation
-
 	ShipCamera camera;
 	MS modelStack, viewStack, projectionStack;
-	Light light[4];
-
-	//=============================
-	//Character Animation
-	//=============================
-	float Jump_;
-	float Walking_X;
-	float Walking_Z;
-	float Walking_Rotation_Left;
-	float Walking_Rotation_Right;
-	float RotateBody;
-
-	//=============================
-	//Interaction
-	//=============================
+	Light light[2];
 
 	//screen
 	bool Screen = false;
