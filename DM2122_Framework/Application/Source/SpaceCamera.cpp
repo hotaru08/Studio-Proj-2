@@ -113,7 +113,7 @@ void SpaceCamera::CollisionPlanets()
 	ColliMax[1].y = 1000;
 	ColliMax[1].z = 2750;
 
-	ColliMin[1].x = 220;
+	ColliMin[1].x = 2100;
 	ColliMin[1].y = -50;
 	ColliMin[1].z = 1200;
 

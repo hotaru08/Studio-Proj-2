@@ -40,7 +40,7 @@ void InternalShip::Init()
 	m_parameters[U_MATERIAL_SHININESS] = glGetUniformLocation(m_programID, "material.kShininess");
 	m_parameters[U_LIGHTENABLED] = glGetUniformLocation(m_programID, "lightEnabled");
 
-	m_parameters[U_LIGHT0_POSITION] = glGetUniformLocation(m_programID, "lights[0].position_cameraInternalShip");
+	m_parameters[U_LIGHT0_POSITION] = glGetUniformLocation(m_programID, "lights[0].position_cameraspace");
 	m_parameters[U_LIGHT0_COLOR] = glGetUniformLocation(m_programID, "lights[0].color");
 	m_parameters[U_LIGHT0_POWER] = glGetUniformLocation(m_programID, "lights[0].power");
 	m_parameters[U_LIGHT0_KC] = glGetUniformLocation(m_programID, "lights[0].kC");
@@ -53,7 +53,7 @@ void InternalShip::Init()
 	m_parameters[U_LIGHT0_EXPONENT] = glGetUniformLocation(m_programID, "lights[0].exponent");
 	m_parameters[U_NUMLIGHTS] = glGetUniformLocation(m_programID, "numLights");
 
-	m_parameters[U_LIGHT1_POSITION] = glGetUniformLocation(m_programID, "lights[1].position_cameraInternalShip");
+	m_parameters[U_LIGHT1_POSITION] = glGetUniformLocation(m_programID, "lights[1].position_cameraspace");
 	m_parameters[U_LIGHT1_COLOR] = glGetUniformLocation(m_programID, "lights[1].color");
 	m_parameters[U_LIGHT1_POWER] = glGetUniformLocation(m_programID, "lights[1].power");
 	m_parameters[U_LIGHT1_KC] = glGetUniformLocation(m_programID, "lights[1].kC");
@@ -75,9 +75,9 @@ void InternalShip::Init()
 
 	//Sunlight properties
 	light[0].type = Light::LIGHT_POINT;
-	light[0].position.Set(0, 140, 0);
-	light[0].color.Set(1, 1, 1);
-	light[0].power = 0.5;
+	light[0].position.Set(-220, 10, 0);
+	light[0].color.Set(0.686, 0.933, 0.933);
+	light[0].power = 10;
 	light[0].kC = 1.f;
 	light[0].kL = 0.01f;
 	light[0].kQ = 0.001f;
@@ -86,15 +86,15 @@ void InternalShip::Init()
 	light[0].exponent = 3.f;
 	light[0].spotDirection.Set(0.f, 1.f, 0.f);
 
-	//Igloo Light properties
-	light[1].type = Light::LIGHT_POINT;
-	light[1].position.Set(-230, 0, 0);
-	light[1].color.Set(0.686, 0.933, 0.933);
-	light[1].power = 2;
+	//Light properties
+	light[1].type = Light::LIGHT_SPOT;
+	light[1].position.Set(-30, 110, -15);
+	light[1].color.Set(1, 1, 1);
+	light[1].power = 40;
 	light[1].kC = 1.f;
 	light[1].kL = 0.01f;
 	light[1].kQ = 0.001f;
-	light[1].cosCutoff = cos(Math::DegreeToRadian(45));
+	light[1].cosCutoff = cos(Math::DegreeToRadian(60));
 	light[1].cosInner = cos(Math::DegreeToRadian(30));
 	light[1].exponent = 3.f;
 	light[1].spotDirection.Set(0.f, 1.f, 0.f);
@@ -109,7 +109,7 @@ void InternalShip::Init()
 	glUniform1f(m_parameters[U_LIGHT0_COSCUTOFF], light[0].cosCutoff);
 	glUniform1f(m_parameters[U_LIGHT0_COSINNER], light[0].cosInner);
 	glUniform1f(m_parameters[U_LIGHT0_EXPONENT], light[0].exponent);
-	glUniform1i(m_parameters[U_NUMLIGHTS], 3);
+	glUniform1i(m_parameters[U_NUMLIGHTS], 2);
 
 	glUniform1i(m_parameters[U_LIGHT1_TYPE], light[1].type);
 	glUniform3fv(m_parameters[U_LIGHT1_COLOR], 1, &light[1].color.r);
@@ -128,40 +128,40 @@ void InternalShip::Init()
 	glGenVertexArrays(1, &m_vertexArrayID);
 	glBindVertexArray(m_vertexArrayID);
 
-	glEnable(GL_DEPTH_TEST);// Enable depth test
+	glEnable(GL_DEPTH_TEST);// Enable depth test	glEnable(GL_CULL_FACE);// Enable cull test	glPolygonMode(GL_FRONT_AND_BACK, GL_LINE); //wireframe mode	glPolygonMode(GL_FRONT_AND_BACK, GL_FILL); //default fill mode
 	glEnable(GL_BLEND);//Enable blending
 	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 	glfwSetInputMode(m_window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);//Enable cursor
 
 	//camera
 	camera.Init(Vector3(140, 0, 0), Vector3(1, 0, 0), Vector3(0, 1, 0));
-
+	
 	meshList[GEO_TEXT] = MeshBuilder::GenerateText("text", 16, 16);
 	meshList[GEO_TEXT]->textureID = LoadTGA("Image//ExportedFont.tga");
 
 	//Bottom
 	meshList[GEO_BOTTOM] = MeshBuilder::GenerateQuad("bottom", Color(1, 1, 1), 1, 1);
-	meshList[GEO_BOTTOM]->textureID = LoadTGA("Image//ship_intr.tga");
+	meshList[GEO_BOTTOM]->textureID = LoadTGA("Image//ship_intr2.tga");
 
 	//Front skybox
 	meshList[GEO_FRONT] = MeshBuilder::GenerateQuad("front", Color(1, 1, 1), 1, 1);
-	meshList[GEO_FRONT]->textureID = LoadTGA("Image//ship_intr.tga");
+	meshList[GEO_FRONT]->textureID = LoadTGA("Image//ship_intr2.tga");
 
 	//back skybox
 	meshList[GEO_BACK] = MeshBuilder::GenerateQuad("back", Color(1, 1, 1), 1, 1);
-	meshList[GEO_BACK]->textureID = LoadTGA("Image//ship_intr.tga");
+	meshList[GEO_BACK]->textureID = LoadTGA("Image//ship_intr2.tga");
 
 	//Left skybox
 	meshList[GEO_LEFT] = MeshBuilder::GenerateQuad("left", Color(1, 1, 1), 1, 1);
-	meshList[GEO_LEFT]->textureID = LoadTGA("Image//ship_intr.tga");
+	meshList[GEO_LEFT]->textureID = LoadTGA("Image//ship_intr2.tga");
 
 	//Right skybox
 	meshList[GEO_RIGHT] = MeshBuilder::GenerateQuad("right", Color(1, 1, 1), 1, 1);
-	meshList[GEO_RIGHT]->textureID = LoadTGA("Image//ship_intr.tga");
+	meshList[GEO_RIGHT]->textureID = LoadTGA("Image//ship_intr2.tga");
 
 	//top skybox
 	meshList[GEO_TOP] = MeshBuilder::GenerateQuad("top", Color(1, 1, 1), 1, 1);
-	meshList[GEO_TOP]->textureID = LoadTGA("Image//ship_intr.tga");
+	meshList[GEO_TOP]->textureID = LoadTGA("Image//ship_intr2.tga");
 
 	//Control Panel
 	meshList[GEO_PANEL] = MeshBuilder::GenerateOBJ("Panel", "OBJ//Panel.obj");
@@ -186,6 +186,8 @@ void InternalShip::Init()
 	Mtx44 projection;
 	projection.SetToPerspective(45.f, 4.f / 3.f, 0.1f, 11000.0f);
 	projectionStack.LoadMatrix(projection);
+
+	ScreenLight = false;
 }
 
 void InternalShip::Update(double dt)
@@ -199,9 +201,15 @@ void InternalShip::Update(double dt)
 
 	if (camera.position.x > -190 && camera.position.x < -150 &&
 		camera.position.z > -20 && camera.position.z < 20)
+	{
 		Screen = true;
+		ScreenLight = true;
+	}
 	else
+	{
 		Screen = false;
+		ScreenLight = false;
+	}
 
 	camera.Update(dt, (width / 2) - X_Pos, (height / 2) - Y_Pos);
 }
@@ -217,14 +225,30 @@ void InternalShip::Render()
 		camera.target.z, camera.up.x, camera.up.y, camera.up.z);
 	modelStack.LoadIdentity();
 
-	//Passing the position of light 0 to the shader
-	Vector3 lightDir(light[0].position.x, light[0].position.y, light[0].position.z);
-	Position light1Position_cameraspace = viewStack.Top() * light[1].position;
-	glUniform3fv(m_parameters[U_LIGHT0_POSITION], 1, &light1Position_cameraspace.x);
+	if (ScreenLight)
+	{
+		//igloo night and fire light
+		light[0].power = 10.0f;
+		glUniform1f(m_parameters[U_LIGHT0_POWER], light[0].power);
+	}
+	else
+	{
+		//sunlight
+		light[0].power = 0.0f;
+		glUniform1f(m_parameters[U_LIGHT0_POWER], light[0].power);
+	}
 
-	//Passing the position of point light 1 to the shader
-	Position light1Position_cameraspace1 = viewStack.Top() * light[1].position;
-	glUniform3fv(m_parameters[U_LIGHT1_POSITION], 1, &light1Position_cameraspace1.x);
+	//point light
+	Position light0Position_cameraspace = viewStack.Top() * light[0].position;
+	glUniform3fv(m_parameters[U_LIGHT1_POSITION], 1, &light0Position_cameraspace.x);
+
+	//Passing spot light
+	Position light1Position_cameraspace = viewStack.Top() * light[1].position;
+	glUniform3fv(m_parameters[U_LIGHT1_POSITION], 1, &light1Position_cameraspace.x);
+	Vector3 spot1Direction_cameraspace = viewStack.Top() * light[1].spotDirection;
+	glUniform3fv(m_parameters[U_LIGHT1_SPOTDIRECTION], 1, &spot1Direction_cameraspace.x);
+	
+	//skybox
 	RenderSkyBox();
 
 	//control panel
@@ -270,8 +294,8 @@ void InternalShip::Render()
 	modelStack.PopMatrix();
 
 	modelStack.PushMatrix();
-	modelStack.Translate(-60,130,-150);
-	modelStack.Scale(50,50,50);
+	modelStack.Translate(-60, 140, -150);
+	modelStack.Scale(50, 50, 50);
 	RenderMesh(meshList[GEO_LAMP], true);
 	modelStack.PopMatrix();
 
