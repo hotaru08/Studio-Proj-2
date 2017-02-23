@@ -122,6 +122,7 @@ void Application::Run()
 	Scene *scene2 = new Planet1();
 	Scene *scene3 = new PlanetTwo();
 	Scene *scene4 = new InternalShip();
+	Scene *scene5 = new PlanetFour();
 	Scene *scene = scene0;
 	scene->Init();
 
@@ -157,6 +158,12 @@ void Application::Run()
 			scene3->Exit();
 			scene = scene4;
 			scene4->Init();
+		}
+		else if (currSceneID == 5 && scene != scene5)
+		{
+			scene1->Exit();
+			scene = scene5;
+			scene5->Init();
 		}
 
 		scene->Update(m_timer.getElapsedTime());
