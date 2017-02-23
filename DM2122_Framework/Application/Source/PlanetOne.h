@@ -148,6 +148,7 @@ private:
     float shipdown;
     double X_Pos, Y_Pos; //get cursor position
 
+    //Enemy 1-5
     Vector3 Enemy;
     Vector3 Enemy2;
     Vector3 Enemy3;
@@ -155,23 +156,19 @@ private:
     Vector3 Enemy5;
 
     Vector3 Direction;
-    Vector3 BoxMax;
-    Vector3 BoxMin;
-
-    Vector3 BoxMax2;
-    Vector3 BoxMin2;
-
-    Vector3 BoxMax3;
-    Vector3 BoxMin3;
-
-    Vector3 BoxMax4;
-    Vector3 BoxMin4;
-
-    Vector3 BoxMax5;
-    Vector3 BoxMin5;
+    Vector3 BoxMax[5];
+    Vector3 BoxMin[5];
 
     Vector3 BulletMax;
     Vector3 BulletMin;
+
+    Vector3 EnemyPrevPos;
+    Vector3 Enemy2PrevPos;
+    Vector3 Enemy3PrevPos;
+    Vector3 Enemy4PrevPos;
+    Vector3 Enemy5PrevPos;
+
+    bool enemyCollided;
 
     bool travel;
     int count;
@@ -200,6 +197,7 @@ private:
 
     void shooting();
     void RenderAlien();
+    double damage;
 
     void RenderMesh(Mesh *mesh, bool enableLight);
     void RenderSkyBox();
