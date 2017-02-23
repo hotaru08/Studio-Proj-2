@@ -77,7 +77,7 @@ void InternalShip::Init()
 	light[0].type = Light::LIGHT_POINT;
 	light[0].position.Set(-220, 10, 0);
 	light[0].color.Set(0.686, 0.933, 0.933);
-	light[0].power = 10;
+	light[0].power = 5;
 	light[0].kC = 1.f;
 	light[0].kL = 0.01f;
 	light[0].kQ = 0.001f;
@@ -90,7 +90,7 @@ void InternalShip::Init()
 	light[1].type = Light::LIGHT_SPOT;
 	light[1].position.Set(-30, 110, -15);
 	light[1].color.Set(1, 1, 1);
-	light[1].power = 40;
+	light[1].power = 60;
 	light[1].kC = 1.f;
 	light[1].kL = 0.01f;
 	light[1].kQ = 0.001f;
@@ -181,13 +181,18 @@ void InternalShip::Init()
 
 	//lamp
 	meshList[GEO_LAMP] = MeshBuilder::GenerateOBJ("Panel", "OBJ//lamp.obj");
-	meshList[GEO_LAMP]->textureID = LoadTGA("Image//ship_intr.tga");
+	meshList[GEO_LAMP]->textureID = LoadTGA("Image//planet4Outside.tga");
+
+	//Merchant
+	meshList[Merchant] = MeshBuilder::GenerateSphere("merchant", Color(0,0,0), 60,20,1);
+	//meshList[Merchant]->textureID = LoadTGA("Image//ship_intr.tga");
 
 	Mtx44 projection;
 	projection.SetToPerspective(45.f, 4.f / 3.f, 0.1f, 11000.0f);
 	projectionStack.LoadMatrix(projection);
 
 	ScreenLight = false;
+	Enter = false;
 }
 
 void InternalShip::Update(double dt)
@@ -204,11 +209,22 @@ void InternalShip::Update(double dt)
 	{
 		Screen = true;
 		ScreenLight = true;
+
+		if (Application::IsKeyPressed(VK_RETURN))
+		{
+			Enter = true;
+		}
 	}
 	else
 	{
 		Screen = false;
 		ScreenLight = false;
+		Enter = false;
+	}
+
+	if (Enter)
+	{
+		Application::SetScene(1);
 	}
 
 	camera.Update(dt, (width / 2) - X_Pos, (height / 2) - Y_Pos);
@@ -301,7 +317,7 @@ void InternalShip::Render()
 
 	modelStack.PopMatrix();
 
-	if (Screen == true)
+	if (Screen)
 	{
 		modelStack.PushMatrix();
 		modelStack.Translate(-240, 60, 0);
@@ -310,6 +326,13 @@ void InternalShip::Render()
 		RenderMesh(meshList[GEO_SCREEN], false);
 		modelStack.PopMatrix();
 	}
+
+	//Merchant
+	modelStack.PushMatrix();
+	modelStack.Translate(200, 0, -50);
+	modelStack.Scale(15, 15, 15);
+	RenderMesh(meshList[Merchant], true);
+	modelStack.PopMatrix();
 }
 
 void InternalShip::RenderSkyBox()

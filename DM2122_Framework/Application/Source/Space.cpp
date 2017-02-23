@@ -94,7 +94,7 @@ void Space::Init()
 	glBindVertexArray(m_vertexArrayID);
 
 	glEnable(GL_DEPTH_TEST);// Enable depth test
-	//glEnable(GL_CULL_FACE);// Enable cull test
+	glDisable(GL_CULL_FACE);// Enable cull test
 	glPolygonMode(GL_FRONT_AND_BACK, GL_LINE); //wireframe mode
 	glPolygonMode(GL_FRONT_AND_BACK, GL_FILL); //default fill mode
 	glEnable(GL_BLEND);//Enable blending
@@ -184,7 +184,7 @@ void Space::Init()
 	//initialising
 	right = (camera.view.Cross(camera.up).Normalized());
 	up = (camera.right.Cross(camera.view).Normalized());
-	forward = camera.target - camera.position;
+	forward = camera.up.Cross(camera.right).Normalized();
 }
 
 void Space::Update(double dt)
@@ -212,21 +212,6 @@ void Space::Update(double dt)
 	if (Application::IsKeyPressed('4'))
 	{
 		glPolygonMode(GL_FRONT_AND_BACK, GL_LINE); //wireframe mode
-	}
-
-	//========================================
-	//Lights
-	//========================================
-	if (Application::IsKeyPressed('B'))
-	{
-		Switch = true;
-		Switch_LightBall = false;
-	}
-
-	if (Application::IsKeyPressed('V'))
-	{
-		Switch = false;
-		Switch_LightBall = true;
 	}
 
 	//=======================================
@@ -585,7 +570,7 @@ void Space::RenderMesh(Mesh *mesh, bool enableLight)
 	glUniformMatrix4fv(m_parameters[U_MVP], 1, GL_FALSE, &MVP.a[0]);
 	modelView = viewStack.Top() * modelStack.Top();
 	glUniformMatrix4fv(m_parameters[U_MODELVIEW], 1, GL_FALSE, &modelView.a[0]);
-	if (enableLight && Switch)
+	if (enableLight)
 	{
 		glUniform1i(m_parameters[U_LIGHTENABLED], 1);
 		modelView_inverse_transpose = modelView.GetInverse().GetTranspose();

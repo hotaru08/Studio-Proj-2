@@ -26,12 +26,8 @@ class InternalShip : public Scene
 		GEO_SCREEN,
 		GEO_LAMP,
 		GEO_TEXT,
+		Merchant,
 
-
-		GEO_AXES,
-		GEO_LIGHTBALL,
-		GEO_LIGHTBALL2,
-		GEO_LIGHTBALL3,
 
 		NUM_GEOMETRY,
 	};
@@ -106,6 +102,7 @@ private:
 	//screen
 	bool Screen = false;
 	bool ScreenLight;
+	bool Enter;
 
 	void RenderMesh(Mesh *mesh, bool enableLight);
 	void RenderSkyBox();
