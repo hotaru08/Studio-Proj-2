@@ -1,5 +1,6 @@
 #ifndef SCENEMANAGER_H
 #define SCENEMANAGER_H
+
 #include "Application.h"
 #include "Scene.h"
 #include "Space.h"
