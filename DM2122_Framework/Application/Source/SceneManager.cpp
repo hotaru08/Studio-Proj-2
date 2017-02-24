@@ -9,6 +9,7 @@ SceneManager::SceneManager()
 SceneManager::~SceneManager()
 {
 	//delete vector
+	delete &storeScene;
 }
 
 void SceneManager::SetNextScene(int SceneID)
@@ -22,17 +23,17 @@ void SceneManager::SetNextScene(int SceneID)
 
 void SceneManager::AddScene(Scene *scene)
 {
-	//name.push_back(*scene)
+	storeScene.push_back(scene);
 }
 
 void SceneManager::Update()
 {
-	/*scene->Update(m_timer.getElapsedTime());
+	//storeScene->Update(m_timer.getElapsedTime());
 
-	//loading scene add if (if curr and next if diff then load loading)
-	glfwSwapBuffers(m_window);
+	////loading scene add if (if curr and next if diff then load loading)
+	//glfwSwapBuffers(m_window);
 
-	//set next scene 
+	////set next scene 
 
-	scene->Render();*/
+	//scene->Render();
 }

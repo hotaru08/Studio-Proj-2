@@ -9,11 +9,13 @@
 #include "PlanetThree.h"
 #include "PlanetFour.h"
 #include "InternalSpaceShip.h"
-#include "StudioProj.h"
+#include <vector>
+
+using std::vector;
 
 class SceneManager
 {
-	int storeScenes[10];//store scenes into array
+	vector<Scene*> storeScene;//store scenes into array
 	int currSceneID;
 	int nextSceneID;
 
