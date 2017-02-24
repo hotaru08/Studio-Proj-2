@@ -254,8 +254,21 @@ void PlanetTwo::Init()
 	meshList[GROUND] = MeshBuilder::GenerateOBJ("ground", "OBJ//Land_Mesh.obj");
 	meshList[GROUND]->textureID = LoadTGA("Image//Planet2//bottom.tga");
 
-	//screen
-	meshList[GEO_SCREEN] = MeshBuilder::GenerateQuad("front", Color(1, 1, 1), 1, 1);
+	//mineral on screen (blue)
+	meshList[GEO_MINERALBOX] = MeshBuilder::GenerateQuad("test", Color(1, 1, 1), 1, 1);
+	meshList[GEO_MINERALBOX]->textureID = LoadTGA("Image//MineralOnScreen//mineralBlue.tga");
+
+	//mineral on screen (yellow)
+	meshList[GEO_MINERAL2BOX] = MeshBuilder::GenerateQuad("test1", Color(1, 0, 0), 1, 1);
+	meshList[GEO_MINERAL2BOX]->textureID = LoadTGA("Image//MineralOnScreen//mineralYellow.tga");
+
+	//mineral on screen (purple)
+	meshList[GEO_MINERAL3BOX] = MeshBuilder::GenerateQuad("test2", Color(1, 0, 1), 1, 1);
+	meshList[GEO_MINERAL3BOX]->textureID = LoadTGA("Image//MineralOnScreen//mineralPurple.tga");
+
+	//inventory
+	meshList[INVENTORY] = MeshBuilder::GenerateQuad("inventory", Color(1, 1, 1), 1, 1);
+	meshList[INVENTORY]->textureID = LoadTGA("Image//inventoryBox.tga");
 
 	Mtx44 projection;
 	projection.SetToPerspective(45.f, 4.f / 3.f, 0.1f, 7000.0f);
@@ -288,6 +301,9 @@ void PlanetTwo::Init()
 	delaypressE = 0;
 	damage = false;
 	mTime = 0;
+	Common = "";
+	Rare = "";
+	Epic = "";
 
 	//=================== RANDOM MINERAL SPAWN =====================//
 	for (int a = 0; a < 100; a++)
@@ -295,7 +311,7 @@ void PlanetTwo::Init()
 		mineralX[a] = rand() % 1001 + (-500);
 	}
 
-	
+
 	for (int a = 0; a < 100; a++)
 	{
 		mineralZ[a] = rand() % 1001 + (-500);
@@ -357,6 +373,8 @@ void PlanetTwo::Update(double dt)
 	int width, height; //get window size
 
 	healthLeft = health.getCurrentHealth();
+
+
 	g_dElapsedTime += dt; //meteor
 	g_dElapsedTime2 += dt; // healthpack
 	delaypressE += dt;
@@ -408,7 +426,7 @@ void PlanetTwo::Update(double dt)
 		//std::cout << g_dElapsedTime << std::endl;
 		if (g_dElapsedTime > 10)
 		{
-			
+
 			translateMeteor = 0;
 			g_dElapsedTime = 0;
 			shake = false;
@@ -472,7 +490,7 @@ void PlanetTwo::Update(double dt)
 		healthLeft = 100;
 		Application::SetScene(1);
 	}
-	
+
 	//===========================================================================//
 
 	//============================HEALTH PACK====================================//
@@ -505,21 +523,21 @@ void PlanetTwo::Update(double dt)
 			int min = -30;
 			int max = 30;
 			if ((camera.position.x + min <= mineralX[c] + max && camera.position.x + max >= mineralX[c] + min) &&
-			   (camera.position.z + min <= mineralZ[c] + max && camera.position.z + max >= mineralZ[c] + min))
+				(camera.position.z + min <= mineralZ[c] + max && camera.position.z + max >= mineralZ[c] + min))
 			{
 				if (mineralcolour[c] != 0)
 				{
 					if (mineralcolour[c] == 1)
 					{
-						inven.addCommon();
+						inven.assignItem(1);//ID is 1
 					}
 					if (mineralcolour[c] == 2)
 					{
-						inven.addRare();
+						inven.assignItem(2);//ID is 2
 					}
 					if (mineralcolour[c] == 3)
 					{
-						inven.addEpic();
+						inven.assignItem(3);//ID is 3
 					}
 					mineralcolour[c] = 0;
 					g_dElapsedTimeMineral[c] = 0;
@@ -600,7 +618,7 @@ void PlanetTwo::Update(double dt)
 	{
 		checkCollide = true;
 	}
-	
+
 	fps = 1 / dt;
 
 	camera.Update(dt, (width / 2) - X_Pos, (height / 2) - Y_Pos);
@@ -648,7 +666,7 @@ void PlanetTwo::Render()
 
 	//meteor
 	modelStack.PushMatrix();
-	modelStack.Translate(meteorX, 6000 + translateMeteor , meteorZ);
+	modelStack.Translate(meteorX, 6000 + translateMeteor, meteorZ);
 	modelStack.Scale(100, 100, 100);
 	RenderMesh(meshList[GEO_METEOR], false);
 	modelStack.PopMatrix();
@@ -681,25 +699,25 @@ void PlanetTwo::Render()
 	//tree
 	for (int i = 0; i < 10; i++)
 	{
-			modelStack.PushMatrix();
-			modelStack.Translate(treeX[i], -40, treeY[i]);
-			modelStack.Scale(20, 20, 20);
-			modelStack.Rotate(randomrotate2[i], 0, 1, 0);
-			if (treecolour[i] == 0)
-			{
-				RenderMesh(meshList[GEO_TREE], true);
-			}
-			if (treecolour[i] == 1)
-			{
-				RenderMesh(meshList[GEO_TREE2], true);
-			}
-			if (treecolour[i] == 2)
-			{
-				RenderMesh(meshList[GEO_TREE3], true);
-			}
-			modelStack.PopMatrix();
+		modelStack.PushMatrix();
+		modelStack.Translate(treeX[i], -40, treeY[i]);
+		modelStack.Scale(20, 20, 20);
+		modelStack.Rotate(randomrotate2[i], 0, 1, 0);
+		if (treecolour[i] == 0)
+		{
+			RenderMesh(meshList[GEO_TREE], true);
+		}
+		if (treecolour[i] == 1)
+		{
+			RenderMesh(meshList[GEO_TREE2], true);
+		}
+		if (treecolour[i] == 2)
+		{
+			RenderMesh(meshList[GEO_TREE3], true);
+		}
+		modelStack.PopMatrix();
 	}
-	
+
 
 	//mountaindew
 	modelStack.PushMatrix();
@@ -719,25 +737,48 @@ void PlanetTwo::Render()
 		modelStack.PopMatrix();
 	}
 
-	modelStack.PopMatrix();
+	modelStack.PopMatrix();//earthquake
 
-	//Test mesh on screen
-	RenderMeshOnScreen(meshList[GEO_SCREEN], 40, 0, 80, 30);
+	for (int width = 0; width < 10; width++)
+	{
+		RenderMeshOnScreen(meshList[INVENTORY], 8.5 + width * 7, 5, 7.5, 7.5);
+
+		if (inven.storage[0][width] != 0)
+		{
+			if (inven.storage[0][width] == 1)//check for common
+			{
+				RenderMeshOnScreen(meshList[GEO_MINERALBOX], 8.5 + width * 7, 5, 5, 5);
+			}
+			else if (inven.storage[0][width] == 2)//check for rare
+			{
+				RenderMeshOnScreen(meshList[GEO_MINERAL2BOX], 8.5 + width * 7, 5, 5, 5);
+			}
+			else if (inven.storage[0][width] == 3)//check for rare
+			{
+				RenderMeshOnScreen(meshList[GEO_MINERAL3BOX], 8.5 + width * 7, 5, 5, 5);
+			}
+		}
+
+		if (inven.storage[1][width] != 0)
+		{
+
+			Common = std::to_string((int)inven.storage[1][width]);
+			Rare = std::to_string((int)inven.storage[1][width]);
+			Epic = std::to_string((int)inven.storage[1][width]);
+
+			RenderTextOnScreen(meshList[GEO_TEXT], Common, Color(0, 1, 0), 2, 4.5 + width * 3.5, 1);
+			RenderTextOnScreen(meshList[GEO_TEXT], Rare, Color(0, 1, 0), 2, 4.5 + width * 3.5, 1);
+			RenderTextOnScreen(meshList[GEO_TEXT], Epic, Color(0, 1, 0), 2, 4.5 + width * 3.5, 1);
+		}
+	}
+
 
 	//=================================
 	//Text on the screen
 	//=================================
 	modelStack.PushMatrix();
-	string frames = "FPS: " + std::to_string(fps);
-	string x = "x: " + std::to_string((int)camera.position.x);
-	string y = "y: " + std::to_string((int)camera.position.y);
-	string z = "z: " + std::to_string((int)camera.position.z);
 	string health = "Health: " + std::to_string((int)healthLeft);
-	RenderTextOnScreen(meshList[GEO_TEXT], frames, Color(0, 1, 0), 2, 0, 29);
-	RenderTextOnScreen(meshList[GEO_TEXT], x, Color(0, 1, 0), 2, 0, 4);
-	RenderTextOnScreen(meshList[GEO_TEXT], y, Color(0, 1, 0), 2, 0, 3);
-	RenderTextOnScreen(meshList[GEO_TEXT], z, Color(0, 1, 0), 2, 0, 2);
-	RenderTextOnScreen(meshList[GEO_TEXT], health, Color(0, 1, 0), 2, 0, 1);
+	RenderTextOnScreen(meshList[GEO_TEXT], health, Color(0, 1, 0), 2, 0, 6);
 }
 
 void PlanetTwo::RenderSkyBox()
@@ -848,7 +889,7 @@ void PlanetTwo::RenderTextOnScreen(Mesh* mesh, std::string text, Color color, fl
 	for (unsigned i = 0; i < text.length(); ++i)
 	{
 		Mtx44 characterSpacing;
-		characterSpacing.SetToTranslation(i * 1.0f, 0, 0); //1.0f is the spacing of each character, you may change this value
+		characterSpacing.SetToTranslation(i * 0.6f, 0, 0); //1.0f is the spacing of each character, you may change this value
 		Mtx44 MVP = projectionStack.Top() * viewStack.Top() * modelStack.Top() * characterSpacing;
 		glUniformMatrix4fv(m_parameters[U_MVP], 1, GL_FALSE, &MVP.a[0]);
 

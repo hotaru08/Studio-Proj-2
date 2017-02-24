@@ -39,7 +39,10 @@ class PlanetTwo : public Scene
 		GEO_MINERAL2,
 		GEO_MINERAL3,
 
-		GEO_SCREEN,
+		GEO_MINERALBOX,
+		GEO_MINERAL2BOX,
+		GEO_MINERAL3BOX,
+		INVENTORY,
 		GEO_TEXT,
 		GROUND,
 
@@ -154,6 +157,9 @@ private:
 	double  delaypressE;
 	bool damage;
 	double mTime;
+	string Common;
+	string Rare;
+	string Epic;
 
 
 	Camera3 camera;

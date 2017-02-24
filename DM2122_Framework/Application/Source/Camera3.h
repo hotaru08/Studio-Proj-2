@@ -26,7 +26,7 @@ public:
 	//================================
 	//bounds
 	//================================
-	float SizeOfScene = 1000.0f;
+	float SizeOfScene = 750.0f;
 
 	Camera3();
 	~Camera3();
