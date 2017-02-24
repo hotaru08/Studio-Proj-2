@@ -172,7 +172,7 @@ void PlanetFour::Init()
 	glfwSetInputMode(m_window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);//Enable cursor
 
 	//camera
-	camera.Init(Vector3(0, 0, -200), Vector3(1, 0, 0), Vector3(0, 1, 0));
+	camera.Init(Vector3(560, 0, 560), Vector3(1, 0, 0), Vector3(0, 1, 0));
 
 	//axis 
 	meshList[GEO_AXES] = MeshBuilder::GenerateAxes("reference", 1000, 1000, 1000);
@@ -325,6 +325,9 @@ void PlanetFour::Render()
 	Position light1Position_cameraspace = viewStack.Top() * light[1].position;
 	glUniform3fv(m_parameters[U_LIGHT1_POSITION], 1, &light1Position_cameraspace.x);
 
+	modelStack.PushMatrix();
+	modelStack.Translate(-10, 0, -10);
+
 	//axes
 	RenderMesh(meshList[GEO_AXES], false);
 
@@ -336,6 +339,8 @@ void PlanetFour::Render()
 	modelStack.PopMatrix();
 
 	RenderMaze();
+
+	modelStack.PopMatrix();
 
 	//Test mesh on screen
 	RenderMeshOnScreen(meshList[GEO_SCREEN], 40, 0, 80, 30);

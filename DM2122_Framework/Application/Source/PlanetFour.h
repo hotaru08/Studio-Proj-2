@@ -2,7 +2,7 @@
 #define PlanetFour_H
 
 #include "Scene.h"
-#include "Camera3.h"
+#include "MazeCamera.h"
 #include "Mesh.h"
 #include "MatrixStack.h"
 #include "Light.h"
@@ -123,7 +123,7 @@ private:
 	bool Switch;
 	bool Switch_LightBall;
 
-	Camera3 camera;
+	MazeCamera camera;
 	MS modelStack, viewStack, projectionStack;
 	Light light[4];
 
