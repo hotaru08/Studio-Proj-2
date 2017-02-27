@@ -455,18 +455,19 @@ void Planet1::AlienOne()
     BoxMax[0] += Enemy;
     BoxMin[0] += Enemy;
 
-    if (alienhealth[0] > 0)
-    {
-        if (Enemy.x + 10 >= camera.position.x + 50 || Enemy.z + 10 >= camera.position.z + 50 || Enemy.x - 10 <= camera.position.x - 50 || Enemy.z - 10 <= camera.position.z - 50)
-        {
-            EnemyPrevPos.x = Enemy.x;
-            EnemyPrevPos.y = Enemy.y;
-            EnemyPrevPos.z = Enemy.z;
-        }
 
-        else
+    if (Enemy.x + 10 >= camera.position.x + 50 || Enemy.z + 10 >= camera.position.z + 50 || Enemy.x - 10 <= camera.position.x - 50 || Enemy.z - 10 <= camera.position.z - 50)
+    {
+        EnemyPrevPos.x = Enemy.x;
+        EnemyPrevPos.y = Enemy.y;
+        EnemyPrevPos.z = Enemy.z;
+    }
+
+    else
+    {
+        Enemy = EnemyPrevPos;
+        if (alienhealth[0] > 0)
         {
-            Enemy = EnemyPrevPos;
             if (damage > 0.5)
             {
                 H->HealthDamageReceive(5);
@@ -474,6 +475,7 @@ void Planet1::AlienOne()
             }
         }
     }
+
 }
 
 void Planet1::AlienTwo()
@@ -497,16 +499,17 @@ void Planet1::AlienTwo()
     BoxMax[1] += Enemy2;
     BoxMin[1] += Enemy2;
 
-    if (alienhealth > 0)
-    {
-        if (Enemy2.x + 10 >= camera.position.x + 50 || Enemy2.z + 10 >= camera.position.z + 50 || Enemy2.x - 10 <= camera.position.x - 50 || Enemy2.z - 10 <= camera.position.z - 50)
-        {
-            Enemy2PrevPos.x = Enemy2.x;
-            Enemy2PrevPos.y = Enemy2.y;
-            Enemy2PrevPos.z = Enemy2.z;
-        }
 
-        else
+    if (Enemy2.x + 10 >= camera.position.x + 50 || Enemy2.z + 10 >= camera.position.z + 50 || Enemy2.x - 10 <= camera.position.x - 50 || Enemy2.z - 10 <= camera.position.z - 50)
+    {
+        Enemy2PrevPos.x = Enemy2.x;
+        Enemy2PrevPos.y = Enemy2.y;
+        Enemy2PrevPos.z = Enemy2.z;
+    }
+
+    else
+    {
+        if (alienhealth > 0)
         {
             Enemy2 = Enemy2PrevPos;
             if (damage > 0.5)
@@ -539,16 +542,17 @@ void Planet1::AlienThree()
     BoxMax[2] += Enemy3;
     BoxMin[2] += Enemy3;
 
-    if (alienhealth[2] > 0)
-    {
-        if (Enemy3.x + 10 >= camera.position.x + 50 || Enemy3.z + 10 >= camera.position.z + 50 || Enemy3.x - 10 <= camera.position.x - 50 || Enemy3.z - 10 <= camera.position.z - 50)
-        {
-            Enemy3PrevPos.x = Enemy3.x;
-            Enemy3PrevPos.y = Enemy3.y;
-            Enemy3PrevPos.z = Enemy3.z;
-        }
 
-        else
+    if (Enemy3.x + 10 >= camera.position.x + 50 || Enemy3.z + 10 >= camera.position.z + 50 || Enemy3.x - 10 <= camera.position.x - 50 || Enemy3.z - 10 <= camera.position.z - 50)
+    {
+        Enemy3PrevPos.x = Enemy3.x;
+        Enemy3PrevPos.y = Enemy3.y;
+        Enemy3PrevPos.z = Enemy3.z;
+    }
+
+    else
+    {
+        if (alienhealth[2] > 0)
         {
             Enemy3 = Enemy3PrevPos;
             if (damage > 0.5)
@@ -581,16 +585,17 @@ void Planet1::AlienFour()
     BoxMax[3] += Enemy4;
     BoxMin[3] += Enemy4;
 
-    if (alienhealth[3] > 0)
-    {
-        if (Enemy4.x + 10 >= camera.position.x + 50 || Enemy4.z + 10 >= camera.position.z + 50 || Enemy4.x - 10 <= camera.position.x - 50 || Enemy4.z - 10 <= camera.position.z - 50)
-        {
-            Enemy4PrevPos.x = Enemy4.x;
-            Enemy4PrevPos.y = Enemy4.y;
-            Enemy4PrevPos.z = Enemy4.z;
-        }
 
-        else
+    if (Enemy4.x + 10 >= camera.position.x + 50 || Enemy4.z + 10 >= camera.position.z + 50 || Enemy4.x - 10 <= camera.position.x - 50 || Enemy4.z - 10 <= camera.position.z - 50)
+    {
+        Enemy4PrevPos.x = Enemy4.x;
+        Enemy4PrevPos.y = Enemy4.y;
+        Enemy4PrevPos.z = Enemy4.z;
+    }
+
+    else
+    {
+        if (alienhealth[3] > 0)
         {
             Enemy4 = Enemy4PrevPos;
             if (damage > 0.5)
@@ -623,16 +628,17 @@ void Planet1::AlienFive()
     BoxMax[4] += Enemy5;
     BoxMin[4] += Enemy5;
 
-    if (alienhealth[4] > 0)
-    {
-        if (Enemy5.x + 10 >= camera.position.x + 50 || Enemy5.z + 10 >= camera.position.z + 50 || Enemy5.x - 10 <= camera.position.x - 50 || Enemy5.z - 10 <= camera.position.z - 50)
-        {
-            Enemy5PrevPos.x = Enemy5.x;
-            Enemy5PrevPos.y = Enemy5.y;
-            Enemy5PrevPos.z = Enemy5.z;
-        }
 
-        else
+    if (Enemy5.x + 10 >= camera.position.x + 50 || Enemy5.z + 10 >= camera.position.z + 50 || Enemy5.x - 10 <= camera.position.x - 50 || Enemy5.z - 10 <= camera.position.z - 50)
+    {
+        Enemy5PrevPos.x = Enemy5.x;
+        Enemy5PrevPos.y = Enemy5.y;
+        Enemy5PrevPos.z = Enemy5.z;
+    }
+
+    else
+    {
+        if (alienhealth[4] > 0)
         {
             Enemy5 = Enemy5PrevPos;
             if (damage > 0.5)
