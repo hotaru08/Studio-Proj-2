@@ -151,6 +151,7 @@ private:
     float shipdown;
     double X_Pos, Y_Pos; //get cursor position
     double bulletTime;
+    double hangtime;
     vector<int> ammo;
 
     //Enemy 1-5
