@@ -455,27 +455,28 @@ void Planet1::AlienOne()
     BoxMax[0] += Enemy;
     BoxMin[0] += Enemy;
 
-
-    if (Enemy.x + 10 >= camera.position.x + 50 || Enemy.z + 10 >= camera.position.z + 50 || Enemy.x - 10 <= camera.position.x - 50 || Enemy.z - 10 <= camera.position.z - 50)
+    if (alienhealth[0] > 0)
     {
-        EnemyPrevPos.x = Enemy.x;
-        EnemyPrevPos.y = Enemy.y;
-        EnemyPrevPos.z = Enemy.z;
-    }
-
-    else
-    {
-        Enemy = EnemyPrevPos;
-        if (alienhealth[0] > 0)
+        if (Enemy.x + 10 >= camera.position.x + 50 || Enemy.z + 10 >= camera.position.z + 50 || Enemy.x - 10 <= camera.position.x - 50 || Enemy.z - 10 <= camera.position.z - 50)
         {
-            if (damage > 0.5)
+            EnemyPrevPos.x = Enemy.x;
+            EnemyPrevPos.y = Enemy.y;
+            EnemyPrevPos.z = Enemy.z;
+        }
+
+        else
+        {
+            Enemy = EnemyPrevPos;
+            if (alienhealth[0] > 0)
             {
-                H->HealthDamageReceive(5);
-                damage = 0;
+                if (damage > 0.5)
+                {
+                    H->HealthDamageReceive(5);
+                    damage = 0;
+                }
             }
         }
     }
-
 }
 
 void Planet1::AlienTwo()
@@ -509,7 +510,7 @@ void Planet1::AlienTwo()
 
     else
     {
-        if (alienhealth > 0)
+        if (alienhealth[1] > 0)
         {
             Enemy2 = Enemy2PrevPos;
             if (damage > 0.5)
