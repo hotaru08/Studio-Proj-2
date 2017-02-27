@@ -307,8 +307,12 @@ void Planet1::Update(double dt)
     //----------------//
     for (int i = 0; i < 5; i++)
     {
-        BoxMax[i] = (20, 20, 20);
-        BoxMin[i] = (-20, -20, -20);
+        BoxMax[i].x = 20;
+        BoxMax[i].y = 20;
+        BoxMax[i].z = 20;
+        BoxMin[i].x = -20;
+        BoxMin[i].y = -20;
+        BoxMin[i].z = -20;
     }
 
     //gun movement
@@ -412,20 +416,20 @@ void Planet1::Update(double dt)
     	Application::SetScene(1);
     }
 
-    std::cout << "BoxMax: " << BoxMax[0] << std::endl;
-    std::cout << "BoxMin: " << BoxMin[0] << std::endl;
+    std::cout << "BoxMax: " << BoxMax[0].x << " : " << BoxMax[0].z << std::endl;
+    std::cout << "BoxMin: " << BoxMin[0].x << " : " << BoxMin[0].z << std::endl;
 
-    //for (int i = 0; i < 5; i++)
-    //{
+    for (int i = 0; i < 5; i++)
+    {
         for (auto &j : allBullet)
         {
             //std::cout << "BulletPos: " << j->BulletTarget << std::endl;
 
             //std::cout << std::endl;
 
-            if (j->BulletTarget.x <= BoxMax[0].x && j->BulletTarget.x >= BoxMin[0].x &&
-               /* j->BulletPosition.y <= BoxMax[i].y && j->BulletPosition.y >= BoxMin[i].y &&*/
-               j->BulletTarget.z <= BoxMax[0].z && j->BulletTarget.z >= BoxMin[0].z)
+            if (j->BulletTarget.x <= BoxMax[i].x && j->BulletTarget.x >= BoxMin[i].x &&
+                j->BulletPosition.y <= BoxMax[i].y && j->BulletPosition.y >= BoxMin[i].y &&
+               j->BulletTarget.z <= BoxMax[i].z && j->BulletTarget.z >= BoxMin[i].z)
             {
                 alienhealth[0] -= 10;
                 //std::cout << "I AM ACTIVATED." << std::endl;
@@ -433,7 +437,7 @@ void Planet1::Update(double dt)
             }
                 
         }
-    //}
+    }
     camera.Update(dt, (width / 2) - X_Pos, (height / 2) - Y_Pos);
 }
 
