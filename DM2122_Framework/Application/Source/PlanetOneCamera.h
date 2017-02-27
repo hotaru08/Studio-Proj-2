@@ -25,6 +25,9 @@ public:
 
     static int const SizeofLand = 2000;
 
+    Vector3 EnemyBoxMax[5];
+    Vector3 EnemyBoxMin[5];
+
     PlanetOneCamera();
     ~PlanetOneCamera();
     virtual void Init(const Vector3& pos, const Vector3& target, const Vector3& up);
@@ -32,7 +35,7 @@ public:
     virtual void Reset();
     void bounds();
     void Update(double dt, double x, double y); //for mouse detection
-    void collsion();
+    void collsion(Vector3 enBoxMax[], Vector3 enBoxMin[]);
 };
 
 #endif

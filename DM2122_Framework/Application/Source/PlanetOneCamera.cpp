@@ -254,9 +254,23 @@ void PlanetOneCamera::bounds()
     {
         position.z = -SizeofLand;
     }
+
+    /*for (int i = 0; i < 5; i++)
+    {
+        if (position.x <= EnemyBoxMax[i].x && position.z <= EnemyBoxMax[i].z &&
+            position.x >= EnemyBoxMin[i].x && position.z >= EnemyBoxMin[i].z)
+        {
+            position = PrevPos;
+        }
+    }
+    PrevPos = position;*/
 }
 
-void PlanetOneCamera::collsion()
+void PlanetOneCamera::collsion(Vector3 enBoxMax[], Vector3 enBoxMin[])
 {
-   
+    for (int i = 0; i < 5; i++)
+    {
+        EnemyBoxMax[i] = enBoxMax[i];
+        EnemyBoxMin[i] = enBoxMin[i];
+    }
 }

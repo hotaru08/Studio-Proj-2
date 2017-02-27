@@ -8,6 +8,7 @@
 #include "Light.h"
 #include <vector>
 #include "Health.h"
+#include "Bullet.h"
 
 using std::vector;
 
@@ -132,6 +133,8 @@ private:
     float changeD;
 
     PlanetOneCamera camera;
+    std::vector<Bullet*> allBullet;
+
     MS modelStack, viewStack, projectionStack;
     Light light[4];
 
@@ -147,6 +150,8 @@ private:
     float flagdown;
     float shipdown;
     double X_Pos, Y_Pos; //get cursor position
+    double bulletTime;
+    vector<int> ammo;
 
     //Enemy 1-5
     Vector3 Enemy;
@@ -168,15 +173,13 @@ private:
     Vector3 Enemy4PrevPos;
     Vector3 Enemy5PrevPos;
 
+    float enemyrotate;
+
     bool enemyCollided;
 
     bool travel;
     int count;
-    int alienhealth;
-    int alienhealth2;
-    int alienhealth3;
-    int alienhealth4;
-    int alienhealth5;
+    int alienhealth[5];
     bool hit;
     bool flagcapture;
 
@@ -196,8 +199,13 @@ private:
     int healthleft;
 
     void shooting();
+    //void Bullet();
     void RenderAlien();
     double damage;
+
+    Vector3 BulletPosition;
+    Vector3 BulletView;
+    Vector3 BulletTarget;
 
     void RenderMesh(Mesh *mesh, bool enableLight);
     void RenderSkyBox();
