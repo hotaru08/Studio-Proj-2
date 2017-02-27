@@ -2,7 +2,7 @@
 #include <iostream>
 using namespace std;
 
-Bullet::Bullet(Vector3 pos, Vector3 target, double time) : BulletPosition(pos), BulletTarget(target), bulletTime(time)
+Bullet::Bullet(Vector3 pos, Vector3 target, Vector3 view, double time) : BulletPosition(pos), BulletTarget(target), BulletView(view), bulletTime(time)
 {
 
 }
@@ -18,7 +18,8 @@ void Bullet::Shooting()
     float bulletspeed = 100;
 
     bulletspeed *= 3;
-    BulletPosition += BulletTarget * bulletTime * 1;
-    BulletTarget = BulletPosition + BulletTarget;
+    BulletPosition += BulletView * bulletTime * 500;
+    BulletTarget = BulletPosition + BulletView;
+    //target = position + view
 
 }

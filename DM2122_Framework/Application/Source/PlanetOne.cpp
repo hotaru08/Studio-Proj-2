@@ -307,8 +307,8 @@ void Planet1::Update(double dt)
     //----------------//
     for (int i = 0; i < 5; i++)
     {
-        BoxMax[i] = (200, 200, 200);
-        BoxMin[i] = (-200, -200, -200);
+        BoxMax[i] = (20, 20, 20);
+        BoxMin[i] = (-20, -20, -20);
     }
 
     //gun movement
@@ -336,13 +336,13 @@ void Planet1::Update(double dt)
     AlienThree();
     AlienFour();
     AlienFive();
-    camera.collsion(&BoxMax[5], &BoxMin[5]);
+    //camera.collsion(&BoxMax[5], &BoxMin[5]);
     Vector3 Store = camera.up.Cross(camera.right);
     Store.Normalized();
     
     if (Application::IsKeyPressed(VK_LBUTTON))
     {
-        Bullet* temp = new Bullet(camera.position, (camera.position + Store), bulletTime); // target prob
+        Bullet* temp = new Bullet(camera.position, camera.target, camera.view, bulletTime);
         allBullet.push_back(temp);
     }
     else
@@ -411,144 +411,31 @@ void Planet1::Update(double dt)
     {
     	Application::SetScene(1);
     }
-    //std::cout << "BULLET: " << BulletMax.x << " " << BulletMax.z << std::endl;
-    //std::cout << "BOX: " << BoxMax[0].x << " " << BoxMax[0].z << std::endl;
-    //std::cout << std::endl;
+
+    std::cout << "BoxMax: " << BoxMax[0] << std::endl;
+    std::cout << "BoxMin: " << BoxMin[0] << std::endl;
 
     //for (int i = 0; i < 5; i++)
     //{
-        //std::cout << "I AM TESTED." << std::endl;
+        for (auto &j : allBullet)
+        {
+            //std::cout << "BulletPos: " << j->BulletTarget << std::endl;
 
-    //std::cout << "camera x: " << camera.position.x << std::endl;
-    //std::cout << "camera y: " << camera.position.y << std::endl;
-    //std::cout << "camera z: " << camera.position.z << std::endl;
-    //std::cout << std::endl;
+            //std::cout << std::endl;
 
-    //std::cout << "x: " << BulletPosition.x << std::endl;
-    //std::cout << "y: " << BulletPosition.y << std::endl;
-    //std::cout << "z: " << BulletPosition.z << std::endl;
-    //std::cout << std::endl;
-    //std::cout << "Enemy x: " << BoxMax[0].x << " : " << BoxMin[0].x << std::endl;
-    //std::cout << "Enemy y: " << BoxMax[0].y << " : " << BoxMin[0].y << std::endl;
-    //std::cout << "Enemy z: " << BoxMax[0].z << " : " << BoxMin[0].z << std::endl;
-    //std::cout << std::endl;
+            if (j->BulletTarget.x <= BoxMax[0].x && j->BulletTarget.x >= BoxMin[0].x &&
+               /* j->BulletPosition.y <= BoxMax[i].y && j->BulletPosition.y >= BoxMin[i].y &&*/
+               j->BulletTarget.z <= BoxMax[0].z && j->BulletTarget.z >= BoxMin[0].z)
+            {
+                alienhealth[0] -= 10;
+                //std::cout << "I AM ACTIVATED." << std::endl;
 
-    //if ((BulletPosition.x <= BoxMax[0].x && BulletPosition.x >= BoxMin[0].x)
-    //    && (BulletPosition.y <= BoxMax[0].y && BulletPosition.y >= BoxMin[0].y)
-    //    && (BulletPosition.z <= BoxMax[0].z && BulletPosition.z >= BoxMin[0].z)
-    //if (bullet->BulletPosition.x <= BoxMax[0].x && bullet.BulletPosition.x >= BoxMin[0].x &&
-    //    bullet->BulletPosition.y <= BoxMax[0].y && bullet.BulletPosition.y >= BoxMin[0].y &&
-    //    bullet->BulletPosition.z <= BoxMax[0].z && bullet.BulletPosition.z >= BoxMin[0].z
-    //        && travel == true)
-    //    {
-    //        alienhealth[0] -= 10;
-    //        std::cout << "I AM ACTIVATED." << std::endl;
-    //    }
+            }
+                
+        }
     //}
     camera.Update(dt, (width / 2) - X_Pos, (height / 2) - Y_Pos);
 }
-
-void Planet1::shooting()
-{
-    ////bullet.Set(camera.position, camera.view, camera.target, bulletTime);
-    ////-----------------------//
-    ////Gun
-    ////-----------------------//
-    //float bulletspeed = 100;
-    //std::cout << travel << std::endl;
-    //if (Application::IsKeyPressed(VK_LBUTTON))
-    //{
-    //    travel = true;
-
-    //    bullet.Shooting();
-    //}
-    //else
-    //{
-    //    travel = false;
-    }
-    //if (travel == false)
-    //{ 
-    //    BulletPosition = camera.position;
-    //    /*BulletView = (0, 0, 0);
-
-    //    BulletPosition = camera.position;
-    //    BulletTarget = camera.target;
-    //    BulletView = (BulletTarget - BulletPosition).Normalized();*/
-    //}
-
-    //if (Application::IsKeyPressed('R'))
-    //{
-    //    for (int i = 0; i < 5; i++)
-    //    {
-    //        ammo.push_back(1);
-    //    }
-    //}
-    //if (travel == false && count == 1)
-    //{
-    //    if (BulletPosition.z - camera.position.z < 200)
-    //    {
-    //        while (BulletPosition.z-camera.position.z < 200)
-    //        {
-    //            BulletPosition = BulletPosition + BulletView * 5;
-    //            BulletTarget = BulletPosition + BulletView;
-    //        }
-    //    }
-    //    else
-    //    {
-    //        count = 0;
-    //    }
-
-    //if (BulletPosition.x - camera.position.x)
-    //{
-    //    while (BulletPosition.x - camera.position.x)
-    //    {
-    //        BulletPosition = BulletPosition + BulletView * 5;
-    //        BulletTarget = BulletPosition + BulletView;
-    //    }
-    //}
-    //else
-    //{
-    //    count = 0;
-    //}
-    //}
-
-    //if (travel == false && count == 1)
-    //{
-    //    if (BulletPosition.z - camera.position.z < 200)
-    //    {
-    //        while (BulletPosition.z - camera.position.z < 200)
-    //        {
-    //            BulletPosition = BulletPosition + BulletView * 5;
-    //            BulletTarget = BulletPosition + BulletView;
-    //        }
-    //    }
-    //    else
-    //    {
-    //        count = 0;
-    //    }
-
-    //    if (BulletPosition.z - camera.position.z > -200)
-    //    {
-    //        while (BulletPosition.z - camera.position.z > -200)
-    //        {
-    //            BulletPosition = BulletPosition + BulletView * 5;
-    //            BulletTarget = BulletPosition + BulletView;
-    //        }
-    //    }
-    //    else
-    //    {
-    //        count = 0;
-    //    }
-    //}
-
-    //if ((BulletPosition.z - camera.defaultPosition.z >= 200)
-    //    ||(BulletPosition.z - camera.defaultPosition.z <= -200)
-    //    )
-    //{
-    //    BulletPosition = camera.position;
-    //    travel = false;
-    //}
-//}
 
 void Planet1::AlienOne()
 {
@@ -567,8 +454,6 @@ void Planet1::AlienOne()
         Direction.z /= hypotenuse;
         Enemy += Direction;//moves enemy
 
-        Direction.Normalized();
-        enemyrotate = Math::RadianToDegree( atan2(Direction.z, Direction.x));
     }
 
     BoxMax[0] += Enemy;
@@ -703,96 +588,6 @@ void Planet1::AlienTwo()
     BoxMax[1] += Enemy2;
     BoxMin[1] += Enemy2;
 
-    //shooting
-    //check range
-    if (Enemy2.x > 400 && Enemy2.x < 800)
-    {
-        BoxMax[1].x -= 400;
-        BoxMin[1].x -= 400;
-    }
-
-    if (Enemy2.x > 800 && Enemy2.x < 1200)
-    {
-        BoxMax[1].x -= 800;
-        BoxMin[1].x -= 800;
-    }
-
-    if (Enemy2.x > 1200 && Enemy2.x < 1600)
-    {
-        BoxMax[1].x -= 1200;
-        BoxMin[1].x -= 1200;
-    }
-
-    if (Enemy2.z > 400 && Enemy2.z < 800)
-    {
-        BoxMax[1].z -= 400;
-        BoxMin[1].z -= 400;
-    }
-
-    if (Enemy2.z > 800 && Enemy2.z < 1200)
-    {
-        BoxMax[1].z -= 800;
-        BoxMin[1].z -= 800;
-    }
-
-    if (Enemy2.z > 1200 && Enemy2.z < 1600)
-    {
-        BoxMax[1].z -= 1200;
-        BoxMin[1].z -= 1200;
-    }
-
-    if (Enemy2.z >-1600 && Enemy2.z <-2000)
-    {
-        BoxMax[1].z -= 1600;
-        BoxMin[1].z -= 1600;
-    }
-
-    ////negative
-    if (Enemy2.x < -400 && Enemy2.x > -800)
-    {
-        BoxMax[1].x += 400;
-        BoxMin[1].x += 400;
-    }
-
-    if (Enemy2.x < -800 && Enemy2.x > -1200)
-    {
-        BoxMax[1].x += 800;
-        BoxMin[1].x += 800;
-    }
-
-    if (Enemy2.x < -1200 && Enemy2.x > -1600)
-    {
-        BoxMax[1].x += 1200;
-        BoxMin[1].x += 1200;
-    }
-
-    if (Enemy2.z < -400 && Enemy2.z > -800)
-    {
-        BoxMax[1].z += 400;
-        BoxMin[1].z += 400;
-    }
-
-    if (Enemy2.z < -800 && Enemy2.z > -1200)
-    {
-        BoxMax[1].z += 800;
-        BoxMin[1].z += 800;
-    }
-
-    if (Enemy2.z < -1200 && Enemy2.z > -1600)
-    {
-        BoxMax[1].z += 1200;
-        BoxMin[1].z += 1200;
-    }
-
-    if (Enemy2.z < -1600 && Enemy2.z >-2000)
-    {
-        BoxMax[1].z += 1600;
-        BoxMin[1].z += 1600;
-    }
-
-    //std::cout << " Enemy2 : " << Enemy2 << " : " << BoxMax[1] << " : " << BoxMin[1] << std::endl;
-    //std::cout << " Bullet : " << beam << " : " << BulletMax << " : " << BulletMin << std::endl;
-
     if (Enemy2.x + 10 >= camera.position.x + 50 || Enemy2.z + 10 >= camera.position.z + 50 || Enemy2.x - 10 <= camera.position.x - 50 || Enemy2.z - 10 <= camera.position.z - 50)
     {
         Enemy2PrevPos.x = Enemy2.x;
@@ -831,96 +626,6 @@ void Planet1::AlienThree()
 
     BoxMax[2] += Enemy3;
     BoxMin[2] += Enemy3;
-
-    //shooting
-    //check range
-    if (Enemy3.x > 400 && Enemy3.x < 800)
-    {
-        BoxMax[2].x -= 400;
-        BoxMin[2].x -= 400;
-    }
-
-    if (Enemy3.x > 800 && Enemy3.x < 1200)
-    {
-        BoxMax[2].x -= 800;
-        BoxMin[2].x -= 800;
-    }
-
-    if (Enemy3.x > 1200 && Enemy3.x < 1600)
-    {
-        BoxMax[2].x -= 1200;
-        BoxMin[2].x -= 1200;
-    }
-
-    if (Enemy3.z > 400 && Enemy3.z < 800)
-    {
-        BoxMax[2].z -= 400;
-        BoxMin[2].z -= 400;
-    }
-
-    if (Enemy3.z > 800 && Enemy3.z < 1200)
-    {
-        BoxMax[2].z -= 800;
-        BoxMin[2].z -= 800;
-    }
-
-    if (Enemy3.z > 1200 && Enemy3.z < 1600)
-    {
-        BoxMax[2].z -= 1200;
-        BoxMin[2].z -= 1200;
-    }
-
-    if (Enemy3.z >-1600 && Enemy3.z <-2000)
-    {
-        BoxMax[2].z -= 1600;
-        BoxMin[2].z -= 1600;
-    }
-
-    ////negative
-    if (Enemy3.x < -400 && Enemy3.x > -800)
-    {
-        BoxMax[2].x += 400;
-        BoxMin[2].x += 400;
-    }
-
-    if (Enemy3.x < -800 && Enemy3.x > -1200)
-    {
-        BoxMax[2].x += 800;
-        BoxMin[2].x += 800;
-    }
-
-    if (Enemy3.x < -1200 && Enemy3.x > -1600)
-    {
-        BoxMax[2].x += 1200;
-        BoxMin[2].x += 1200;
-    }
-
-    if (Enemy3.z < -400 && Enemy3.z > -800)
-    {
-        BoxMax[2].z += 400;
-        BoxMin[2].z += 400;
-    }
-
-    if (Enemy3.z < -800 && Enemy3.z > -1200)
-    {
-        BoxMax[2].z += 800;
-        BoxMin[2].z += 800;
-    }
-
-    if (Enemy3.z < -1200 && Enemy3.z > -1600)
-    {
-        BoxMax[2].z += 1200;
-        BoxMin[2].z += 1200;
-    }
-
-    if (Enemy3.z < -1600 && Enemy3.z >-2000)
-    {
-        BoxMax[2].z += 1600;
-        BoxMin[2].z += 1600;
-    }
-
-    //std::cout << " Enemy3 : " << Enemy3 << " : " << BoxMin[2] << " : " << BoxMin[2] << std::endl;
-    //std::cout << " Bullet : " << beam << " : " << BulletMax << " : " << BulletMin << std::endl;
 
     if (Enemy3.x + 10 >= camera.position.x + 50 || Enemy3.z + 10 >= camera.position.z + 50 || Enemy3.x - 10 <= camera.position.x - 50 || Enemy3.z - 10 <= camera.position.z - 50)
     {
@@ -961,96 +666,6 @@ void Planet1::AlienFour()
     BoxMax[3] += Enemy4;
     BoxMin[3] += Enemy4;
 
-    //shooting
-    //check range
-    if (Enemy4.x > 400 && Enemy4.x < 800)
-    {
-        BoxMax[3].x -= 400;
-        BoxMin[3].x -= 400;
-    }
-
-    if (Enemy4.x > 800 && Enemy4.x < 1200)
-    {
-        BoxMax[3].x -= 800;
-        BoxMin[3].x -= 800;
-    }
-
-    if (Enemy4.x > 1200 && Enemy4.x < 1600)
-    {
-        BoxMax[3].x -= 1200;
-        BoxMin[3].x -= 1200;
-    }
-
-    if (Enemy4.z > 400 && Enemy4.z < 800)
-    {
-        BoxMax[3].z -= 400;
-        BoxMin[3].z -= 400;
-    }
-
-    if (Enemy4.z > 800 && Enemy4.z < 1200)
-    {
-        BoxMax[3].z -= 800;
-        BoxMin[3].z -= 800;
-    }
-
-    if (Enemy4.z > 1200 && Enemy4.z < 1600)
-    {
-        BoxMax[3].z -= 1200;
-        BoxMin[3].z -= 1200;
-    }
-
-    if (Enemy4.z >-1600 && Enemy4.z <-2000)
-    {
-        BoxMax[3].z -= 1600;
-        BoxMin[3].z -= 1600;
-    }
-
-    ////negative
-    if (Enemy4.x < -400 && Enemy4.x > -800)
-    {
-        BoxMax[3].x += 400;
-        BoxMin[3].x += 400;
-    }
-
-    if (Enemy4.x < -800 && Enemy4.x > -1200)
-    {
-        BoxMax[3].x += 800;
-        BoxMin[3].x += 800;
-    }
-
-    if (Enemy4.x < -1200 && Enemy4.x > -1600)
-    {
-        BoxMax[3].x += 1200;
-        BoxMin[3].x += 1200;
-    }
-
-    if (Enemy4.z < -400 && Enemy4.z > -800)
-    {
-        BoxMax[3].z += 400;
-        BoxMin[3].z += 400;
-    }
-
-    if (Enemy4.z < -800 && Enemy4.z > -1200)
-    {
-        BoxMax[3].z += 800;
-        BoxMin[3].z += 800;
-    }
-
-    if (Enemy4.z < -1200 && Enemy4.z > -1600)
-    {
-        BoxMax[3].z += 1200;
-        BoxMin[3].z += 1200;
-    }
-
-    if (Enemy4.z < -1600 && Enemy4.z >-2000)
-    {
-        BoxMax[3].z += 1600;
-        BoxMin[3].z += 1600;
-    }
-
-    //std::cout << " Enemy4 : " << Enemy4 << " : " << BoxMax[3] << " : " << BoxMin[3] << std::endl;
-    //std::cout << " Bullet : " << beam << " : " << BulletMax << " : " << BulletMin << std::endl;
-
     if (Enemy4.x + 10 >= camera.position.x + 50 || Enemy4.z + 10 >= camera.position.z + 50 || Enemy4.x - 10 <= camera.position.x - 50 || Enemy4.z - 10 <= camera.position.z - 50)
     {
         Enemy4PrevPos.x = Enemy4.x;
@@ -1089,96 +704,6 @@ void Planet1::AlienFive()
 
     BoxMax[4] += Enemy5;
     BoxMin[4] += Enemy5;
-
-    //shooting
-    //check range
-    if (Enemy5.x > 400 && Enemy5.x < 800)
-    {
-        BoxMax[4].x -= 400;
-        BoxMin[4].x -= 400;
-    }
-
-    if (Enemy5.x > 800 && Enemy5.x < 1200)
-    {
-        BoxMax[4].x -= 800;
-        BoxMin[4].x -= 800;
-    }
-
-    if (Enemy5.x > 1200 && Enemy5.x < 1600)
-    {
-        BoxMax[4].x -= 1200;
-        BoxMin[4].x -= 1200;
-    }
-
-    if (Enemy5.z > 400 && Enemy5.z < 800)
-    {
-        BoxMax[4].z -= 400;
-        BoxMin[4].z -= 400;
-    }
-
-    if (Enemy5.z > 800 && Enemy5.z < 1200)
-    {
-        BoxMax[4].z -= 800;
-        BoxMin[4].z -= 800;
-    }
-
-    if (Enemy5.z > 1200 && Enemy5.z < 1600)
-    {
-        BoxMax[4].z -= 1200;
-        BoxMin[4].z -= 1200;
-    }
-
-    if (Enemy5.z >-1600 && Enemy5.z <-2000)
-    {
-        BoxMax[4].z -= 1600;
-        BoxMin[4].z -= 1600;
-    }
-
-    ////negative
-    if (Enemy5.x < -400 && Enemy5.x > -800)
-    {
-        BoxMax[4].x += 400;
-        BoxMin[4].x += 400;
-    }
-
-    if (Enemy5.x < -800 && Enemy5.x > -1200)
-    {
-        BoxMax[4].x += 800;
-        BoxMin[4].x += 800;
-    }
-
-    if (Enemy5.x < -1200 && Enemy5.x > -1600)
-    {
-        BoxMax[4].x += 1200;
-        BoxMin[4].x += 1200;
-    }
-
-    if (Enemy5.z < -400 && Enemy5.z > -800)
-    {
-        BoxMax[4].z += 400;
-        BoxMin[4].z += 400;
-    }
-
-    if (Enemy5.z < -800 && Enemy5.z > -1200)
-    {
-        BoxMax[4].z += 800;
-        BoxMin[4].z += 800;
-    }
-
-    if (Enemy5.z < -1200 && Enemy5.z > -1600)
-    {
-        BoxMax[4].z += 1200;
-        BoxMin[4].z += 1200;
-    }
-
-    if (Enemy5.z < -1600 && Enemy5.z >-2000)
-    {
-        BoxMax[4].z += 1600;
-        BoxMin[4].z += 1600;
-    }
-
-    //std::cout << " Enemy5 : " << Enemy5 << " : " << BoxMax[4] << " : " << BoxMin[4] << std::endl;
-    //std::cout << " Bullet : " << beam << " : " << BulletMax << " : " << BulletMin << std::endl;
 
     if (Enemy5.x + 10 >= camera.position.x + 50 || Enemy5.z + 10 >= camera.position.z + 50 || Enemy5.x - 10 <= camera.position.x - 50 || Enemy5.z - 10 <= camera.position.z - 50)
     {
@@ -1249,13 +774,9 @@ void Planet1::Render()
     for (auto &i : allBullet)
     {
         modelStack.PushMatrix();
-        modelStack.Translate(i->BulletPosition.x, 0, i->BulletPosition.z);
-        std::cout << "camera: " << camera.target << std::endl;
-
-        std::cout << i->BulletTarget << std::endl;
-
-        //modelStack.Translate(0, 1, 0.5);
-        modelStack.Scale(10.2, 10.2, 10.2);
+        modelStack.Translate(i->BulletPosition.x, i->BulletPosition.y, i->BulletPosition.z);
+        modelStack.Translate(0, -1, 0.5);
+        modelStack.Scale(0.2, 0.2, 0.2);
         RenderMesh(meshList[SPHERE], true);
         modelStack.PopMatrix();
     }
