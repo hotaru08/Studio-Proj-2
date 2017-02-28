@@ -73,7 +73,7 @@ void InternalShip::Init()
 	m_parameters[U_TEXT_ENABLED] = glGetUniformLocation(m_programID, "textEnabled");
 	m_parameters[U_TEXT_COLOR] = glGetUniformLocation(m_programID, "textColor");
 
-	//Sunlight properties
+	//screen properties
 	light[0].type = Light::LIGHT_POINT;
 	light[0].position.Set(-220, 10, 0);
 	light[0].color.Set(0.686, 0.933, 0.933);
@@ -90,7 +90,7 @@ void InternalShip::Init()
 	light[1].type = Light::LIGHT_SPOT;
 	light[1].position.Set(-30, 110, -15);
 	light[1].color.Set(1, 1, 1);
-	light[1].power = 60;
+	light[1].power = 150;
 	light[1].kC = 1.f;
 	light[1].kL = 0.01f;
 	light[1].kQ = 0.001f;
@@ -128,7 +128,7 @@ void InternalShip::Init()
 	glGenVertexArrays(1, &m_vertexArrayID);
 	glBindVertexArray(m_vertexArrayID);
 
-	glEnable(GL_DEPTH_TEST);// Enable depth test	glEnable(GL_CULL_FACE);// Enable cull test	glPolygonMode(GL_FRONT_AND_BACK, GL_LINE); //wireframe mode	glPolygonMode(GL_FRONT_AND_BACK, GL_FILL); //default fill mode
+	glEnable(GL_DEPTH_TEST);// Enable depth test
 	glEnable(GL_BLEND);//Enable blending
 	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 	glfwSetInputMode(m_window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);//Enable cursor
@@ -185,15 +185,78 @@ void InternalShip::Init()
 
 	//Merchant
 	meshList[Merchant] = MeshBuilder::GenerateSphere("merchant", Color(0,0,0), 60,20,1);
-	//meshList[Merchant]->textureID = LoadTGA("Image//ship_intr.tga");
+
+	//shop
+	meshList[SHOP] = MeshBuilder::GenerateQuad("store", Color(1, 1, 1), 1, 1);
+	meshList[SHOP]->textureID = LoadTGA("Image//Items//storeDesign.tga");
+
+	//inventory
+	meshList[INVENTORY] = MeshBuilder::GenerateQuad("inventory", Color(1, 1, 1), 1, 1);
+	meshList[INVENTORY]->textureID = LoadTGA("Image//inventoryBox.tga");
+
+	//mineral on screen (blue)
+	meshList[GEO_MINERALBOX] = MeshBuilder::GenerateQuad("test", Color(1, 1, 1), 1, 1);
+	meshList[GEO_MINERALBOX]->textureID = LoadTGA("Image//MineralOnScreen//mineralBlue.tga");
+
+	//mineral on screen (yellow)
+	meshList[GEO_MINERAL2BOX] = MeshBuilder::GenerateQuad("test1", Color(1, 1, 1), 1, 1);
+	meshList[GEO_MINERAL2BOX]->textureID = LoadTGA("Image//MineralOnScreen//mineralYellow.tga");
+
+	//mineral on screen (purple)
+	meshList[GEO_MINERAL3BOX] = MeshBuilder::GenerateQuad("test2", Color(1, 1, 1), 1, 1);
+	meshList[GEO_MINERAL3BOX]->textureID = LoadTGA("Image//MineralOnScreen//mineralPurple.tga");
+
+	//chicken on screen
+	meshList[SCHICKEN] = MeshBuilder::GenerateQuad("chicken", Color(1, 1, 1), 1, 1);
+	meshList[SCHICKEN]->textureID = LoadTGA("Image//Items//chickenMesh.tga");
+
+	//seed 1
+	meshList[SBERRY] = MeshBuilder::GenerateQuad("berry", Color(1, 1, 1), 1, 1);
+	meshList[SBERRY]->textureID = LoadTGA("Image//Items//BerrySeeds.tga");
+	
+	//seed 2
+	meshList[SMELON] = MeshBuilder::GenerateQuad("melon", Color(1, 1, 1), 1, 1);
+	meshList[SMELON]->textureID = LoadTGA("Image//Items//MelonSeeds.tga");
+
+	//seed 3
+	meshList[SPUMPKIN] = MeshBuilder::GenerateQuad("pumpkin", Color(1, 1, 1), 1, 1);
+	meshList[SPUMPKIN]->textureID = LoadTGA("Image//Items//PumpkinSeeds.tga");
+
+	//Gold image
+	meshList[SGOLD] = MeshBuilder::GenerateQuad("gold", Color(1, 1, 1), 1, 1);
+	meshList[SGOLD]->textureID = LoadTGA("Image//Items//goldCoin.tga");
+
+	//io merchant
+	meshList[IO] = MeshBuilder::GenerateQuad("io", Color(1, 1, 1), 1, 1);
+	meshList[IO]->textureID = LoadTGA("Image//Items//Merchant.tga");
+
+	//hightlight
+	meshList[HL] = MeshBuilder::GenerateQuad("hightlight", Color(1, 1, 1), 1, 1);
+	meshList[HL]->textureID = LoadTGA("Image//Items//HightlightItem.tga");
 
 	Mtx44 projection;
-	projection.SetToPerspective(45.f, 4.f / 3.f, 0.1f, 11000.0f);
+	projection.SetToPerspective(45.f, 4.f / 3.f, 0.1f, 1000.0f);
 	projectionStack.LoadMatrix(projection);
 
 	ScreenLight = false;
+	Buy = false;
 	Enter = false;
+
+	Common = "";
+	Rare = "";
+	Epic = "";
+
+	count = 0;
+	deltaTime = 0;
 }
+
+int InternalShip::ItemShop[4]
+{
+	{ 7 },
+	{ 4 },
+	{ 5 },
+	{ 6 }
+};
 
 void InternalShip::Update(double dt)
 {
@@ -204,6 +267,9 @@ void InternalShip::Update(double dt)
 	glfwGetWindowSize(m_window, &width, &height); //get size to center cursor 
 	glfwSetCursorPos(m_window, width / 2, height / 2); //set cursor to center of screen
 
+	//==============================================================
+	//Entering space
+	//==============================================================
 	if (camera.position.x > -190 && camera.position.x < -150 &&
 		camera.position.z > -20 && camera.position.z < 20)
 	{
@@ -227,6 +293,52 @@ void InternalShip::Update(double dt)
 		Application::SetScene(1);
 	}
 
+	//===========================================================
+	//Enter Shop
+	//===========================================================
+	if (camera.position.x < 250 && camera.position.x > 150
+		&& camera.position.z < 0 && camera.position.z > -100)
+	{
+		if (Application::IsKeyPressed(VK_RETURN) && deltaTime > 0.4)
+		{
+			camera.ShopEnter = true;
+			deltaTime = 0;
+		}
+		else if (Application::IsKeyPressed(VK_BACK))
+		{
+			camera.ShopEnter = false;
+		}
+	}
+
+	//==============================================
+	//Items in the shop
+	//==============================================
+	if (camera.ShopEnter)
+	{
+		if (count == 0 && Buy)//chicken
+		{
+			in.assignItem(7);
+		}
+		if (count == 1 && Buy)//berry
+		{
+			in.assignItem(4);
+		}
+		if (count == 2 && Buy)//melon
+		{
+			in.assignItem(5);
+		}
+		if (count == 3 && Buy)//radish
+		{
+			in.assignItem(6);//assign to inventory
+		}
+	}
+		
+	
+	//-------------------------------//
+	//Time related variables
+	//-------------------------------//
+	deltaTime += dt;
+
 	camera.Update(dt, (width / 2) - X_Pos, (height / 2) - Y_Pos);
 }
 
@@ -243,13 +355,11 @@ void InternalShip::Render()
 
 	if (ScreenLight)
 	{
-		//igloo night and fire light
 		light[0].power = 10.0f;
 		glUniform1f(m_parameters[U_LIGHT0_POWER], light[0].power);
 	}
 	else
 	{
-		//sunlight
 		light[0].power = 0.0f;
 		glUniform1f(m_parameters[U_LIGHT0_POWER], light[0].power);
 	}
@@ -333,6 +443,180 @@ void InternalShip::Render()
 	modelStack.Scale(15, 15, 15);
 	RenderMesh(meshList[Merchant], true);
 	modelStack.PopMatrix();
+
+	RenderInven();
+	
+	if (camera.ShopEnter)
+	{
+		ShopRender();
+		RenderHightLight();
+	}
+}
+
+void InternalShip::ShopRender()
+{
+	modelStack.PushMatrix();
+	RenderMeshOnScreen(meshList[SHOP], 60, 35, 50, 50);//background
+
+	if (ItemShop[0] == 7)//chicken
+	{
+		RenderMeshOnScreen(meshList[SCHICKEN], 50, 50, 8, 8);
+	}
+	if (ItemShop[1] == 4)//berry
+	{
+		RenderMeshOnScreen(meshList[SBERRY], 50, 40, 8, 8);
+	}
+	if (ItemShop[2] == 5)//melon
+	{
+		RenderMeshOnScreen(meshList[SMELON], 50, 30, 8, 8);
+	}
+	if (ItemShop[3] == 6)//radish
+	{
+		RenderMeshOnScreen(meshList[SPUMPKIN], 50, 20, 8, 8);
+	}
+	
+
+	//-----------------------------------------//
+	//Merchant
+	//-----------------------------------------//
+	RenderMeshOnScreen(meshList[IO], 20, 35, 50, 50);//background
+	modelStack.PopMatrix();
+}
+
+void InternalShip::RenderInven()
+{
+	//======================================================
+	//Inventory
+	//======================================================
+	for (int width = 0; width < 10; width++)
+	{
+		RenderMeshOnScreen(meshList[INVENTORY], 8.5 + width * 7, 5, 7.5, 7.5);
+
+		if (in.storage[0][width] != 0)
+		{
+			if (in.storage[0][width] == 1)//check for common
+			{
+				RenderMeshOnScreen(meshList[GEO_MINERALBOX], 8.5 + width * 7, 5, 5, 5);
+			}
+			else if (in.storage[0][width] == 2)//check for rare
+			{
+				RenderMeshOnScreen(meshList[GEO_MINERAL2BOX], 8.5 + width * 7, 5, 5, 5);
+			}
+			else if (in.storage[0][width] == 3)//check for rare
+			{
+				RenderMeshOnScreen(meshList[GEO_MINERAL3BOX], 8.5 + width * 7, 5, 5, 5);
+			}
+			else if (in.storage[0][width] == 4)//check for berry
+			{
+				RenderMeshOnScreen(meshList[SBERRY], 8.5 + width * 7, 5, 5, 5);
+			}
+			else if (in.storage[0][width] == 5)//check for melon
+			{
+				RenderMeshOnScreen(meshList[SMELON], 8.5 + width * 7, 5, 5, 5);
+			}
+			else if (in.storage[0][width] == 6)//check for radish
+			{
+				RenderMeshOnScreen(meshList[SPUMPKIN], 8.5 + width * 7, 5, 5, 5);
+			}
+			else if (in.storage[0][width] == 7)//check for chicken
+			{
+				RenderMeshOnScreen(meshList[SCHICKEN], 8.5 + width * 7, 5, 5, 5);
+			}
+		}
+
+		if (in.storage[1][width] != 0)
+		{
+			Common = std::to_string((int)in.storage[1][width]);
+			Rare = std::to_string((int)in.storage[1][width]);
+			Epic = std::to_string((int)in.storage[1][width]);
+			Chicken = std::to_string((int)in.storage[1][width]);
+			Berry = std::to_string((int)in.storage[1][width]);
+			Melon = std::to_string((int)in.storage[1][width]);
+			Radish = std::to_string((int)in.storage[1][width]);
+
+			RenderTextOnScreen(meshList[GEO_TEXT], Common, Color(0, 1, 0), 2, 4.5 + width * 3.5, 1);
+			RenderTextOnScreen(meshList[GEO_TEXT], Rare, Color(0, 1, 0), 2, 4.5 + width * 3.5, 1);
+			RenderTextOnScreen(meshList[GEO_TEXT], Epic, Color(0, 1, 0), 2, 4.5 + width * 3.5, 1);
+			RenderTextOnScreen(meshList[GEO_TEXT], Chicken, Color(0, 1, 0), 2, 4.5 + width * 3.5, 1);
+			RenderTextOnScreen(meshList[GEO_TEXT], Berry, Color(0, 1, 0), 2, 4.5 + width * 3.5, 1);
+			RenderTextOnScreen(meshList[GEO_TEXT], Melon, Color(0, 1, 0), 2, 4.5 + width * 3.5, 1);
+			RenderTextOnScreen(meshList[GEO_TEXT], Radish, Color(0, 1, 0), 2, 4.5 + width * 3.5, 1);
+		}
+	}
+}
+
+void InternalShip::RenderHightLight()
+{
+	if (Application::IsKeyPressed(VK_DOWN) && deltaTime > 0.4)
+	{
+		if (count < 3)
+		{
+			count += 1;
+			deltaTime = 0;
+			//cout << count << endl;
+		}
+	}
+	if (Application::IsKeyPressed(VK_UP) && deltaTime > 0.4)
+	{
+		if (count > 0)
+		{
+			count -= 1;
+			deltaTime = 0;
+			//cout << count << endl;
+		}
+	}
+
+	if (count == 0)
+	{
+		Buy = false;
+		RenderMeshOnScreen(meshList[HL], 60, 50, 40, 12);//first box highlighted
+
+		if (Application::IsKeyPressed(VK_RETURN) && deltaTime > 0.2)
+		{
+			Buy = true;
+			deltaTime = 0;
+			//cout << Buy << endl;
+		}
+	}
+	if (count == 1)
+	{
+		Buy = false;
+		RenderMeshOnScreen(meshList[HL], 60, 40, 40, 12);
+
+		if (Application::IsKeyPressed(VK_RETURN) && deltaTime > 0.2)
+		{
+			Buy = true;
+			deltaTime = 0;
+			//cout << Buy << endl;
+
+		}
+	}
+	if (count == 2)
+	{
+		Buy = false;
+		RenderMeshOnScreen(meshList[HL], 60, 30, 40, 12);
+
+		if (Application::IsKeyPressed(VK_RETURN) && deltaTime > 0.2)
+		{
+			Buy = true;
+			deltaTime = 0;
+			//cout << Buy << endl;
+
+		}
+	}
+	if (count == 3)
+	{
+		Buy = false;
+		RenderMeshOnScreen(meshList[HL], 60, 20, 40, 12);
+
+		if (Application::IsKeyPressed(VK_RETURN) && deltaTime > 0.2)
+		{
+			Buy = true;
+			deltaTime = 0;
+			//cout << Buy << endl;
+
+		}
+	}
 }
 
 void InternalShip::RenderSkyBox()
@@ -444,7 +728,7 @@ void InternalShip::RenderTextOnScreen(Mesh* mesh, std::string text, Color color,
 	for (unsigned i = 0; i < text.length(); ++i)
 	{
 		Mtx44 characterSpacing;
-		characterSpacing.SetToTranslation(i * 1.0f, 0, 0); //1.0f is the spacing of each character, you may change this value
+		characterSpacing.SetToTranslation(i * 0.7f, 0, 0); //1.0f is the spacing of each character, you may change this value
 		Mtx44 MVP = projectionStack.Top() * viewStack.Top() * modelStack.Top() * characterSpacing;
 		glUniformMatrix4fv(m_parameters[U_MVP], 1, GL_FALSE, &MVP.a[0]);
 

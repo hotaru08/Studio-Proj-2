@@ -6,6 +6,8 @@
 #include "Mesh.h"
 #include "MatrixStack.h"
 #include "Light.h"
+#include "Store.h"
+#include "Inventory.h"
 
 class InternalShip : public Scene
 {
@@ -26,8 +28,23 @@ class InternalShip : public Scene
 		GEO_SCREEN,
 		GEO_LAMP,
 		GEO_TEXT,
-		Merchant,
 
+		//Inventory
+		INVENTORY,
+		GEO_MINERALBOX,
+		GEO_MINERAL2BOX,
+		GEO_MINERAL3BOX,
+
+		//Shop items
+		Merchant,
+		IO,
+		SHOP,
+		SBERRY,
+		SMELON,
+		SPUMPKIN,
+		SGOLD,
+		SCHICKEN,
+		HL,
 
 		NUM_GEOMETRY,
 	};
@@ -81,6 +98,7 @@ class InternalShip : public Scene
 public:
 	InternalShip();
 	~InternalShip();
+	static int ItemShop[4];
 
 	//methods
 	virtual void Init();
@@ -96,19 +114,37 @@ private:
 	unsigned m_parameters[U_TOTAL];
 
 	ShipCamera camera;
+	Store store;
+	Inventory in;
 	MS modelStack, viewStack, projectionStack;
 	Light light[2];
 
-	//screen
+	string Common;
+	string Rare;
+	string Epic;
+	string Chicken;
+	string Berry;
+	string Melon;
+	string Radish;
+
+	//things in the ship
 	bool Screen = false;
 	bool ScreenLight;
 	bool Enter;
+	bool Buy;
+	int count;
+	double deltaTime;
 
 	void RenderMesh(Mesh *mesh, bool enableLight);
-	void RenderSkyBox();
 	void RenderText(Mesh* mesh, std::string text, Color color);
 	void RenderTextOnScreen(Mesh* mesh, std::string text, Color color, float size, float x, float y);
 	void RenderMeshOnScreen(Mesh* mesh, int x, int y, int sizex, int sizey);
+
+	void ShopRender();
+	void RenderSkyBox();
+	void RenderGold();
+	void RenderInven();
+	void RenderHightLight();
 };
 
 #endif
