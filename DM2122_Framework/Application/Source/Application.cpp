@@ -14,6 +14,8 @@
 #include "PlanetTwo.h"
 #include "Space.h"
 #include "MainMenu.h"
+#include "PlanetFour.h"
+#include "PlanetThree.h"
 #include "InternalSpaceShip.h"
 
 //#include "StudioProj.h"
@@ -123,8 +125,16 @@ void Application::Run()
 	Scene *scene3 = new PlanetTwo();
 	Scene *scene4 = new InternalShip();
 	Scene *scene5 = new PlanetFour();
+	Scene *scene6 = new PlanetThree();
 	Scene *scene = scene0;
 	scene->Init();
+/*
+	SceneManage.AddScene(&MainMenu());
+	SceneManage.AddScene(&Space());
+	SceneManage.AddScene(&Planet1());
+	SceneManage.AddScene(&PlanetTwo());
+	SceneManage.AddScene(&PlanetFour());
+	SceneManage.AddScene(&InternalShip());*/
 
 	m_timer.startTimer();    // Start timer to calculate how long it takes to render this frame
 	while (!glfwWindowShouldClose(m_window) && !IsKeyPressed(VK_ESCAPE))
@@ -164,6 +174,12 @@ void Application::Run()
 			scene1->Exit();
 			scene = scene5;
 			scene5->Init();
+		}
+		else if (currSceneID == 6 && scene != scene6)
+		{
+			scene1->Exit();
+			scene = scene6;
+			scene6->Init();
 		}
 
 		scene->Update(m_timer.getElapsedTime());

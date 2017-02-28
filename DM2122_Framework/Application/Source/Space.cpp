@@ -286,7 +286,7 @@ void Space::Update(double dt)
 		{
 			if (count == 0)
 			{
-				//Application::SetScene(5);
+				Application::SetScene(6);
 			}
 			else if (count == 1)
 			{
