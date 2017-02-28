@@ -133,6 +133,7 @@ private:
 	bool Enter;
 	bool Buy;
 	int count;
+	long g;
 	double deltaTime;
 
 	void RenderMesh(Mesh *mesh, bool enableLight);

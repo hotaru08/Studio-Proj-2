@@ -245,6 +245,10 @@ void InternalShip::Init()
 	Common = "";
 	Rare = "";
 	Epic = "";
+	Chicken = "";
+	Berry = "";
+	Melon = "";
+	Radish = "";
 
 	count = 0;
 	deltaTime = 0;
@@ -299,7 +303,7 @@ void InternalShip::Update(double dt)
 	if (camera.position.x < 250 && camera.position.x > 150
 		&& camera.position.z < 0 && camera.position.z > -100)
 	{
-		if (Application::IsKeyPressed(VK_RETURN) && deltaTime > 0.4)
+		if (Application::IsKeyPressed(VK_RETURN) && deltaTime > 0.2)
 		{
 			camera.ShopEnter = true;
 			deltaTime = 0;
@@ -307,6 +311,7 @@ void InternalShip::Update(double dt)
 		else if (Application::IsKeyPressed(VK_BACK))
 		{
 			camera.ShopEnter = false;
+			count = 0;
 		}
 	}
 
@@ -332,8 +337,7 @@ void InternalShip::Update(double dt)
 			in.assignItem(6);//assign to inventory
 		}
 	}
-		
-	
+
 	//-------------------------------//
 	//Time related variables
 	//-------------------------------//
@@ -455,9 +459,11 @@ void InternalShip::Render()
 
 void InternalShip::ShopRender()
 {
-	modelStack.PushMatrix();
 	RenderMeshOnScreen(meshList[SHOP], 60, 35, 50, 50);//background
 
+	//---------------------------------------------------------//
+	//Items in the shop
+	//---------------------------------------------------------//
 	if (ItemShop[0] == 7)//chicken
 	{
 		RenderMeshOnScreen(meshList[SCHICKEN], 50, 50, 8, 8);
@@ -474,13 +480,40 @@ void InternalShip::ShopRender()
 	{
 		RenderMeshOnScreen(meshList[SPUMPKIN], 50, 20, 8, 8);
 	}
-	
 
 	//-----------------------------------------//
 	//Merchant
 	//-----------------------------------------//
-	RenderMeshOnScreen(meshList[IO], 20, 35, 50, 50);//background
-	modelStack.PopMatrix();
+	RenderMeshOnScreen(meshList[IO], 20, 35, 50, 50);//io merchant
+
+	//---------------------------------------------------------//
+	//Items names
+	//---------------------------------------------------------//
+
+	//chicken
+	RenderTextOnScreen(meshList[GEO_TEXT], "Chicken", Color(0.545, 0.271, 0.075), 3, 19, 16.25);
+	RenderMeshOnScreen(meshList[SGOLD], 58.5 ,47.5, 3, 3);
+	RenderTextOnScreen(meshList[GEO_TEXT], "50000", Color(0.545, 0.271, 0.075), 3, 20, 15.25);
+
+	//Berry
+	RenderTextOnScreen(meshList[GEO_TEXT], "Berry", Color(0.545, 0.271, 0.075), 3, 19, 13.25);
+	RenderMeshOnScreen(meshList[SGOLD], 58.5, 38.5, 3, 3);
+	RenderTextOnScreen(meshList[GEO_TEXT], "100", Color(0.545, 0.271, 0.075), 3, 20, 12.25);
+
+	//Melon
+	RenderTextOnScreen(meshList[GEO_TEXT], "Melon", Color(0.545, 0.271, 0.075), 3, 19, 10);
+	RenderMeshOnScreen(meshList[SGOLD], 58.5, 29.5, 3, 3);
+	RenderTextOnScreen(meshList[GEO_TEXT], "100", Color(0.545, 0.271, 0.075), 3, 20, 9.25);
+
+	//Radish
+	RenderTextOnScreen(meshList[GEO_TEXT], "Radish", Color(0.545, 0.271, 0.075), 3, 19, 6.85);
+	RenderMeshOnScreen(meshList[SGOLD], 58.5, 19.5, 3, 3);
+	RenderTextOnScreen(meshList[GEO_TEXT], "100", Color(0.545, 0.271, 0.075), 3, 20, 5.85);
+	
+	//--------------------------------------------------------//
+	//Gold Coins
+	//--------------------------------------------------------//
+	RenderMeshOnScreen(meshList[SGOLD], 50, 13, 4, 4);
 }
 
 void InternalShip::RenderInven()
@@ -553,7 +586,6 @@ void InternalShip::RenderHightLight()
 		{
 			count += 1;
 			deltaTime = 0;
-			//cout << count << endl;
 		}
 	}
 	if (Application::IsKeyPressed(VK_UP) && deltaTime > 0.4)
@@ -562,11 +594,10 @@ void InternalShip::RenderHightLight()
 		{
 			count -= 1;
 			deltaTime = 0;
-			//cout << count << endl;
 		}
 	}
 
-	if (count == 0)
+	if (count == 0)//for chicken
 	{
 		Buy = false;
 		RenderMeshOnScreen(meshList[HL], 60, 50, 40, 12);//first box highlighted
@@ -574,11 +605,11 @@ void InternalShip::RenderHightLight()
 		if (Application::IsKeyPressed(VK_RETURN) && deltaTime > 0.2)
 		{
 			Buy = true;
+			store.reduceGold_(50000);
 			deltaTime = 0;
-			//cout << Buy << endl;
 		}
 	}
-	if (count == 1)
+	if (count == 1)//berry
 	{
 		Buy = false;
 		RenderMeshOnScreen(meshList[HL], 60, 40, 40, 12);
@@ -586,12 +617,11 @@ void InternalShip::RenderHightLight()
 		if (Application::IsKeyPressed(VK_RETURN) && deltaTime > 0.2)
 		{
 			Buy = true;
+			store.reduceGold_(100);
 			deltaTime = 0;
-			//cout << Buy << endl;
-
 		}
 	}
-	if (count == 2)
+	if (count == 2)//melon
 	{
 		Buy = false;
 		RenderMeshOnScreen(meshList[HL], 60, 30, 40, 12);
@@ -599,12 +629,11 @@ void InternalShip::RenderHightLight()
 		if (Application::IsKeyPressed(VK_RETURN) && deltaTime > 0.2)
 		{
 			Buy = true;
+			store.reduceGold_(250);
 			deltaTime = 0;
-			//cout << Buy << endl;
-
 		}
 	}
-	if (count == 3)
+	if (count == 3)//radish
 	{
 		Buy = false;
 		RenderMeshOnScreen(meshList[HL], 60, 20, 40, 12);
@@ -612,9 +641,8 @@ void InternalShip::RenderHightLight()
 		if (Application::IsKeyPressed(VK_RETURN) && deltaTime > 0.2)
 		{
 			Buy = true;
+			store.reduceGold_(500);
 			deltaTime = 0;
-			//cout << Buy << endl;
-
 		}
 	}
 }
