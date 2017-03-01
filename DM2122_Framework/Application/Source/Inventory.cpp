@@ -170,14 +170,14 @@ void Inventory::assignItem(int itemID)
 	{
 		for (int i = 0; i < 10 && empty == true; i++)
 		{
-			if (storage[0][i] == 7 && storage[1][i] < 1)
+			if (storage[0][i] == 8 && storage[1][i] < 10)
 			{
 				storage[1][i] += 1;
 				empty = false;
 			}
 			else if (storage[0][i] == 0)
 			{
-				storage[0][i] = 7;
+				storage[0][i] = 8;
 				storage[1][i] = 1;
 				empty = false;
 			}
@@ -187,14 +187,14 @@ void Inventory::assignItem(int itemID)
 	{
 		for (int i = 0; i < 10 && empty == true; i++)
 		{
-			if (storage[0][i] == 7 && storage[1][i] < 1)
+			if (storage[0][i] == 9 && storage[1][i] < 10)
 			{
 				storage[1][i] += 1;
 				empty = false;
 			}
 			else if (storage[0][i] == 0)
 			{
-				storage[0][i] = 7;
+				storage[0][i] = 9;
 				storage[1][i] = 1;
 				empty = false;
 			}
@@ -204,14 +204,14 @@ void Inventory::assignItem(int itemID)
 	{
 		for (int i = 0; i < 10 && empty == true; i++)
 		{
-			if (storage[0][i] == 7 && storage[1][i] < 1)
+			if (storage[0][i] == 10 && storage[1][i] < 10)
 			{
 				storage[1][i] += 1;
 				empty = false;
 			}
 			else if (storage[0][i] == 0)
 			{
-				storage[0][i] = 7;
+				storage[0][i] = 10;
 				storage[1][i] = 1;
 				empty = false;
 			}
@@ -230,16 +230,21 @@ void Inventory::assignItem(int itemID)
 	std::cout << "storage 9 ID is : " << storage[0][9] << "    count is:" << storage[1][9] << std::endl;
 }
 
-void Inventory::Remove(int slotNo, int amount)
+int Inventory::Remove(int slotNo, int amount)
 {
 	if (storage[1][slotNo] > 0)
 	{
 		storage[1][slotNo] -= amount;
+		if (storage[1][slotNo] == 0)
+		{
+			storage[0][slotNo] = 0;
+			storage[1][slotNo] = 0;
+		}
+		return storage[0][slotNo];
 
 	}
-	if (storage[1][slotNo] == 0)
+	else
 	{
-		storage[0][slotNo] = 0;
-		storage[1][slotNo] = 0;
+		return 0;
 	}
 }

@@ -26,7 +26,8 @@ PlanetThree::~PlanetThree()
 
 void PlanetThree::Init()
 {
-	m_programID = LoadShaders("Shader//Texture.vertexshader", "Shader//Text.fragmentshader");	// Use our shader
+	m_programID = LoadShaders("Shader//Texture.vertexshader", "Shader//Text.fragmentshader");
+	// Use our shader
 	glUseProgram(m_programID);
 
 	// Get a handle for our "MVP" uniform
@@ -156,11 +157,16 @@ void PlanetThree::Init()
 	glUniform1f(m_parameters[U_LIGHT2_EXPONENT], light[2].exponent);
 
 	// Set background color to black
-	glClearColor(0.0f, 0.0f, 0.0f, 0.0f);
+	glClearColor(0.0f, 0.0f, 0.0f, 0.0f);
+
 	// Generate a default VAO for now
 	glGenVertexArrays(1, &m_vertexArrayID);
-	glBindVertexArray(m_vertexArrayID);
-	glEnable(GL_DEPTH_TEST);// Enable depth test	glEnable(GL_CULL_FACE);// Enable cull test	glPolygonMode(GL_FRONT_AND_BACK, GL_LINE); //wireframe mode	glPolygonMode(GL_FRONT_AND_BACK, GL_FILL); //default fill mode
+	glBindVertexArray(m_vertexArrayID);
+
+	glEnable(GL_DEPTH_TEST);// Enable depth test
+	glEnable(GL_CULL_FACE);// Enable cull test
+	glPolygonMode(GL_FRONT_AND_BACK, GL_LINE); //wireframe mode
+	glPolygonMode(GL_FRONT_AND_BACK, GL_FILL); //default fill mode
 	glEnable(GL_BLEND);//Enable blending
 	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 	glfwSetInputMode(m_window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);//Enable cursor
@@ -181,48 +187,27 @@ void PlanetThree::Init()
 	//=====================================
 	//Bottom
 	meshList[GEO_BOTTOM] = MeshBuilder::GenerateQuad("bottom", Color(1, 1, 1), 1, 1);
-	meshList[GEO_BOTTOM]->textureID = LoadTGA("Image//Bottom.tga");
+	meshList[GEO_BOTTOM]->textureID = LoadTGA("Image//Planet3//bottom.tga");
 
 	//Front skybox
 	meshList[GEO_FRONT] = MeshBuilder::GenerateQuad("front", Color(1, 1, 1), 1, 1);
-	meshList[GEO_FRONT]->textureID = LoadTGA("Image/Front.tga");
+	meshList[GEO_FRONT]->textureID = LoadTGA("Image//Planet3//front.tga");
+
 	//back skybox
 	meshList[GEO_BACK] = MeshBuilder::GenerateQuad("back", Color(1, 1, 1), 1, 1);
-	meshList[GEO_BACK]->textureID = LoadTGA("Image//Back.tga");
+	meshList[GEO_BACK]->textureID = LoadTGA("Image//Planet3//back.tga");
 
 	//Left skybox
 	meshList[GEO_LEFT] = MeshBuilder::GenerateQuad("left", Color(1, 1, 1), 1, 1);
-	meshList[GEO_LEFT]->textureID = LoadTGA("Image//Left.tga");
+	meshList[GEO_LEFT]->textureID = LoadTGA("Image//Planet3//left.tga");
 
 	//Right skybox
 	meshList[GEO_RIGHT] = MeshBuilder::GenerateQuad("right", Color(1, 1, 1), 1, 1);
-	meshList[GEO_RIGHT]->textureID = LoadTGA("Image//Right.tga");
+	meshList[GEO_RIGHT]->textureID = LoadTGA("Image//Planet3//right.tga");
 
 	//top skybox
 	meshList[GEO_TOP] = MeshBuilder::GenerateQuad("top", Color(1, 1, 1), 1, 1);
-	meshList[GEO_TOP]->textureID = LoadTGA("Image//Top.tga");
-
-	//=====================================
-	//Night
-	//=====================================
-	//Front skybox
-	meshList[GEO_FRONTNight] = MeshBuilder::GenerateQuad("front", Color(1, 1, 1), 1, 1);
-	meshList[GEO_FRONTNight]->textureID = LoadTGA("Image//FrontNight.tga");
-	//back skybox
-	meshList[GEO_BACKNight] = MeshBuilder::GenerateQuad("back", Color(1, 1, 1), 1, 1);
-	meshList[GEO_BACKNight]->textureID = LoadTGA("Image//BackNight.tga");
-
-	//Left skybox
-	meshList[GEO_LEFTNight] = MeshBuilder::GenerateQuad("left", Color(1, 1, 1), 1, 1);
-	meshList[GEO_LEFTNight]->textureID = LoadTGA("Image//LeftNight.tga");
-
-	//Right skybox
-	meshList[GEO_RIGHTNight] = MeshBuilder::GenerateQuad("right", Color(1, 1, 1), 1, 1);
-	meshList[GEO_RIGHTNight]->textureID = LoadTGA("Image//RightNight.tga");
-
-	//top skybox
-	meshList[GEO_TOPNight] = MeshBuilder::GenerateQuad("top", Color(1, 1, 1), 1, 1);
-	meshList[GEO_TOPNight]->textureID = LoadTGA("Image//TopNight.tga");
+	meshList[GEO_TOP]->textureID = LoadTGA("Image//Planet3//up.tga");
 
 	//text
 	meshList[GEO_TEXT] = MeshBuilder::GenerateText("text", 16, 16);
@@ -230,10 +215,60 @@ void PlanetThree::Init()
 
 	//ground
 	meshList[GROUND] = MeshBuilder::GenerateOBJ("ground", "OBJ//Land_Mesh.obj");
-	meshList[GROUND]->textureID = LoadTGA("Image//bottom.tga");
+	meshList[GROUND]->textureID = LoadTGA("Image//Planet3//bottom.tga");
 
-	//screen
-	meshList[GEO_SCREEN] = MeshBuilder::GenerateQuad("front", Color(1, 1, 1), 1, 1);
+	//intory
+	meshList[INVENTORY] = MeshBuilder::GenerateQuad("intory", Color(1, 1, 1), 1, 1);
+	meshList[INVENTORY]->textureID = LoadTGA("Image//inventoryBox.tga");
+
+	//mineral on screen (blue)
+	meshList[GEO_MINERALBOX] = MeshBuilder::GenerateQuad("test", Color(1, 1, 1), 1, 1);
+	meshList[GEO_MINERALBOX]->textureID = LoadTGA("Image//MineralOnScreen//mineralBlue.tga");
+
+	//mineral on screen (yellow)
+	meshList[GEO_MINERAL2BOX] = MeshBuilder::GenerateQuad("test1", Color(1, 1, 1), 1, 1);
+	meshList[GEO_MINERAL2BOX]->textureID = LoadTGA("Image//MineralOnScreen//mineralYellow.tga");
+
+	//mineral on screen (purple)
+	meshList[GEO_MINERAL3BOX] = MeshBuilder::GenerateQuad("test2", Color(1, 1, 1), 1, 1);
+	meshList[GEO_MINERAL3BOX]->textureID = LoadTGA("Image//MineralOnScreen//mineralPurple.tga");
+
+	//chicken on screen
+	meshList[SCHICKEN] = MeshBuilder::GenerateQuad("chicken", Color(1, 1, 1), 1, 1);
+	meshList[SCHICKEN]->textureID = LoadTGA("Image//Items//chickenMesh.tga");
+
+	//seed 1 UI
+	meshList[SBERRY] = MeshBuilder::GenerateQuad("berry", Color(1, 1, 1), 1, 1);
+	meshList[SBERRY]->textureID = LoadTGA("Image//Items//BerrySeeds.tga");
+
+	//seed 2 UI
+	meshList[SMELON] = MeshBuilder::GenerateQuad("melon", Color(1, 1, 1), 1, 1);
+	meshList[SMELON]->textureID = LoadTGA("Image//Items//MelonSeeds.tga");
+
+	//seed 3 UI
+	meshList[SPUMPKIN] = MeshBuilder::GenerateQuad("pumpkin", Color(1, 1, 1), 1, 1);
+	meshList[SPUMPKIN]->textureID = LoadTGA("Image//Items//PumpkinSeeds.tga");
+
+	//berry
+	meshList[GEO_BERRIES] = MeshBuilder::GenerateOBJ("berries", "OBJ//berry.obj");
+	meshList[GEO_BERRIES]->textureID = LoadTGA("Image//plants.tga");
+
+	//melon
+	meshList[GEO_MELON] = MeshBuilder::GenerateOBJ("melon", "OBJ//melon.obj");
+	meshList[GEO_MELON]->textureID = LoadTGA("Image//plants.tga");
+
+	//raddish
+	meshList[GEO_RADDISH] = MeshBuilder::GenerateOBJ("raddish", "OBJ//raddish.obj");
+	meshList[GEO_RADDISH]->textureID = LoadTGA("Image//plants.tga");
+
+	//seed obj
+	meshList[GEO_BERRYSEED] = MeshBuilder::GenerateOBJ("seed", "OBJ//seed.obj");
+	meshList[GEO_BERRYSEED]->textureID = LoadTGA("Image//plants.tga");
+	meshList[GEO_MELONSEED] = MeshBuilder::GenerateOBJ("seed", "OBJ//seed.obj");
+	meshList[GEO_MELONSEED]->textureID = LoadTGA("Image//plants.tga");
+	meshList[GEO_RADDISHSEED] = MeshBuilder::GenerateOBJ("seed", "OBJ//seed.obj");
+	meshList[GEO_RADDISHSEED]->textureID = LoadTGA("Image//plants.tga");
+
 
 	Mtx44 projection;
 	projection.SetToPerspective(45.f, 4.f / 3.f, 0.1f, 7000.0f);
@@ -241,6 +276,9 @@ void PlanetThree::Init()
 
 	Switch = true;
 	Switch_LightBall = false;
+	playerPlant = false;
+	playerHarvest = false;
+	deltaTime = 0;
 }
 
 void PlanetThree::Update(double dt)
@@ -252,22 +290,12 @@ void PlanetThree::Update(double dt)
 	glfwGetWindowSize(m_window, &width, &height); //get size to center cursor 
 	glfwSetCursorPos(m_window, width / 2, height / 2); //set cursor to center of screen
 
-	//modes
-	if (Application::IsKeyPressed('1'))
+	deltaTime += dt;
+
+	//Seed growth timer
+	for (int i = 0; i < plantGrow.size(); i++)
 	{
-		glEnable(GL_CULL_FACE);
-	}
-	if (Application::IsKeyPressed('2'))
-	{
-		glDisable(GL_CULL_FACE);
-	}
-	if (Application::IsKeyPressed('3'))
-	{
-		glPolygonMode(GL_FRONT_AND_BACK, GL_FILL); //default fill mode
-	}
-	if (Application::IsKeyPressed('4'))
-	{
-		glPolygonMode(GL_FRONT_AND_BACK, GL_LINE); //wireframe mode
+		plantGrow[i] += dt;
 	}
 
 	//Switching on and off
@@ -281,6 +309,386 @@ void PlanetThree::Update(double dt)
 	{
 		Switch = false;
 		Switch_LightBall = true;
+	}
+
+	if (Application::IsKeyPressed('1') && deltaTime > 0.2)
+	{
+		int ID;
+		ID = in.Remove(0, 1);
+		cout << ID << endl;
+		if (ID != 0)
+		{
+			playerPlant = true;
+			if (playerPlant == true)
+			{
+				plantX.push_back(camera.position.x);
+				plantY.push_back(camera.position.z);
+				plantGrow.push_back(0);
+				if (ID == 4)
+				{
+					plantType.push_back(4);
+				}
+				if (ID == 5)
+				{
+					plantType.push_back(5);
+				}
+				if (ID == 6)
+				{
+					plantType.push_back(6);
+				}
+				playerPlant = false;
+			}
+		}
+		deltaTime = 0;
+	}
+	else
+	{
+		playerPlant = false;
+	}
+	if (Application::IsKeyPressed('2') && deltaTime > 0.2)
+	{
+		int ID;
+		ID = in.Remove(1, 1);
+		cout << ID << endl;
+		if (ID != 0)
+		{
+			playerPlant = true;
+			if (playerPlant == true)
+			{
+				plantX.push_back(camera.position.x);
+				plantY.push_back(camera.position.z);
+				plantGrow.push_back(0);
+				if (ID == 4)
+				{
+					plantType.push_back(4);
+				}
+				if (ID == 5)
+				{
+					plantType.push_back(5);
+				}
+				if (ID == 6)
+				{
+					plantType.push_back(6);
+				}
+				playerPlant = false;
+			}
+		}
+		deltaTime = 0;
+	}
+	else
+	{
+		playerPlant = false;
+	}
+	if (Application::IsKeyPressed('3') && deltaTime > 0.2)
+	{
+		int ID;
+		ID = in.Remove(2, 1);
+		cout << ID << endl;
+		if (ID != 0)
+		{
+			playerPlant = true;
+			if (playerPlant == true)
+			{
+				plantX.push_back(camera.position.x);
+				plantY.push_back(camera.position.z);
+				plantGrow.push_back(0);
+				if (ID == 4)
+				{
+					plantType.push_back(4);
+				}
+				if (ID == 5)
+				{
+					plantType.push_back(5);
+				}
+				if (ID == 6)
+				{
+					plantType.push_back(6);
+				}
+				playerPlant = false;
+			}
+		}
+		deltaTime = 0;
+	}
+	else
+	{
+		playerPlant = false;
+	}
+	if (Application::IsKeyPressed('4') && deltaTime > 0.2)
+	{
+		int ID;
+		ID = in.Remove(3, 1);
+		cout << ID << endl;
+		if (ID != 0)
+		{
+			playerPlant = true;
+			if (playerPlant == true)
+			{
+				plantX.push_back(camera.position.x);
+				plantY.push_back(camera.position.z);
+				plantGrow.push_back(0);
+				if (ID == 4)
+				{
+					plantType.push_back(4);
+				}
+				if (ID == 5)
+				{
+					plantType.push_back(5);
+				}
+				if (ID == 6)
+				{
+					plantType.push_back(6);
+				}
+				playerPlant = false;
+			}
+		}
+		deltaTime = 0;
+	}
+	else
+	{
+		playerPlant = false;
+	}
+	if (Application::IsKeyPressed('5') && deltaTime > 0.2)
+	{
+		int ID;
+		ID = in.Remove(4, 1);
+		cout << ID << endl;
+		if (ID != 0)
+		{
+			playerPlant = true;
+			if (playerPlant == true)
+			{
+				plantX.push_back(camera.position.x);
+				plantY.push_back(camera.position.z);
+				plantGrow.push_back(0);
+				if (ID == 4)
+				{
+					plantType.push_back(4);
+				}
+				if (ID == 5)
+				{
+					plantType.push_back(5);
+				}
+				if (ID == 6)
+				{
+					plantType.push_back(6);
+				}
+				playerPlant = false;
+			}
+		}
+		deltaTime = 0;
+	}
+	else
+	{
+		playerPlant = false;
+	}
+	if (Application::IsKeyPressed('6') && deltaTime > 0.2)
+	{
+		int ID;
+		ID = in.Remove(5, 1);
+		cout << ID << endl;
+		if (ID != 0)
+		{
+			playerPlant = true;
+			if (playerPlant == true)
+			{
+				plantX.push_back(camera.position.x);
+				plantY.push_back(camera.position.z);
+				plantGrow.push_back(0);
+				if (ID == 4)
+				{
+					plantType.push_back(4);
+				}
+				if (ID == 5)
+				{
+					plantType.push_back(5);
+				}
+				if (ID == 6)
+				{
+					plantType.push_back(6);
+				}
+				playerPlant = false;
+			}
+		}
+		deltaTime = 0;
+	}
+	else
+	{
+		playerPlant = false;
+	}
+	if (Application::IsKeyPressed('7') && deltaTime > 0.2)
+	{
+		int ID;
+		ID = in.Remove(6, 1);
+		cout << ID << endl;
+		if (ID != 0)
+		{
+			playerPlant = true;
+			if (playerPlant == true)
+			{
+				plantX.push_back(camera.position.x);
+				plantY.push_back(camera.position.z);
+				plantGrow.push_back(0);
+				if (ID == 4)
+				{
+					plantType.push_back(4);
+				}
+				if (ID == 5)
+				{
+					plantType.push_back(5);
+				}
+				if (ID == 6)
+				{
+					plantType.push_back(6);
+				}
+				playerPlant = false;
+			}
+		}
+		deltaTime = 0;
+	}
+	else
+	{
+		playerPlant = false;
+	}
+	if (Application::IsKeyPressed('8') && deltaTime > 0.2)
+	{
+		int ID;
+		ID = in.Remove(7, 1);
+		cout << ID << endl;
+		if (ID != 0)
+		{
+			playerPlant = true;
+			if (playerPlant == true)
+			{
+				plantX.push_back(camera.position.x);
+				plantY.push_back(camera.position.z);
+				plantGrow.push_back(0);
+				if (ID == 4)
+				{
+					plantType.push_back(4);
+				}
+				if (ID == 5)
+				{
+					plantType.push_back(5);
+				}
+				if (ID == 6)
+				{
+					plantType.push_back(6);
+				}
+				playerPlant = false;
+			}
+		}
+		deltaTime = 0;
+	}
+	else
+	{
+		playerPlant = false;
+	}
+	if (Application::IsKeyPressed('9') && deltaTime > 0.2)
+	{
+		int ID;
+		ID = in.Remove(8, 1);
+		cout << ID << endl;
+		if (ID != 0)
+		{
+			playerPlant = true;
+			if (playerPlant == true)
+			{
+				plantX.push_back(camera.position.x);
+				plantY.push_back(camera.position.z);
+				plantGrow.push_back(0);
+				if (ID == 4)
+				{
+					plantType.push_back(4);
+				}
+				if (ID == 5)
+				{
+					plantType.push_back(5);
+				}
+				if (ID == 6)
+				{
+					plantType.push_back(6);
+				}
+				playerPlant = false;
+			}
+		}
+		deltaTime = 0;
+	}
+	else
+	{
+		playerPlant = false;
+	}
+	if (Application::IsKeyPressed('0') && deltaTime > 0.2)
+	{
+		int ID;
+		ID = in.Remove(9, 1);
+		cout << ID << endl;
+		if (ID != 0)
+		{
+			playerPlant = true;
+			if (playerPlant == true)
+			{
+				plantX.push_back(camera.position.x);
+				plantY.push_back(camera.position.z);
+				plantGrow.push_back(0);
+				if (ID == 4)
+				{
+					plantType.push_back(4);
+				}
+				if (ID == 5)
+				{
+					plantType.push_back(5);
+				}
+				if (ID == 6)
+				{
+					plantType.push_back(6);
+				}
+				playerPlant = false;
+			}
+		}
+		deltaTime = 0;
+	}
+	else
+	{
+		playerPlant = false;
+	}
+	
+	if (Application::IsKeyPressed('E') && deltaTime > 0.2)
+	{
+		playerHarvest = true;
+	}
+	else
+	{
+		playerHarvest = false;
+	}
+
+	if (playerHarvest == true)
+	{
+		for (int c = 0; c < plantType.size(); c++)
+		{
+			int min = -30;
+			int max = 30;
+			if ((camera.position.x + min <= plantX[c] + max && camera.position.x + max >= plantX[c] + min) &&
+				(camera.position.z + min <= plantY[c] + max && camera.position.z + max >= plantY[c] + min))
+			{
+				if (plantType[c] != 0)
+				{
+					if (plantType[c] == 4)
+					{
+						in.assignItem(8);
+					}
+					if (plantType[c] == 5)
+					{
+						in.assignItem(9);
+					}
+					if (plantType[c] == 6)
+					{
+						in.assignItem(10);
+					}
+					plantType[c] = 0;
+					playerPlant = false;
+				}
+			}
+		}
 	}
 
 	fps = 1 / dt;
@@ -322,22 +730,106 @@ void PlanetThree::Render()
 	modelStack.Scale(9000, 7000, 9000);
 	RenderMesh(meshList[GROUND], true);
 	modelStack.PopMatrix();
+	RenderSkyBox();
 
-	//Test mesh on screen
-	RenderMeshOnScreen(meshList[GEO_SCREEN], 40, 0, 80, 30);
+	//generate plant
+	for (int i = 0; i < plantType.size(); i++)
+	{
+		modelStack.PushMatrix();
+		modelStack.Translate(plantX[i], -50, plantY[i]);
+		modelStack.Scale(40, 40, 40);
+		//modelStack.Rotate(randomrotate[i], 0, 1, 0);
+		if (plantType[i] == 4 && plantGrow[i] < 10)
+		{
+			RenderMesh(meshList[GEO_BERRYSEED], true);
+		}
+		if (plantType[i] == 4 && plantGrow[i] >= 10)
+		{
+			RenderMesh(meshList[GEO_BERRIES], true);
+		}
+		if (plantType[i] == 5 && plantGrow[i] < 10)
+		{
+			RenderMesh(meshList[GEO_MELONSEED], true);
+		}
+		if (plantType[i] == 5 && plantGrow[i] >= 10)
+		{
+			RenderMesh(meshList[GEO_MELON], true);
+		}
+		if (plantType[i] == 6 && plantGrow[i] < 10)
+		{
+			RenderMesh(meshList[GEO_RADDISHSEED], true);
+		}
+		if (plantType[i] == 6 && plantGrow[i] >= 10)
+		{
+			RenderMesh(meshList[GEO_RADDISH], true);
+		}
+		modelStack.PopMatrix();
+	}
 
-	//=================================
-	//Text on the screen
-	//=================================
 	modelStack.PushMatrix();
-	string frames = "FPS: " + std::to_string(fps);
-	string x = "x: " + std::to_string((int)camera.position.x);
-	string y = "y: " + std::to_string((int)camera.position.y);
-	string z = "z: " + std::to_string((int)camera.position.z);
-	RenderTextOnScreen(meshList[GEO_TEXT], frames, Color(0, 1, 0), 2, 0, 29);
-	RenderTextOnScreen(meshList[GEO_TEXT], x, Color(0, 1, 0), 2, 0, 4);
-	RenderTextOnScreen(meshList[GEO_TEXT], y, Color(0, 1, 0), 2, 0, 3);
-	RenderTextOnScreen(meshList[GEO_TEXT], z, Color(0, 1, 0), 2, 0, 2);
+	modelStack.Translate(0, 0, 0);
+	modelStack.Scale(50, 50, 50);
+	RenderMesh(meshList[GEO_MELON], true);
+	modelStack.PopMatrix();
+
+	//======================================================
+	//intory
+	//======================================================
+	for (int width = 0; width < 10; width++)
+	{
+		RenderMeshOnScreen(meshList[INVENTORY], 8.5 + width * 7, 5, 7.5, 7.5);
+
+		if (in.storage[0][width] != 0)
+		{
+			if (in.storage[0][width] == 1)//check for common
+			{
+				RenderMeshOnScreen(meshList[GEO_MINERALBOX], 8.5 + width * 7, 5, 5, 5);
+			}
+			else if (in.storage[0][width] == 2)//check for rare
+			{
+				RenderMeshOnScreen(meshList[GEO_MINERAL2BOX], 8.5 + width * 7, 5, 5, 5);
+			}
+			else if (in.storage[0][width] == 3)//check for rare
+			{
+				RenderMeshOnScreen(meshList[GEO_MINERAL3BOX], 8.5 + width * 7, 5, 5, 5);
+			}
+			else if (in.storage[0][width] == 4)//check for berry
+			{
+				RenderMeshOnScreen(meshList[SBERRY], 8.5 + width * 7, 5, 5, 5);
+			}
+			else if (in.storage[0][width] == 5)//check for melon
+			{
+				RenderMeshOnScreen(meshList[SMELON], 8.5 + width * 7, 5, 5, 5);
+			}
+			else if (in.storage[0][width] == 6)//check for radish
+			{
+				RenderMeshOnScreen(meshList[SPUMPKIN], 8.5 + width * 7, 5, 5, 5);
+			}
+			else if (in.storage[0][width] == 7)//check for chicken
+			{
+				RenderMeshOnScreen(meshList[SCHICKEN], 8.5 + width * 7, 5, 5, 5);
+			}
+		}
+
+		if (in.storage[1][width] != 0)
+		{
+			Common = std::to_string((int)in.storage[1][width]);
+			Rare = std::to_string((int)in.storage[1][width]);
+			Epic = std::to_string((int)in.storage[1][width]);
+			Chicken = std::to_string((int)in.storage[1][width]);
+			Berry = std::to_string((int)in.storage[1][width]);
+			Melon = std::to_string((int)in.storage[1][width]);
+			Radish = std::to_string((int)in.storage[1][width]);
+
+			RenderTextOnScreen(meshList[GEO_TEXT], Common, Color(0, 1, 0), 2, 4.5 + width * 3.5, 1);
+			RenderTextOnScreen(meshList[GEO_TEXT], Rare, Color(0, 1, 0), 2, 4.5 + width * 3.5, 1);
+			RenderTextOnScreen(meshList[GEO_TEXT], Epic, Color(0, 1, 0), 2, 4.5 + width * 3.5, 1);
+			RenderTextOnScreen(meshList[GEO_TEXT], Chicken, Color(0, 1, 0), 2, 4.5 + width * 3.5, 1);
+			RenderTextOnScreen(meshList[GEO_TEXT], Berry, Color(0, 1, 0), 2, 4.5 + width * 3.5, 1);
+			RenderTextOnScreen(meshList[GEO_TEXT], Melon, Color(0, 1, 0), 2, 4.5 + width * 3.5, 1);
+			RenderTextOnScreen(meshList[GEO_TEXT], Radish, Color(0, 1, 0), 2, 4.5 + width * 3.5, 1);
+		}
+	}
 }
 
 void PlanetThree::RenderSkyBox()
@@ -350,97 +842,42 @@ void PlanetThree::RenderSkyBox()
 
 	//Ground
 	modelStack.PushMatrix();
-	modelStack.Rotate(180, 0, 1, 0);
 	modelStack.Rotate(-90, 1, 0, 0);
 	RenderMesh(meshList[GEO_BOTTOM], false);
 	modelStack.PopMatrix();
 
-	//Front
+	//left
 	modelStack.PushMatrix();
 	modelStack.Translate(0, 0.498, 0.498);
 	modelStack.Rotate(180, 0, 1, 0);
-	RenderMesh(meshList[GEO_FRONT], false);
+	RenderMesh(meshList[GEO_LEFT], false);
 	modelStack.PopMatrix();
 
-	//Top
+	//top
 	modelStack.PushMatrix();
-	modelStack.Rotate(180, 0, 1, 0);
 	modelStack.Translate(0, 0.98, 0);
 	modelStack.Rotate(90, 1, 0, 0);
 	RenderMesh(meshList[GEO_TOP], false);
 	modelStack.PopMatrix();
 
-	//Back
+	//right
 	modelStack.PushMatrix();
 	modelStack.Translate(0, 0.498, -0.498);
-	RenderMesh(meshList[GEO_BACK], false);
-	modelStack.PopMatrix();
-
-	//Left
-	modelStack.PushMatrix();
-	modelStack.Translate(0.498, 0.4975, 0);
-	modelStack.Rotate(270, 0, 1, 0);
-	RenderMesh(meshList[GEO_LEFT], false);
-	modelStack.PopMatrix();
-
-	//Right
-	modelStack.PushMatrix();
-	modelStack.Translate(-0.498, 0.498, 0);
-	modelStack.Rotate(90, 0, 1, 0);
 	RenderMesh(meshList[GEO_RIGHT], false);
 	modelStack.PopMatrix();
 
-	modelStack.PopMatrix();//skybox
-}
-
-void PlanetThree::RenderSkyBoxNight()
-{
-	//sky box
-	modelStack.PushMatrix();
-	modelStack.Translate(camera.position.x, camera.position.y, camera.position.z);
-	modelStack.Translate(0, -1250, 0);
-	modelStack.Scale(3000, 3000, 3000);
-
-	//Ground
-	modelStack.PushMatrix();
-	modelStack.Rotate(180, 0, 1, 0);
-	modelStack.Rotate(-90, 1, 0, 0);
-	RenderMesh(meshList[GEO_BOTTOM], false);
-	modelStack.PopMatrix();
-
-	//Front
-	modelStack.PushMatrix();
-	modelStack.Translate(0, 0.498, 0.498);
-	modelStack.Rotate(180, 0, 1, 0);
-	RenderMesh(meshList[GEO_FRONTNight], false);
-	modelStack.PopMatrix();
-
-	//Top
-	modelStack.PushMatrix();
-	modelStack.Rotate(180, 0, 1, 0);
-	modelStack.Translate(0, 0.98, 0);
-	modelStack.Rotate(90, 1, 0, 0);
-	RenderMesh(meshList[GEO_TOPNight], false);
-	modelStack.PopMatrix();
-
-	//Back
-	modelStack.PushMatrix();
-	modelStack.Translate(0, 0.498, -0.498);
-	RenderMesh(meshList[GEO_BACKNight], false);
-	modelStack.PopMatrix();
-
-	//Left
+	//front
 	modelStack.PushMatrix();
 	modelStack.Translate(0.498, 0.4975, 0);
 	modelStack.Rotate(270, 0, 1, 0);
-	RenderMesh(meshList[GEO_LEFTNight], false);
+	RenderMesh(meshList[GEO_FRONT], false);
 	modelStack.PopMatrix();
 
-	//Right
+	//back
 	modelStack.PushMatrix();
 	modelStack.Translate(-0.498, 0.498, 0);
 	modelStack.Rotate(90, 0, 1, 0);
-	RenderMesh(meshList[GEO_RIGHTNight], false);
+	RenderMesh(meshList[GEO_BACK], false);
 	modelStack.PopMatrix();
 
 	modelStack.PopMatrix();//skybox

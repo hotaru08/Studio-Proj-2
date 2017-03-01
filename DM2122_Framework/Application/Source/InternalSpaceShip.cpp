@@ -329,96 +329,106 @@ void InternalShip::Update(double dt)
 	//==============================================
 	if (camera.ShopEnter)
 	{
-		if (count == 0 && Buy)//chicken
-		{
-			in.assignItem(7);
-		}
-		if (count == 1 && Buy)//berry
-		{
-			in.assignItem(4);
-		}
-		if (count == 2 && Buy)//melon
-		{
-			in.assignItem(5);
-		}
-		if (count == 3 && Buy)//radish
-		{
-			in.assignItem(6);//assign to inventory
-		}
-	}
+		//-------------------------------------------------//
+		//Buying items
+		//-------------------------------------------------//
 
-	//---------------------------------------------------//
-	//Selling items in shop
-	//--------------------------------------------------//
-
-	for (int i = 0; i < 10; i++)
-	{
-		if (countInven == i && Sell)
+		if (Buy)
 		{
-			switch (in.storage[0][i])
+			if (count == 0 && goldRemain >= 50000)//chicken
 			{
-			case 1://checking for common
-				store.addGold_(50);
-				in.Remove(i, 1);
-				Sell = false;
-				break;
-
-			case 2://checking for rare
-				store.addGold_(100);
-				in.Remove(i, 1);
-				Sell = false;
-				break;
-
-			case 3://checking for epic
-				store.addGold_(250);
-				in.Remove(i, 1);
-				Sell = false;
-				break;
-
-			case 4://checking for berry seed
-				store.addGold_(50);
-				in.Remove(i, 1);
-				Sell = false;
-				break;
-
-			case 5://checking for melon seed
-				store.addGold_(125);
-				in.Remove(i, 1);
-				Sell = false;
-				break;
-
-			case 6://checking for radish seed
-				store.addGold_(250);
-				in.Remove(i, 1);
-				Sell = false;
-				break;
-
-			case 7://checking for chicken
-				store.addGold_(25000);
-				in.Remove(i, 1);
-				Sell = false;
-				break;
-
-			case 8://checking for berry
-				store.addGold_(200);
-				in.Remove(i, 1);
-				Sell = false;
-				break;
-
-			case 9://checking for melon
-				store.addGold_(500);
-				in.Remove(i, 1);
-				Sell = false;
-				break;
-
-			case 10://checking for raddish
-				store.addGold_(1000);
-				in.Remove(i, 1);
-				Sell = false;
-				break;
+				in.assignItem(7);
+				store.reduceGold_(50000);
+			}
+			if (count == 1 && goldRemain >= 100)//berry
+			{
+				in.assignItem(4);
+				store.reduceGold_(100);
+			}
+			if (count == 2 && goldRemain >= 250)//melon
+			{
+				in.assignItem(5);
+				store.reduceGold_(250);
+			}
+			if (count == 3 && goldRemain >= 500)//radish
+			{
+				in.assignItem(6);
+				store.reduceGold_(500);
 			}
 		}
-		
+
+		//---------------------------------------------------//
+		//Selling items in shop
+		//--------------------------------------------------//
+		for (int i = 0; i < 10; i++)
+		{
+			if (countInven == i && Sell)
+			{
+				switch (in.storage[0][i])
+				{
+				case 1://checking for common
+					store.addGold_(50);
+					in.Remove(i, 1);
+					Sell = false;
+					break;
+
+				case 2://checking for rare
+					store.addGold_(100);
+					in.Remove(i, 1);
+					Sell = false;
+					break;
+
+				case 3://checking for epic
+					store.addGold_(250);
+					in.Remove(i, 1);
+					Sell = false;
+					break;
+
+				case 4://checking for berry seed
+					store.addGold_(50);
+					in.Remove(i, 1);
+					Sell = false;
+					break;
+
+				case 5://checking for melon seed
+					store.addGold_(125);
+					in.Remove(i, 1);
+					Sell = false;
+					break;
+
+				case 6://checking for radish seed
+					store.addGold_(250);
+					in.Remove(i, 1);
+					Sell = false;
+					break;
+
+				case 7://checking for chicken
+					store.addGold_(25000);
+					in.Remove(i, 1);
+					Sell = false;
+					break;
+
+				case 8://checking for berry
+					store.addGold_(200);
+					in.Remove(i, 1);
+					Sell = false;
+					break;
+
+				case 9://checking for melon
+					store.addGold_(500);
+					in.Remove(i, 1);
+					Sell = false;
+					break;
+
+				case 10://checking for raddish
+					store.addGold_(1000);
+					in.Remove(i, 1);
+					Sell = false;
+					break;
+				}
+			}
+			
+		}
 	}
 
 	camera.Update(dt, (width / 2) - X_Pos, (height / 2) - Y_Pos);
@@ -733,64 +743,21 @@ void InternalShip::BuyingItems()
 	//--------------------------------------------------------//
 	//Buying items according to count
 	//--------------------------------------------------------//
-	if (count == 0)//for chicken
+
+	for (int i = 0; i < 4; i++)
 	{
-		Buy = false;
-		RenderMeshOnScreen(meshList[HL], 60, 50, 40, 12);//first box highlighted
-
-		if (in.storage[1][9] < 10)
+		if (count == i)//for chicken
 		{
-			if (Application::IsKeyPressed(VK_RETURN) && deltaTime > 0.15)
-			{
-				Buy = true;
-				store.reduceGold_(50000);
-				deltaTime = 0;
-			}
-		}
-	}
-	if (count == 1)//berry
-	{
-		Buy = false;
-		RenderMeshOnScreen(meshList[HL], 60, 40, 40, 12);
+			Buy = false;
+			RenderMeshOnScreen(meshList[HL], 60, 50 - (i * 10), 40, 12);//first box highlighted
 
-		if (in.storage[1][9] < 10)
-		{
-			if (Application::IsKeyPressed(VK_RETURN) && deltaTime > 0.15)
+			if (in.storage[1][9] < 10)
 			{
-				Buy = true;
-				store.reduceGold_(100);
-				deltaTime = 0;
-			}
-		}
-	}
-
-	if (count == 2)//melon
-	{
-		Buy = false;
-		RenderMeshOnScreen(meshList[HL], 60, 30, 40, 12);
-
-		if (in.storage[1][9] < 10)
-		{
-			if (Application::IsKeyPressed(VK_RETURN) && deltaTime > 0.15)
-			{
-				Buy = true;
-				store.reduceGold_(250);
-				deltaTime = 0;
-			}
-		}
-	}
-	if (count == 3)//radish
-	{
-		Buy = false;
-		RenderMeshOnScreen(meshList[HL], 60, 20, 40, 12);
-
-		if (in.storage[1][9] < 10)
-		{
-			if (Application::IsKeyPressed(VK_RETURN) && deltaTime > 0.15)
-			{
-				Buy = true;
-				store.reduceGold_(500);
-				deltaTime = 0;
+				if (Application::IsKeyPressed(VK_RETURN) && deltaTime > 0.15)
+				{
+					Buy = true;
+					deltaTime = 0;
+				}
 			}
 		}
 	}

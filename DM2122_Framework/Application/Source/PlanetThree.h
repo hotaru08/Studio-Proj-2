@@ -6,6 +6,10 @@
 #include "Mesh.h"
 #include "MatrixStack.h"
 #include "Light.h"
+#include "Inventory.h"
+#include <vector>
+
+using namespace std;
 
 class PlanetThree : public Scene
 {
@@ -31,6 +35,26 @@ class PlanetThree : public Scene
 		GEO_TOPNight,
 		GEO_FRONTNight,
 		GEO_BACKNight,
+
+		//Inventory
+		INVENTORY,
+		GEO_MINERALBOX,
+		GEO_MINERAL2BOX,
+		GEO_MINERAL3BOX,
+
+		//shop
+		SBERRY,
+		SMELON,
+		SPUMPKIN,
+		SCHICKEN,
+
+		//plants
+		GEO_BERRIES,
+		GEO_MELON,
+		GEO_RADDISH,
+		GEO_BERRYSEED,
+		GEO_MELONSEED,
+		GEO_RADDISHSEED,
 
 		GEO_SCREEN,
 		GEO_TEXT,
@@ -123,6 +147,28 @@ private:
 	Camera3 camera;
 	MS modelStack, viewStack, projectionStack;
 	Light light[4];
+	Inventory in;
+
+	string Common;
+	string Rare;
+	string Epic;
+	string Chicken;
+	string Berry;
+	string Melon;
+	string Radish;
+
+	vector<int> plantX;
+	vector<int> plantY;
+	vector<int> plantType;
+	vector<double> plantGrow;
+	float plantScale;
+
+
+	bool playerPlant;
+	bool playerHarvest;
+	int ID;
+	double deltaTime;
+
 
 	void RenderMesh(Mesh *mesh, bool enableLight);
 	void RenderSkyBox();

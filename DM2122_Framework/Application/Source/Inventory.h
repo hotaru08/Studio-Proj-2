@@ -16,7 +16,7 @@ public:
 	void addEpic();
 	void assignItem(int itemID);
 	static int storage[2][10];
-	void Remove(int slotNo, int amount);
+	int Remove(int slotNo, int slotAmt);
 
 private:
 	int common;
@@ -24,7 +24,9 @@ private:
 	int epic;
 	bool empty;
 	bool stop;
+	bool stop2;
 	int ID;
+	int amount;
 	bool boughtchicken;
 };
 
