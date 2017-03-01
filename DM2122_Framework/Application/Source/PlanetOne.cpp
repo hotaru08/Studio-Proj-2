@@ -11,6 +11,9 @@
 #include "LoadTGA.h"
 #include "LoadOBJ.h"
 
+#include <windows.h>
+#include <mmsystem.h>
+
 #include <string>
 
 using std::string;
@@ -64,7 +67,7 @@ void Planet1::Init()
     //Sunlight properties
     light[0].type = Light::LIGHT_DIRECTIONAL;
     light[0].position.Set(0, 1000, 0);
-    light[0].color.Set(1, 1,1);
+    light[0].color.Set(1, 1, 1);
     light[0].power = 1;
     light[0].kC = 1.f;
     light[0].kL = 0.01f;
@@ -141,6 +144,9 @@ void Planet1::Init()
     meshList[GEO_RIGHT] = MeshBuilder::GenerateQuad("right", Color(1, 1, 1), 1, 1);
     meshList[GEO_RIGHT]->textureID = LoadTGA("Image//Planet1//right.tga");
 
+    meshList[BLOOD] = MeshBuilder::GenerateQuad("blood", Color(1, 1, 1), 1, 1);
+    meshList[BLOOD]->textureID = LoadTGA("Image//Planet1//Blood.tga");
+
     //top skybox
     meshList[GEO_TOP] = MeshBuilder::GenerateQuad("top", Color(1, 1, 1), 1, 1);
     meshList[GEO_TOP]->textureID = LoadTGA("Image//Planet1//top.tga");
@@ -171,8 +177,6 @@ void Planet1::Init()
     projection.SetToPerspective(45.f, 4.f / 3.f, 0.1f, 25000.0f);
     projectionStack.LoadMatrix(projection);
 
-	srand(time(NULL));
-
     Switch = true;
     Switch_LightBall = false;
     beam = 0.f;
@@ -182,9 +186,11 @@ void Planet1::Init()
     travel = false;
     count = 0;
 
+    srand(time(NULL));
+
     for (int i = 0; i < 5; i++)
     {
-        alienhealth[i]= 200; 
+        alienhealth[i] = 200;
         BoxMax[i] = (0, 0, 0);
         BoxMin[i] = (0, 0, 0);
     }
@@ -234,6 +240,7 @@ void Planet1::Init()
     Enemy5.z = rand() % 1600;
 
     hangtime = 0;
+    isDamage = false;
 }
 
 void Planet1::Update(double dt)
@@ -299,14 +306,14 @@ void Planet1::Update(double dt)
     //-----------------//
     //Box around beam
     //-----------------//
- /*   BulletMax.x = 0.2;
+    /*   BulletMax.x = 0.2;
     BulletMax.y = 0.2;
     BulletMax.z = 0.2;
 
     BulletMin.x = -0.2;
     BulletMin.y = -0.2;
     BulletMin.z = -0.2;
-*/
+    */
     //-----------------//
     //Box around enemy
     //----------------//
@@ -324,8 +331,8 @@ void Planet1::Update(double dt)
     Vector3 view = (camera.target - camera.position).Normalized();
 
     angleside = (view.x > 0 ? 1 : -1) * (Math::RadianToDegree(acos(Vector3(0, 0, 1).Dot(Vector3(view.x, 0, view.z).Normalized()))));
-    Vector3 right = camera.view.Cross(camera.up); 
-    
+    Vector3 right = camera.view.Cross(camera.up);
+
     angley = (view.y > 0 ? -1 : 1) * (Math::RadianToDegree(acos(Vector3(0, 0, 1).Dot(Vector3(0, view.y, view.z).Normalized()))));
 
     //enemy movement
@@ -354,8 +361,10 @@ void Planet1::Update(double dt)
         {
             Bullet* temp = new Bullet(camera.position, camera.target, camera.view, bulletTime);
             allBullet.push_back(temp);
+            test.se->play2D("beam.wav");
+
         }
-    hangtime = 0;
+        hangtime = 0;
     }
 
     for (auto &i : allBullet)
@@ -375,7 +384,7 @@ void Planet1::Update(double dt)
         AlienTwoDead = true;
     }
 
-    if (alienhealth[2]<= 0 && AlienThreeDead == false)
+    if (alienhealth[2] <= 0 && AlienThreeDead == false)
     {
         NumAlien -= 1;
         AlienThreeDead = true;
@@ -413,11 +422,11 @@ void Planet1::Update(double dt)
         shipdown -= 1;
     }
 
-    if ((camera.position.x > -1000 && camera.position.x < 0 
-    	&& camera.position.z > 0 && camera.position.z < 1000)
+    if ((camera.position.x > -1000 && camera.position.x < 0
+        && camera.position.z > 0 && camera.position.z < 1000)
         && flagcapture == true && Application::IsKeyPressed('E'))
     {
-    	Application::SetScene(1);
+        Application::SetScene(1);
     }
 
     for (int i = 0; i < 5; i++)
@@ -426,10 +435,10 @@ void Planet1::Update(double dt)
         {
             if (j->BulletTarget.x <= BoxMax[i].x && j->BulletTarget.x >= BoxMin[i].x &&
                 j->BulletPosition.y <= BoxMax[i].y && j->BulletPosition.y >= BoxMin[i].y &&
-               j->BulletTarget.z <= BoxMax[i].z && j->BulletTarget.z >= BoxMin[i].z)
+                j->BulletTarget.z <= BoxMax[i].z && j->BulletTarget.z >= BoxMin[i].z)
             {
                 alienhealth[i] -= 5;
-            } 
+            }
         }
     }
     camera.Update(dt, (width / 2) - X_Pos, (height / 2) - Y_Pos);
@@ -474,6 +483,11 @@ void Planet1::AlienOne()
                 {
                     H->HealthDamageReceive(20);
                     damage = 0;
+                    isDamage = true;
+                }
+                else
+                {
+                    isDamage = false;
                 }
             }
         }
@@ -518,6 +532,12 @@ void Planet1::AlienTwo()
             {
                 H->HealthDamageReceive(20);
                 damage = 0;
+                isDamage = true;
+
+            }
+            else
+            {
+                isDamage = false;
             }
         }
     }
@@ -561,6 +581,12 @@ void Planet1::AlienThree()
             {
                 H->HealthDamageReceive(20);
                 damage = 0;
+                isDamage = true;
+
+            }
+            else
+            {
+                isDamage = false;
             }
         }
     }
@@ -604,6 +630,12 @@ void Planet1::AlienFour()
             {
                 H->HealthDamageReceive(20);
                 damage = 0;
+                isDamage = true;
+
+            }
+            else
+            {
+                isDamage = false;
             }
         }
     }
@@ -647,6 +679,12 @@ void Planet1::AlienFive()
             {
                 H->HealthDamageReceive(20);
                 damage = 0;
+                isDamage = true;
+
+            }
+            else
+            {
+                isDamage = false;
             }
         }
     }
@@ -690,7 +728,7 @@ void Planet1::Render()
         camera.position.z + (camera.target.z - camera.position.z));
     modelStack.Rotate(angleside, 0, 1, 0);
     //modelStack.Rotate(angley, 1,0,0);
-    modelStack.Translate(0,-1.8,0);
+    modelStack.Translate(0, -1.8, 0);
 
     // gun
     modelStack.PushMatrix();
@@ -733,20 +771,12 @@ void Planet1::Render()
         RenderMesh(meshList[SPACESHIP], true);
         modelStack.PopMatrix();
     }
-    //=================================
-    //Text on the screen
-    //=================================
-    //modelStack.PushMatrix();
-    //string frames = "FPS: " + std::to_string(fps);
-    //string x = "x: " + std::to_string((int)camera.position.x);
-    //string y = "y: " + std::to_string((int)camera.position.y);
-    //string z = "z: " + std::to_string((int)camera.position.z);
-    string NumAlienCounter = "Number of Aliens left: " + std::to_string((int)NumAlien);
-    ////xyz
-    //RenderTextOnScreen(meshList[GEO_TEXT], x, Color(1,1,1), 2, 0, 4);
-    //RenderTextOnScreen(meshList[GEO_TEXT], y, Color(1,1,1), 2, 0, 3);
-    //RenderTextOnScreen(meshList[GEO_TEXT], z, Color(1, 1, 1), 2, 0, 2);
 
+    if (isDamage == true)
+    {
+        RenderMeshOnScreen(meshList[BLOOD], 45, 40, 70, 70);
+    }
+    string NumAlienCounter = "Number of Aliens left: " + std::to_string((int)NumAlien);
     RenderTextOnScreen(meshList[GEO_TEXT], NumAlienCounter, Color(1, 1, 1), 2, 0, 0);
     RenderMeshOnScreen(meshList[HEALTH], 20, 50, 40, 40);
     RenderMeshOnScreen(meshList[PORTRAIT], 20, 50, 40, 40);

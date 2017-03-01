@@ -9,6 +9,7 @@
 #include <vector>
 #include "Health.h"
 #include "Bullet.h"
+#include "Sounds.h"
 
 using std::vector;
 
@@ -39,6 +40,7 @@ class Planet1 : public Scene
         HEALTH,
         HEALTHPING,
         PORTRAIT,
+        BLOOD,
 
         GEO_TEXT,
 
@@ -203,10 +205,13 @@ private:
     //void Bullet();
     void RenderAlien();
     double damage;
+    bool isDamage;
 
     Vector3 BulletPosition;
     Vector3 BulletView;
     Vector3 BulletTarget;
+
+    Sound test;
 
     void RenderMesh(Mesh *mesh, bool enableLight);
     void RenderSkyBox();

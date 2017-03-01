@@ -35,7 +35,6 @@ public:
     virtual void Reset();
     void bounds();
     void Update(double dt, double x, double y); //for mouse detection
-    void collsion(Vector3 enBoxMax[], Vector3 enBoxMin[]);
 };
 
 #endif
