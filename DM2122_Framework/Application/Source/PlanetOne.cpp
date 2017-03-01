@@ -171,6 +171,8 @@ void Planet1::Init()
     projection.SetToPerspective(45.f, 4.f / 3.f, 0.1f, 25000.0f);
     projectionStack.LoadMatrix(projection);
 
+	srand(time(NULL));
+
     Switch = true;
     Switch_LightBall = false;
     beam = 0.f;

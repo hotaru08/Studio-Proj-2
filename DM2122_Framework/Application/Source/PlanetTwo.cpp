@@ -266,6 +266,22 @@ void PlanetTwo::Init()
 	meshList[GEO_MINERAL3BOX] = MeshBuilder::GenerateQuad("test2", Color(1, 0, 1), 1, 1);
 	meshList[GEO_MINERAL3BOX]->textureID = LoadTGA("Image//MineralOnScreen//mineralPurple.tga");
 
+	//chicken on screen
+	meshList[SCHICKEN] = MeshBuilder::GenerateQuad("chicken", Color(1, 1, 1), 1, 1);
+	meshList[SCHICKEN]->textureID = LoadTGA("Image//Items//chickenMesh.tga");
+
+	//seed 1
+	meshList[SBERRY] = MeshBuilder::GenerateQuad("berry", Color(1, 1, 1), 1, 1);
+	meshList[SBERRY]->textureID = LoadTGA("Image//Items//BerrySeeds.tga");
+
+	//seed 2
+	meshList[SMELON] = MeshBuilder::GenerateQuad("melon", Color(1, 1, 1), 1, 1);
+	meshList[SMELON]->textureID = LoadTGA("Image//Items//MelonSeeds.tga");
+
+	//seed 3
+	meshList[SPUMPKIN] = MeshBuilder::GenerateQuad("pumpkin", Color(1, 1, 1), 1, 1);
+	meshList[SPUMPKIN]->textureID = LoadTGA("Image//Items//PumpkinSeeds.tga");
+
 	//inventory
 	meshList[INVENTORY] = MeshBuilder::GenerateQuad("inventory", Color(1, 1, 1), 1, 1);
 	meshList[INVENTORY]->textureID = LoadTGA("Image//inventoryBox.tga");
@@ -301,9 +317,14 @@ void PlanetTwo::Init()
 	delaypressE = 0;
 	damage = false;
 	mTime = 0;
+
 	Common = "";
 	Rare = "";
 	Epic = "";
+	Chicken = "";
+	Berry = "";
+	Melon = "";
+	Radish = "";
 
 	//=================== RANDOM MINERAL SPAWN =====================//
 	for (int a = 0; a < 100; a++)
@@ -422,11 +443,9 @@ void PlanetTwo::Update(double dt)
 	if (translateMeteor <= -6200)
 	{
 		translateMeteor = -6200;
-		shake = true;
-		//std::cout << g_dElapsedTime << std::endl;
+
 		if (g_dElapsedTime > 10)
 		{
-
 			translateMeteor = 0;
 			g_dElapsedTime = 0;
 			shake = false;
@@ -456,7 +475,6 @@ void PlanetTwo::Update(double dt)
 		&& (camera.position.x >= meteorX - 200 && camera.position.x <= meteorX + 200)
 		&& (camera.position.z >= meteorZ - 200 && camera.position.z <= meteorZ + 200))
 	{
-		//*changeHealth -= 100;
 		health.HealthDamageReceive(100);
 	}
 
@@ -465,7 +483,7 @@ void PlanetTwo::Update(double dt)
 		&& (camera.position.x >= meteorX - 300 && camera.position.x <= meteorX + 300)
 		&& (camera.position.z >= meteorZ - 300 && camera.position.z <= meteorZ + 300))
 	{
-		//*changeHealth -= 50;
+		shake = true;
 		damage = true;
 	}
 
@@ -498,7 +516,6 @@ void PlanetTwo::Update(double dt)
 	{
 		if (playerActivated == false)
 		{
-			/**changeHealth += 100;*/
 			health.AddHealth();
 			playerActivated = true;
 			g_dElapsedTime2 = 0;
@@ -506,7 +523,6 @@ void PlanetTwo::Update(double dt)
 	}
 	if (playerActivated == true)
 	{
-		//std::cout << g_dElapsedTime2 << std::endl;
 		if (g_dElapsedTime2 > 10)
 		{
 			playerActivated = false;
@@ -779,6 +795,68 @@ void PlanetTwo::Render()
 	modelStack.PushMatrix();
 	string health = "Health: " + std::to_string((int)healthLeft);
 	RenderTextOnScreen(meshList[GEO_TEXT], health, Color(0, 1, 0), 2, 0, 6);
+}
+
+void PlanetTwo::RenderInven()
+{
+	//======================================================
+	//Inventory
+	//======================================================
+	for (int width = 0; width < 10; width++)
+	{
+		RenderMeshOnScreen(meshList[INVENTORY], 8.5 + width * 7, 5, 7.5, 7.5);
+
+		if (inven.storage[0][width] != 0)
+		{
+			if (inven.storage[0][width] == 1)//check for common
+			{
+				RenderMeshOnScreen(meshList[GEO_MINERALBOX], 8.5 + width * 7, 5, 5, 5);
+			}
+			else if (inven.storage[0][width] == 2)//check for rare
+			{
+				RenderMeshOnScreen(meshList[GEO_MINERAL2BOX], 8.5 + width * 7, 5, 5, 5);
+			}
+			else if (inven.storage[0][width] == 3)//check for rare
+			{
+				RenderMeshOnScreen(meshList[GEO_MINERAL3BOX], 8.5 + width * 7, 5, 5, 5);
+			}
+			else if (inven.storage[0][width] == 4)//check for berry
+			{
+				RenderMeshOnScreen(meshList[SBERRY], 8.5 + width * 7, 5, 5, 5);
+			}
+			else if (inven.storage[0][width] == 5)//check for melon
+			{
+				RenderMeshOnScreen(meshList[SMELON], 8.5 + width * 7, 5, 5, 5);
+			}
+			else if (inven.storage[0][width] == 6)//check for radish
+			{
+				RenderMeshOnScreen(meshList[SPUMPKIN], 8.5 + width * 7, 5, 5, 5);
+			}
+			else if (inven.storage[0][width] == 7)//check for chicken
+			{
+				RenderMeshOnScreen(meshList[SCHICKEN], 8.5 + width * 7, 5, 5, 5);
+			}
+		}
+
+		if (inven.storage[1][width] != 0)
+		{
+			Common = std::to_string((int)inven.storage[1][width]);
+			Rare = std::to_string((int)inven.storage[1][width]);
+			Epic = std::to_string((int)inven.storage[1][width]);
+			Chicken = std::to_string((int)inven.storage[1][width]);
+			Berry = std::to_string((int)inven.storage[1][width]);
+			Melon = std::to_string((int)inven.storage[1][width]);
+			Radish = std::to_string((int)inven.storage[1][width]);
+
+			RenderTextOnScreen(meshList[GEO_TEXT], Common, Color(0, 0, 0), 2, 4.5 + width * 3.5, 1);
+			RenderTextOnScreen(meshList[GEO_TEXT], Rare, Color(0, 0, 0), 2, 4.5 + width * 3.5, 1);
+			RenderTextOnScreen(meshList[GEO_TEXT], Epic, Color(0, 0, 0), 2, 4.5 + width * 3.5, 1);
+			RenderTextOnScreen(meshList[GEO_TEXT], Chicken, Color(0, 0, 0), 2, 4.5 + width * 3.5, 1);
+			RenderTextOnScreen(meshList[GEO_TEXT], Berry, Color(0, 0, 0), 2, 4.5 + width * 3.5, 1);
+			RenderTextOnScreen(meshList[GEO_TEXT], Melon, Color(0, 0, 0), 2, 4.5 + width * 3.5, 1);
+			RenderTextOnScreen(meshList[GEO_TEXT], Radish, Color(0, 0, 0), 2, 4.5 + width * 3.5, 1);
+		}
+	}
 }
 
 void PlanetTwo::RenderSkyBox()

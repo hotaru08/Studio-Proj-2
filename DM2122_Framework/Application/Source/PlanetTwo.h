@@ -46,6 +46,11 @@ class PlanetTwo : public Scene
 		GEO_TEXT,
 		GROUND,
 
+		SBERRY,
+		SMELON,
+		SPUMPKIN,
+		SCHICKEN,
+
 		NUM_GEOMETRY,
 	};
 
@@ -157,9 +162,14 @@ private:
 	double  delaypressE;
 	bool damage;
 	double mTime;
+
 	string Common;
 	string Rare;
 	string Epic;
+	string Chicken;
+	string Berry;
+	string Melon;
+	string Radish;
 
 
 	Camera3 camera;
@@ -174,6 +184,8 @@ private:
 	void RenderText(Mesh* mesh, std::string text, Color color);
 	void RenderTextOnScreen(Mesh* mesh, std::string text, Color color, float size, float x, float y);
 	void RenderMeshOnScreen(Mesh* mesh, int x, int y, int sizex, int sizey);
+
+	void RenderInven();
 };
 
 #endif
