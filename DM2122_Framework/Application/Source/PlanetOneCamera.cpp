@@ -181,7 +181,6 @@ void PlanetOneCamera::Update(double dt, double x, double y)
         position.y = 0;
         position = position + view * CAMERA_SPEED * dt;
         target = position + view;
-        //collsion();
     }
 
     //back camera movement
@@ -192,7 +191,6 @@ void PlanetOneCamera::Update(double dt, double x, double y)
         position.y = 0;
         position = position - view * CAMERA_SPEED * dt;
         target = position + view;
-        //collsion();
     }
 
     //Left camera movement
@@ -203,7 +201,6 @@ void PlanetOneCamera::Update(double dt, double x, double y)
         position.y = 0;
         position = position - right * CAMERA_SPEED * dt;
         target = position + view;
-        //collsion();
     }
 
     //Right camera movement
@@ -214,25 +211,6 @@ void PlanetOneCamera::Update(double dt, double x, double y)
         position.y = 0;
         position = position + right * CAMERA_SPEED * dt;
         target = position + view;
-        //collsion();
-    }
-
-    //Zoom in
-    if (Application::IsKeyPressed('N'))
-    {
-        Vector3 direction = target - position;
-        if (direction.Length() > 5)
-        {
-            Vector3 view = (target - position).Normalized();
-            position += view * (float)(100.f * dt);
-        }
-    }
-
-    //Zoom out
-    if (Application::IsKeyPressed('M'))
-    {
-        Vector3 view = (target - position).Normalized();
-        position -= view * (float)(100.f * dt);
     }
 }
 

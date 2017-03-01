@@ -182,7 +182,7 @@ void Planet1::Init()
 
     for (int i = 0; i < 5; i++)
     {
-        alienhealth[i]= 30; 
+        alienhealth[i]= 200; 
         BoxMax[i] = (0, 0, 0);
         BoxMin[i] = (0, 0, 0);
     }
@@ -346,7 +346,7 @@ void Planet1::Update(double dt)
     //camera.collsion(&BoxMax[5], &BoxMin[5]);
     Vector3 Store = camera.up.Cross(camera.right);
     Store.Normalized();
-    if (hangtime > 0.25)
+    if (hangtime > 0.5)
     {
         if (Application::IsKeyPressed(VK_LBUTTON))
         {
@@ -426,7 +426,7 @@ void Planet1::Update(double dt)
                 j->BulletPosition.y <= BoxMax[i].y && j->BulletPosition.y >= BoxMin[i].y &&
                j->BulletTarget.z <= BoxMax[i].z && j->BulletTarget.z >= BoxMin[i].z)
             {
-                alienhealth[i] -= 10;
+                alienhealth[i] -= 5;
             } 
         }
     }
@@ -448,8 +448,7 @@ void Planet1::AlienOne()
         float hypotenuse = sqrt((Direction.x *Direction.x) + (Direction.z * Direction.z));
         Direction.x /= hypotenuse;
         Direction.z /= hypotenuse;
-        Enemy += Direction;//moves enemy
-
+        Enemy += Direction * 2;//moves enemy
     }
 
     BoxMax[0] += Enemy;
@@ -471,7 +470,7 @@ void Planet1::AlienOne()
             {
                 if (damage > 0.5)
                 {
-                    H->HealthDamageReceive(5);
+                    H->HealthDamageReceive(20);
                     damage = 0;
                 }
             }
@@ -494,7 +493,7 @@ void Planet1::AlienTwo()
         float hypotenuse = sqrt((Direction.x *Direction.x) + (Direction.z * Direction.z));
         Direction.x /= hypotenuse;
         Direction.z /= hypotenuse;
-        Enemy2 += Direction;//moves Enemy2
+        Enemy2 += Direction * 2;//moves Enemy2
     }
 
     BoxMax[1] += Enemy2;
@@ -515,7 +514,7 @@ void Planet1::AlienTwo()
             Enemy2 = Enemy2PrevPos;
             if (damage > 0.5)
             {
-                H->HealthDamageReceive(5);
+                H->HealthDamageReceive(20);
                 damage = 0;
             }
         }
@@ -537,7 +536,7 @@ void Planet1::AlienThree()
         float hypotenuse = sqrt((Direction.x *Direction.x) + (Direction.z * Direction.z));
         Direction.x /= hypotenuse;
         Direction.z /= hypotenuse;
-        Enemy3 += Direction;//moves Enemy3
+        Enemy3 += Direction * 2;//moves Enemy3
     }
 
     BoxMax[2] += Enemy3;
@@ -558,7 +557,7 @@ void Planet1::AlienThree()
             Enemy3 = Enemy3PrevPos;
             if (damage > 0.5)
             {
-                H->HealthDamageReceive(5);
+                H->HealthDamageReceive(20);
                 damage = 0;
             }
         }
@@ -580,7 +579,7 @@ void Planet1::AlienFour()
         float hypotenuse = sqrt((Direction.x *Direction.x) + (Direction.z * Direction.z));
         Direction.x /= hypotenuse;
         Direction.z /= hypotenuse;
-        Enemy4 += Direction;//moves Enemy4
+        Enemy4 += Direction * 2;//moves Enemy4
     }
 
     BoxMax[3] += Enemy4;
@@ -601,7 +600,7 @@ void Planet1::AlienFour()
             Enemy4 = Enemy4PrevPos;
             if (damage > 0.5)
             {
-                H->HealthDamageReceive(5);
+                H->HealthDamageReceive(20);
                 damage = 0;
             }
         }
@@ -644,7 +643,7 @@ void Planet1::AlienFive()
             Enemy5 = Enemy5PrevPos;
             if (damage > 0.5)
             {
-                H->HealthDamageReceive(5);
+                H->HealthDamageReceive(20);
                 damage = 0;
             }
         }
@@ -741,14 +740,12 @@ void Planet1::Render()
     //string y = "y: " + std::to_string((int)camera.position.y);
     //string z = "z: " + std::to_string((int)camera.position.z);
     string NumAlienCounter = "Number of Aliens left: " + std::to_string((int)NumAlien);
-    string AmmoCounter = "Ammo: " + std::to_string(ammo.size());
     ////xyz
     //RenderTextOnScreen(meshList[GEO_TEXT], x, Color(1,1,1), 2, 0, 4);
     //RenderTextOnScreen(meshList[GEO_TEXT], y, Color(1,1,1), 2, 0, 3);
     //RenderTextOnScreen(meshList[GEO_TEXT], z, Color(1, 1, 1), 2, 0, 2);
 
     RenderTextOnScreen(meshList[GEO_TEXT], NumAlienCounter, Color(1, 1, 1), 2, 0, 0);
-    RenderTextOnScreen(meshList[GEO_TEXT], AmmoCounter, Color(1, 1, 1), 2, 30, 0);
     RenderMeshOnScreen(meshList[HEALTH], 20, 50, 40, 40);
     RenderMeshOnScreen(meshList[PORTRAIT], 20, 50, 40, 40);
 
