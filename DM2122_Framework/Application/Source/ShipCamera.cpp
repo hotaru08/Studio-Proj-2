@@ -19,6 +19,9 @@ void ShipCamera::Init(const Vector3& pos, const Vector3& target, const Vector3& 
 	right.y = 0;
 	right.Normalize();
 	this->up = defaultUp = right.Cross(view).Normalized();
+
+	Move = true;
+	ShopEnter = false;
 }
 
 void ShipCamera::Update(double dt)
@@ -138,6 +141,8 @@ void ShipCamera::Reset()
 	position = defaultPosition;
 	target = defaultTarget;
 	up = defaultUp;
+	Move = true;
+	ShopEnter = false;
 }
 
 void ShipCamera::bounds()
@@ -162,89 +167,103 @@ void ShipCamera::bounds()
 
 void ShipCamera::Update(double dt, double x, double y)
 {
-	double Ver = y * 0.05;
-	double Horz = x * 0.05;
-	float CAMERA_SPEED = 40;
-
-	view = (target - position).Normalized();
-	right = view.Cross(up);
-	Mtx44 pitch;
-	Mtx44 yaw;
-
-	//look up n down
-	pitch.SetToRotation(Ver, right.x, right.y, right.z);
-	view = pitch * view;
-	target = position + view;
-
-	//look left and right
-	yaw.SetToRotation(Horz, up.x, up.y, up.z);
-	view = yaw * view;
-	target = position + view;
-
-	right.y = 0.f;
-	up = right.Cross(view).Normalized();
-
-	//normalise everything
-	view.Normalize();
-	right.Normalize();
-	up.Normalize();
-
-	if (Application::IsKeyPressed(VK_RBUTTON))
+	if (position.x < 250 && position.x > 150
+		&& position.z < 0 && position.z > -100
+		&& ShopEnter)
 	{
-		CAMERA_SPEED *= 3;
+		Move = false;
+	}
+	else
+	{
+		Move = true;
 	}
 
-	//front camera movement
-	if (Application::IsKeyPressed('W'))
+	if (Move)
 	{
-		bounds();
-		position.y = 0;
-		position = position + view * CAMERA_SPEED * dt;
+		double Ver = y * 0.05;
+		double Horz = x * 0.05;
+		float CAMERA_SPEED = 40;
+
+		view = (target - position).Normalized();
+		right = view.Cross(up);
+		Mtx44 pitch;
+		Mtx44 yaw;
+
+		//look up n down
+		pitch.SetToRotation(Ver, right.x, right.y, right.z);
+		view = pitch * view;
 		target = position + view;
-	}
 
-	//back camera movement
-	if (Application::IsKeyPressed('S'))
-	{
-		bounds();
-		position.y = 0;
-		position = position - view * CAMERA_SPEED * dt;
+		//look left and right
+		yaw.SetToRotation(Horz, up.x, up.y, up.z);
+		view = yaw * view;
 		target = position + view;
-	}
 
-	//Left camera movement
-	if (Application::IsKeyPressed('A'))
-	{
-		bounds();
-		position.y = 0;
-		position = position - right * CAMERA_SPEED * dt;
-		target = position + view;
-	}
+		right.y = 0.f;
+		up = right.Cross(view).Normalized();
 
-	//Right camera movement
-	if (Application::IsKeyPressed('D'))
-	{
-		bounds();
-		position.y = 0;
-		position = position + right * CAMERA_SPEED * dt;
-		target = position + view;
-	}
+		//normalise everything
+		view.Normalize();
+		right.Normalize();
+		up.Normalize();
 
-	//Zoom in
-	if (Application::IsKeyPressed('N'))
-	{
-		Vector3 direction = target - position;
-		if (direction.Length() > 5)
+		if (Application::IsKeyPressed(VK_RBUTTON))
+		{
+			CAMERA_SPEED *= 3;
+		}
+
+		//front camera movement
+		if (Application::IsKeyPressed('W'))
+		{
+			bounds();
+			position.y = 0;
+			position = position + view * CAMERA_SPEED * dt;
+			target = position + view;
+		}
+
+		//back camera movement
+		if (Application::IsKeyPressed('S'))
+		{
+			bounds();
+			position.y = 0;
+			position = position - view * CAMERA_SPEED * dt;
+			target = position + view;
+		}
+
+		//Left camera movement
+		if (Application::IsKeyPressed('A'))
+		{
+			bounds();
+			position.y = 0;
+			position = position - right * CAMERA_SPEED * dt;
+			target = position + view;
+		}
+
+		//Right camera movement
+		if (Application::IsKeyPressed('D'))
+		{
+			bounds();
+			position.y = 0;
+			position = position + right * CAMERA_SPEED * dt;
+			target = position + view;
+		}
+
+		//Zoom in
+		if (Application::IsKeyPressed('N'))
+		{
+			Vector3 direction = target - position;
+			if (direction.Length() > 5)
+			{
+				Vector3 view = (target - position).Normalized();
+				position += view * (float)(100.f * dt);
+			}
+		}
+
+		//Zoom out
+		if (Application::IsKeyPressed('M'))
 		{
 			Vector3 view = (target - position).Normalized();
-			position += view * (float)(100.f * dt);
+			position -= view * (float)(100.f * dt);
 		}
-	}
-
-	//Zoom out
-	if (Application::IsKeyPressed('M'))
-	{
-		Vector3 view = (target - position).Normalized();
-		position -= view * (float)(100.f * dt);
 	}
 }

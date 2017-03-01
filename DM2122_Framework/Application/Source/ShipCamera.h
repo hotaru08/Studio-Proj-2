@@ -17,7 +17,8 @@ public:
 	//bounds
 	//================================
 	float SizeOfScene = 235.0f;
-
+	bool Move;
+	bool ShopEnter;
 
 	ShipCamera();
 	~ShipCamera();
