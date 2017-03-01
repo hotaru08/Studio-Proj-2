@@ -247,18 +247,26 @@ void PlanetFour::Init()
 	meshList[GEO_WALL] = MeshBuilder::GenerateOBJ("Wall", "OBJ//Maze_Wall.obj");
 	meshList[GEO_WALL]->textureID = LoadTGA("Image//Maze_Wall.tga");
 
+	//spaceship
+	meshList[GEO_SHIP] = MeshBuilder::GenerateOBJ("Ship", "OBJ//SpaceshipLanding.obj");
+	meshList[GEO_SHIP]->textureID = LoadTGA("Image//Spaceship.tga");
+
 	Mtx44 projection;
 	projection.SetToPerspective(45.f, 4.f / 3.f, 0.1f, 7000.0f);
 	projectionStack.LoadMatrix(projection);
 
 	Switch = true;
 	Switch_LightBall = false;
+	Door = true;
+	OpenDoor = false;
 }
 
 void PlanetFour::Update(double dt)
 {
 	double X_Pos, Y_Pos; //get cursor position
 	int width, height; //get window size
+
+	static int transDir = 1;
 
 	glfwGetCursorPos(m_window, &X_Pos, &Y_Pos);// getting the cursor position 
 	glfwGetWindowSize(m_window, &width, &height); //get size to center cursor 
@@ -294,6 +302,62 @@ void PlanetFour::Update(double dt)
 		Switch = false;
 		Switch_LightBall = true;
 	}
+
+	//Return to space
+	if (camera.position.x >= -561 && camera.position.x <= -243
+		&& camera.position.z >= -400 && camera.position.z <= -44) 
+	{
+		ShipNear = true;
+
+		if (Application::IsKeyPressed(VK_RETURN))
+		{
+			if (count == 0)
+			{
+				Application::SetScene(1);
+			}
+			else if (count == 1)
+			{
+				Stay = true;
+			}
+		}
+	}
+	else
+	{
+		ShipNear = false;
+		Stay = false;
+	}
+
+	//NearDoor
+	if (camera.position.x >= -200 && camera.position.x <= -30
+		&& camera.position.z >= -500 && camera.position.z <= -300)
+	{
+		NearDoor = true;
+	}
+	else
+	{
+		NearDoor = false;
+	}
+
+	//Door animation
+	translateDoor += (float)(transDir * 0.5 * dt);
+	if (translateDoor > 0.5)
+	{
+		transDir = -1;
+	}
+	if (translateDoor < 0)
+	{
+		transDir = 1;
+	}
+
+	//Door
+	if (Application::IsKeyPressed('Q') //close door
+		//&& OpenDoor == false
+		&& Door == true)
+		Door = false;
+	else if (Application::IsKeyPressed('Q') //open door
+		//&& OpenDoor == false
+		&& Door == false)
+		Door = true;
 
 	fps = 1 / dt;
 
@@ -338,6 +402,24 @@ void PlanetFour::Render()
 	RenderMesh(meshList[GROUND], true);
 	modelStack.PopMatrix();
 
+	//spaceship
+	modelStack.PushMatrix();
+	modelStack.Translate(-400, -50, -200);
+	modelStack.Rotate(90, 0, 1, 0);
+	modelStack.Scale(10, 10, 10);
+	RenderMesh(meshList[GEO_SHIP], true);
+	modelStack.PopMatrix();
+
+	//Door
+	if (Door == true)
+	{
+		modelStack.PushMatrix();
+		modelStack.Translate(-100, -80, -400);
+		modelStack.Scale(50, 40, 20);
+		RenderMesh(meshList[GEO_WALL], true);
+		modelStack.PopMatrix();
+	}
+
 	RenderMaze();
 
 	modelStack.PopMatrix();
@@ -348,15 +430,51 @@ void PlanetFour::Render()
 	//=================================
 	//Text on the screen
 	//=================================
-	modelStack.PushMatrix();
-	string frames = "FPS: " + std::to_string(fps);
-	string x = "x: " + std::to_string((int)camera.position.x);
-	string y = "y: " + std::to_string((int)camera.position.y);
-	string z = "z: " + std::to_string((int)camera.position.z);
-	RenderTextOnScreen(meshList[GEO_TEXT], frames, Color(0, 1, 0), 2, 0, 29);
-	RenderTextOnScreen(meshList[GEO_TEXT], x, Color(0, 1, 0), 2, 0, 4);
-	RenderTextOnScreen(meshList[GEO_TEXT], y, Color(0, 1, 0), 2, 0, 3);
-	RenderTextOnScreen(meshList[GEO_TEXT], z, Color(0, 1, 0), 2, 0, 2);
+	if (ShipNear)
+	{
+		if (Application::IsKeyPressed(VK_DOWN))
+		{
+			count = 1;
+		}
+		if (Application::IsKeyPressed(VK_UP))
+		{
+			count = 0;
+		}
+
+		if (count == 0)
+		{
+			RenderTextOnScreen(meshList[GEO_TEXT], "Return to space?", Color(0, 0, 0), 2, 0, 4);
+			RenderTextOnScreen(meshList[GEO_TEXT], ">Yes?", Color(0, 0, 0), 2, 0, 3);
+			RenderTextOnScreen(meshList[GEO_TEXT], "No?", Color(0, 0, 0), 2, 0, 2);
+		}
+		if (count == 1)
+		{
+			if (Stay)
+			{
+				RenderTextOnScreen(meshList[GEO_TEXT], "Welps, okay then.", Color(0, 0, 0), 2, 0, 2);
+			}
+			else
+			{
+				RenderTextOnScreen(meshList[GEO_TEXT], "Return to space?", Color(0, 0, 0), 2, 0, 4);
+				RenderTextOnScreen(meshList[GEO_TEXT], "Yes?", Color(0, 0, 0), 2, 0, 3);
+				RenderTextOnScreen(meshList[GEO_TEXT], ">No?", Color(0, 0, 0), 2, 0, 2);
+			}
+		}
+	}
+	else
+	{
+		ShipNear = false;
+		count = 0;
+
+		string frames = "FPS: " + std::to_string(fps);
+		string x = "x: " + std::to_string((int)camera.position.x);
+		string y = "y: " + std::to_string((int)camera.position.y);
+		string z = "z: " + std::to_string((int)camera.position.z);
+		RenderTextOnScreen(meshList[GEO_TEXT], frames, Color(0, 1, 0), 2, 0, 29);
+		RenderTextOnScreen(meshList[GEO_TEXT], x, Color(0, 0, 0), 2, 0, 4);
+		RenderTextOnScreen(meshList[GEO_TEXT], y, Color(0, 0, 0), 2, 0, 3);
+		RenderTextOnScreen(meshList[GEO_TEXT], z, Color(0, 0, 0), 2, 0, 2);
+	}
 }
 
 void PlanetFour::RenderMaze()

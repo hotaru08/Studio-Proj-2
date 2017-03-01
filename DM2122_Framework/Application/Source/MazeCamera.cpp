@@ -103,7 +103,7 @@ void MazeCamera::Reset()
 int MazeCamera::coordWallX[23] = { 100, 300, 100, -300, -500, -100, -300, -100, 100, 300, 400, 400, 400, 400, 200, 200, 200, 0, 0, 0, -200, -200, -400 };
 int MazeCamera::coordWallZ[23] = { -400, -400, -200, 0, 0, 200, 200, 400, 400, 400, -300, -100, 100, 300, -100, 100, 300, -500, -100, 100, -100, -300, 300 };
 
-void MazeCamera::bounds() //need edit -> Size of scene done
+void MazeCamera::bounds()
 {
 	if (position.x > SizeOfScene)
 	{
@@ -141,6 +141,12 @@ void MazeCamera::bounds() //need edit -> Size of scene done
 			position = PrevPos;
 			collided = true;
 		}
+	}
+	if ((position.x <= -290 && position.x >= -510) &&
+		(position.z <= -110 && position.z >= -320)) //Spaceship
+	{
+		position = PrevPos;
+		collided = true;
 	}
 	PrevPos = position;
 }
@@ -235,6 +241,34 @@ void MazeCamera::Update(double dt, double x, double y)
 	{
 		Vector3 view = (target - position).Normalized();
 		position -= view * (float)(100.f * dt);
+	}
+
+	//front camera movement
+	if (Application::IsKeyPressed('T'))
+	{
+		position = position + view * CAMERA_SPEED * dt;
+		target = position + view;
+	}
+
+	//back camera movement
+	if (Application::IsKeyPressed('G'))
+	{
+		position = position - view * CAMERA_SPEED * dt;
+		target = position + view;
+	}
+
+	//Left camera movement
+	if (Application::IsKeyPressed('F'))
+	{
+		position = position - right * CAMERA_SPEED * dt;
+		target = position + view;
+	}
+
+	//Right camera movement
+	if (Application::IsKeyPressed('H'))
+	{
+		position = position + right * CAMERA_SPEED * dt;
+		target = position + view;
 	}
 }
 

@@ -38,6 +38,7 @@ class PlanetFour : public Scene
 
 		//objects
 		GEO_WALL,
+		GEO_SHIP,
 
 		NUM_GEOMETRY,
 	};
@@ -120,8 +121,15 @@ private:
 	unsigned m_parameters[U_TOTAL];
 
 	float LSPEED;
+	float translateDoor;
 	bool Switch;
 	bool Switch_LightBall;
+	bool ShipNear;
+	bool NearDoor;
+	bool Stay;
+	bool Door;
+	bool OpenDoor;
+	int count;
 
 	MazeCamera camera;
 	MS modelStack, viewStack, projectionStack;
