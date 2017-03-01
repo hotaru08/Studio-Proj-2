@@ -16,7 +16,7 @@ public:
 	void addEpic();
 	void assignItem(int itemID);
 	static int storage[2][10];
-	void Remove(int slotNo, int slotAmt);
+	void Remove(int slotNo, int amount);
 
 private:
 	int common;

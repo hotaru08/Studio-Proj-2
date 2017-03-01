@@ -90,7 +90,7 @@ void InternalShip::Init()
 	light[1].type = Light::LIGHT_SPOT;
 	light[1].position.Set(-30, 110, -15);
 	light[1].color.Set(1, 1, 1);
-	light[1].power = 150;
+	light[1].power = 60;
 	light[1].kC = 1.f;
 	light[1].kL = 0.01f;
 	light[1].kQ = 0.001f;
@@ -241,6 +241,7 @@ void InternalShip::Init()
 	ScreenLight = false;
 	Buy = false;
 	Enter = false;
+	Sell = false;
 
 	Common = "";
 	Rare = "";
@@ -251,6 +252,7 @@ void InternalShip::Init()
 	Radish = "";
 
 	count = 0;
+	countInven = 0;
 	deltaTime = 0;
 }
 
@@ -266,6 +268,13 @@ void InternalShip::Update(double dt)
 {
 	double X_Pos, Y_Pos; //get cursor position
 	int width, height; //get window size
+
+	goldRemain = store.GetGold_();
+
+	//-------------------------------//
+	//Time related variables
+	//-------------------------------//
+	deltaTime += dt;
 
 	glfwGetCursorPos(m_window, &X_Pos, &Y_Pos);// getting the cursor position 
 	glfwGetWindowSize(m_window, &width, &height); //get size to center cursor 
@@ -338,12 +347,129 @@ void InternalShip::Update(double dt)
 		}
 	}
 
-	//-------------------------------//
-	//Time related variables
-	//-------------------------------//
-	deltaTime += dt;
+	//---------------------------------------------------//
+	//Selling items in shop
+	//--------------------------------------------------//
+
+	for (int i = 0; i < 10; i++)
+	{
+		if (countInven == i && Sell)
+		{
+			switch (in.storage[0][i])
+			{
+			case 1://checking for common
+				store.addGold_(50);
+				in.Remove(i, 1);
+				Sell = false;
+				break;
+
+			case 2://checking for rare
+				store.addGold_(100);
+				in.Remove(i, 1);
+				Sell = false;
+				break;
+
+			case 3://checking for epic
+				store.addGold_(250);
+				in.Remove(i, 1);
+				Sell = false;
+				break;
+
+			case 4://checking for berry seed
+				store.addGold_(50);
+				in.Remove(i, 1);
+				Sell = false;
+				break;
+
+			case 5://checking for melon seed
+				store.addGold_(125);
+				in.Remove(i, 1);
+				Sell = false;
+				break;
+
+			case 6://checking for radish seed
+				store.addGold_(250);
+				in.Remove(i, 1);
+				Sell = false;
+				break;
+
+			case 7://checking for chicken
+				store.addGold_(25000);
+				in.Remove(i, 1);
+				Sell = false;
+				break;
+
+			case 8://checking for berry
+				store.addGold_(200);
+				in.Remove(i, 1);
+				Sell = false;
+				break;
+
+			case 9://checking for melon
+				store.addGold_(500);
+				in.Remove(i, 1);
+				Sell = false;
+				break;
+
+			case 10://checking for raddish
+				store.addGold_(1000);
+				in.Remove(i, 1);
+				Sell = false;
+				break;
+			}
+		}
+		
+	}
 
 	camera.Update(dt, (width / 2) - X_Pos, (height / 2) - Y_Pos);
+}
+
+void InternalShip::SellingItems()
+{
+	//---------------------------------------------//
+	//For choosing items to sell
+	//---------------------------------------------//
+	if (Application::IsKeyPressed(VK_RIGHT) && deltaTime > 0.4)
+	{
+		if (countInven < 9)
+		{
+			countInven += 1;
+			deltaTime = 0;
+		}
+	}
+	if (Application::IsKeyPressed(VK_LEFT) && deltaTime > 0.4)
+	{
+		if (countInven > 0)
+		{
+			countInven -= 1;
+			deltaTime = 0;
+		}
+	}
+
+	//--------------------------------------------------------//
+	//Selling items according to ID
+	//--------------------------------------------------------//
+
+	for (int i = 0; i < 10; i++)
+	{
+		if (countInven == i)
+		{
+			Sell = false;
+			RenderMeshOnScreen(meshList[HL], (7 * i) + 8, 5, 8, 8);
+
+			for (int i = 0; i < 10; i++)
+			{
+				if (in.storage[1][i] > 0)
+				{
+					if (Application::IsKeyPressed('S') && deltaTime > 0.15)
+					{
+						Sell = true;
+						deltaTime = 0;
+					}
+				}
+			}
+		}
+	}
 }
 
 void InternalShip::Render()
@@ -453,7 +579,8 @@ void InternalShip::Render()
 	if (camera.ShopEnter)
 	{
 		ShopRender();
-		RenderHightLight();
+		BuyingItems();
+		SellingItems();
 	}
 }
 
@@ -503,17 +630,20 @@ void InternalShip::ShopRender()
 	//Melon
 	RenderTextOnScreen(meshList[GEO_TEXT], "Melon", Color(0.545, 0.271, 0.075), 3, 19, 10);
 	RenderMeshOnScreen(meshList[SGOLD], 58.5, 29.5, 3, 3);
-	RenderTextOnScreen(meshList[GEO_TEXT], "100", Color(0.545, 0.271, 0.075), 3, 20, 9.25);
+	RenderTextOnScreen(meshList[GEO_TEXT], "250", Color(0.545, 0.271, 0.075), 3, 20, 9.25);
 
 	//Radish
 	RenderTextOnScreen(meshList[GEO_TEXT], "Radish", Color(0.545, 0.271, 0.075), 3, 19, 6.85);
 	RenderMeshOnScreen(meshList[SGOLD], 58.5, 19.5, 3, 3);
-	RenderTextOnScreen(meshList[GEO_TEXT], "100", Color(0.545, 0.271, 0.075), 3, 20, 5.85);
+	RenderTextOnScreen(meshList[GEO_TEXT], "500", Color(0.545, 0.271, 0.075), 3, 20, 5.85);
 	
 	//--------------------------------------------------------//
 	//Gold Coins
 	//--------------------------------------------------------//
 	RenderMeshOnScreen(meshList[SGOLD], 50, 13, 4, 4);
+
+	string g = std::to_string((int)goldRemain);
+	RenderTextOnScreen(meshList[GEO_TEXT], g, Color(0.545, 0.271, 0.075), 3, 17.5, 3.9);
 }
 
 void InternalShip::RenderInven()
@@ -578,8 +708,11 @@ void InternalShip::RenderInven()
 	}
 }
 
-void InternalShip::RenderHightLight()
+void InternalShip::BuyingItems()
 {
+	//-----------------------------------------------------------//
+	//For buying items in shop
+	//-----------------------------------------------------------//
 	if (Application::IsKeyPressed(VK_DOWN) && deltaTime > 0.4)
 	{
 		if (count < 3)
@@ -597,16 +730,22 @@ void InternalShip::RenderHightLight()
 		}
 	}
 
+	//--------------------------------------------------------//
+	//Buying items according to count
+	//--------------------------------------------------------//
 	if (count == 0)//for chicken
 	{
 		Buy = false;
 		RenderMeshOnScreen(meshList[HL], 60, 50, 40, 12);//first box highlighted
 
-		if (Application::IsKeyPressed(VK_RETURN) && deltaTime > 0.2)
+		if (in.storage[1][9] < 10)
 		{
-			Buy = true;
-			store.reduceGold_(50000);
-			deltaTime = 0;
+			if (Application::IsKeyPressed(VK_RETURN) && deltaTime > 0.15)
+			{
+				Buy = true;
+				store.reduceGold_(50000);
+				deltaTime = 0;
+			}
 		}
 	}
 	if (count == 1)//berry
@@ -614,23 +753,30 @@ void InternalShip::RenderHightLight()
 		Buy = false;
 		RenderMeshOnScreen(meshList[HL], 60, 40, 40, 12);
 
-		if (Application::IsKeyPressed(VK_RETURN) && deltaTime > 0.2)
+		if (in.storage[1][9] < 10)
 		{
-			Buy = true;
-			store.reduceGold_(100);
-			deltaTime = 0;
+			if (Application::IsKeyPressed(VK_RETURN) && deltaTime > 0.15)
+			{
+				Buy = true;
+				store.reduceGold_(100);
+				deltaTime = 0;
+			}
 		}
 	}
+
 	if (count == 2)//melon
 	{
 		Buy = false;
 		RenderMeshOnScreen(meshList[HL], 60, 30, 40, 12);
 
-		if (Application::IsKeyPressed(VK_RETURN) && deltaTime > 0.2)
+		if (in.storage[1][9] < 10)
 		{
-			Buy = true;
-			store.reduceGold_(250);
-			deltaTime = 0;
+			if (Application::IsKeyPressed(VK_RETURN) && deltaTime > 0.15)
+			{
+				Buy = true;
+				store.reduceGold_(250);
+				deltaTime = 0;
+			}
 		}
 	}
 	if (count == 3)//radish
@@ -638,11 +784,14 @@ void InternalShip::RenderHightLight()
 		Buy = false;
 		RenderMeshOnScreen(meshList[HL], 60, 20, 40, 12);
 
-		if (Application::IsKeyPressed(VK_RETURN) && deltaTime > 0.2)
+		if (in.storage[1][9] < 10)
 		{
-			Buy = true;
-			store.reduceGold_(500);
-			deltaTime = 0;
+			if (Application::IsKeyPressed(VK_RETURN) && deltaTime > 0.15)
+			{
+				Buy = true;
+				store.reduceGold_(500);
+				deltaTime = 0;
+			}
 		}
 	}
 }

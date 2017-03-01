@@ -132,8 +132,12 @@ private:
 	bool ScreenLight;
 	bool Enter;
 	bool Buy;
+	bool Sell;
+	bool Show;
+
 	int count;
-	long g;
+	int countInven;
+	long goldRemain;
 	double deltaTime;
 
 	void RenderMesh(Mesh *mesh, bool enableLight);
@@ -141,11 +145,12 @@ private:
 	void RenderTextOnScreen(Mesh* mesh, std::string text, Color color, float size, float x, float y);
 	void RenderMeshOnScreen(Mesh* mesh, int x, int y, int sizex, int sizey);
 
+	void BuyingItems();
+	void SellingItems();
+
 	void ShopRender();
 	void RenderSkyBox();
-	void RenderGold();
 	void RenderInven();
-	void RenderHightLight();
 };
 
 #endif

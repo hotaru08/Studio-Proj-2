@@ -10,6 +10,7 @@
 class Store
 {
 	long gold_;
+	Inventory inven;
 
 public:
 	Store();

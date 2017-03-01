@@ -2,7 +2,7 @@
 
 Store::Store()
 {
-	gold_ = 0;
+	gold_ = 99999;
 }
 
 Store::~Store()
@@ -17,7 +17,10 @@ void Store::addGold_(int amount)
 
 void Store::reduceGold_(int amount)
 {
-	gold_ -= amount;
+	if (gold_ >= amount)
+	{
+		gold_ -= amount;
+	}
 }
 
 int Store::GetGold_()
