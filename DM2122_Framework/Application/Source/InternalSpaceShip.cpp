@@ -87,10 +87,10 @@ void InternalShip::Init()
 	light[0].spotDirection.Set(0.f, 1.f, 0.f);
 
 	//Light properties
-	light[1].type = Light::LIGHT_SPOT;
+	light[1].type = Light::LIGHT_DIRECTIONAL;
 	light[1].position.Set(-30, 110, -15);
 	light[1].color.Set(1, 1, 1);
-	light[1].power = 60;
+	light[1].power = 1.5;
 	light[1].kC = 1.f;
 	light[1].kL = 0.01f;
 	light[1].kQ = 0.001f;
@@ -184,7 +184,8 @@ void InternalShip::Init()
 	meshList[GEO_LAMP]->textureID = LoadTGA("Image//planet4Outside.tga");
 
 	//Merchant
-	meshList[Merchant] = MeshBuilder::GenerateSphere("merchant", Color(0,0,0), 60,20,1);
+	meshList[Merchant] = MeshBuilder::GenerateOBJ("merchant", "OBJ//Sculpt.obj");
+	meshList[Merchant]->textureID = LoadTGA("Image//NPCS//Sculpt.tga");
 
 	//shop
 	meshList[SHOP] = MeshBuilder::GenerateQuad("store", Color(1, 1, 1), 1, 1);
@@ -495,24 +496,28 @@ void InternalShip::Render()
 
 	if (ScreenLight)
 	{
-		light[0].power = 10.0f;
+		light[0].power = 5.0f;
 		glUniform1f(m_parameters[U_LIGHT0_POWER], light[0].power);
+
+		light[1].power = 0.0f;
+		glUniform1f(m_parameters[U_LIGHT1_POWER], light[1].power);
 	}
 	else
 	{
 		light[0].power = 0.0f;
 		glUniform1f(m_parameters[U_LIGHT0_POWER], light[0].power);
+
+		light[1].power = 1.5f;
+		glUniform1f(m_parameters[U_LIGHT1_POWER], light[1].power);
 	}
 
 	//point light
 	Position light0Position_cameraspace = viewStack.Top() * light[0].position;
-	glUniform3fv(m_parameters[U_LIGHT1_POSITION], 1, &light0Position_cameraspace.x);
+	glUniform3fv(m_parameters[U_LIGHT0_POSITION], 1, &light0Position_cameraspace.x);
 
-	//Passing spot light
-	Position light1Position_cameraspace = viewStack.Top() * light[1].position;
-	glUniform3fv(m_parameters[U_LIGHT1_POSITION], 1, &light1Position_cameraspace.x);
-	Vector3 spot1Direction_cameraspace = viewStack.Top() * light[1].spotDirection;
-	glUniform3fv(m_parameters[U_LIGHT1_SPOTDIRECTION], 1, &spot1Direction_cameraspace.x);
+	Vector3 lightDir(light[1].position.x, light[1].position.y, light[1].position.z);
+	Vector3 lightDirection_cameraspace = viewStack.Top() * lightDir;
+	glUniform3fv(m_parameters[U_LIGHT1_POSITION], 1, &lightDirection_cameraspace.x);
 	
 	//skybox
 	RenderSkyBox();
@@ -753,7 +758,7 @@ void InternalShip::BuyingItems()
 
 			if (in.storage[1][9] < 10)
 			{
-				if (Application::IsKeyPressed(VK_RETURN) && deltaTime > 0.15)
+				if (Application::IsKeyPressed('E') && deltaTime > 0.15)
 				{
 					Buy = true;
 					deltaTime = 0;
