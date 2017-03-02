@@ -269,8 +269,15 @@ void PlanetThree::Init()
 	meshList[GEO_RADDISHSEED] = MeshBuilder::GenerateOBJ("seed", "OBJ//seed.obj");
 	meshList[GEO_RADDISHSEED]->textureID = LoadTGA("Image//plants.tga");
 
-    meshList[SPACESHIP] = MeshBuilder::GenerateOBJ("spaceship", "OBJ//Spaceship.obj");
-    meshList[SPACESHIP]->textureID = LoadTGA("Image//spaceship.tga");
+	//spaceship
+	meshList[SPACESHIP] = MeshBuilder::GenerateOBJ("spaceship", "OBJ//Spaceship.obj");
+	meshList[SPACESHIP]->textureID = LoadTGA("Image//spaceship.tga");
+
+	//kermit
+	meshList[GEO_KERMIT] = MeshBuilder::GenerateOBJ("kermit", "OBJ//kermit.obj");
+	meshList[GEO_KERMIT]->textureID = LoadTGA("Image//kermit.tga");
+	meshList[GEO_HANDS] = MeshBuilder::GenerateOBJ("hands", "OBJ//hands.obj");
+	meshList[GEO_HANDS]->textureID = LoadTGA("Image//kermit.tga");
 
 	Mtx44 projection;
 	projection.SetToPerspective(45.f, 4.f / 3.f, 0.1f, 7000.0f);
@@ -281,6 +288,9 @@ void PlanetThree::Init()
 	playerPlant = false;
 	playerHarvest = false;
 	deltaTime = 0;
+	kermitX = 400;
+	kermitZ = 500;
+	kermitTalk = false;
 }
 
 void PlanetThree::Update(double dt)
@@ -293,6 +303,18 @@ void PlanetThree::Update(double dt)
 	glfwSetCursorPos(m_window, width / 2, height / 2); //set cursor to center of screen
 
 	deltaTime += dt;
+
+	//============================NPC TALKING====================================//
+	if ((camera.position.x >= kermitX - 30 && camera.position.x <= kermitX + 30)
+		&& (camera.position.z >= kermitZ - 30 && camera.position.z <= kermitZ + 30))
+	{
+		kermitTalk = true;
+	}
+	else
+	{
+		kermitTalk = false;
+	}
+	//===========================================================================//
 
 	//Seed growth timer
 	for (int i = 0; i < plantGrow.size(); i++)
@@ -728,11 +750,11 @@ void PlanetThree::Render()
 
 	//textured ground mesh
 	modelStack.PushMatrix();
-	modelStack.Translate(0, -60, 0);
-	modelStack.Scale(9000, 7000, 9000);
-	RenderMesh(meshList[GROUND], true);
+	modelStack.Translate(0, -100, 0);
+	modelStack.Scale(60, 80, 60);
+	modelStack.Rotate(180, 0, 1, 0);
+	RenderMesh(meshList[GROUND], false);
 	modelStack.PopMatrix();
-	RenderSkyBox();
 
 	//generate plant
 	for (int i = 0; i < plantType.size(); i++)
@@ -774,11 +796,91 @@ void PlanetThree::Render()
 	RenderMesh(meshList[GEO_MELON], true);
 	modelStack.PopMatrix();
 
-    modelStack.PushMatrix();
-    modelStack.Translate(300, 50, -700);
-    modelStack.Scale(50, 50, 50);
-    RenderMesh(meshList[SPACESHIP], true);
-    modelStack.PopMatrix();
+	//spaceship
+	modelStack.PushMatrix();
+	modelStack.Translate(500, 0, 1300);
+	modelStack.Scale(50, 50, 50);
+	modelStack.Rotate(180, 0, 1, 0);
+	RenderMesh(meshList[SPACESHIP], true);
+	modelStack.PopMatrix();
+
+	//kermit
+	modelStack.PushMatrix();
+	modelStack.Translate(400, -60, 500);
+	modelStack.PushMatrix();
+	modelStack.Translate(0, 0, 150);
+	modelStack.Rotate(180, 0, 1, 0);
+	modelStack.PushMatrix();
+	modelStack.Scale(1, 1, 1);
+	modelStack.Translate(0, 0, 0);
+	RenderMesh(meshList[GEO_KERMIT], false);
+	modelStack.PopMatrix();
+
+	modelStack.PushMatrix();
+	modelStack.Scale(10, 15, 10);
+	modelStack.Translate(2.2f, 0.8f, 0);
+	RenderMesh(meshList[GEO_HANDS], false);
+	modelStack.PopMatrix();
+	modelStack.PushMatrix();
+	modelStack.Scale(10, 15, 10);
+	modelStack.Translate(-2.2f, 0.8f, 0);
+	RenderMesh(meshList[GEO_HANDS], false);
+	modelStack.PopMatrix();
+	modelStack.PopMatrix();
+	modelStack.PopMatrix();
+	//sky box
+	modelStack.PushMatrix();
+	modelStack.Translate(camera.position.x, camera.position.y, camera.position.z);
+	modelStack.Translate(0, -2500, 0);
+	modelStack.Scale(6000, 6000, 6000);
+
+	//Ground
+	modelStack.PushMatrix();
+	modelStack.Rotate(-90, 1, 0, 0);
+	RenderMesh(meshList[GEO_BOTTOM], false);
+	modelStack.PopMatrix();
+
+	//left
+	modelStack.PushMatrix();
+	modelStack.Translate(0, 0.498, 0.498);
+	modelStack.Rotate(180, 0, 1, 0);
+	RenderMesh(meshList[GEO_LEFT], false);
+	modelStack.PopMatrix();
+
+	//top
+	modelStack.PushMatrix();
+	modelStack.Translate(0, 0.98, 0);
+	modelStack.Rotate(90, 1, 0, 0);
+	RenderMesh(meshList[GEO_TOP], false);
+	modelStack.PopMatrix();
+
+	//right
+	modelStack.PushMatrix();
+	modelStack.Translate(0, 0.498, -0.498);
+	RenderMesh(meshList[GEO_RIGHT], false);
+	modelStack.PopMatrix();
+
+	//front
+	modelStack.PushMatrix();
+	modelStack.Translate(0.498, 0.4975, 0);
+	modelStack.Rotate(270, 0, 1, 0);
+	RenderMesh(meshList[GEO_FRONT], false);
+	modelStack.PopMatrix();
+
+	//back
+	modelStack.PushMatrix();
+	modelStack.Translate(-0.498, 0.498, 0);
+	modelStack.Rotate(90, 0, 1, 0);
+	RenderMesh(meshList[GEO_BACK], false);
+	modelStack.PopMatrix();
+
+	modelStack.PopMatrix();//skybox
+
+	//NPC talking
+	if (kermitTalk == true)
+	{
+		RenderTextOnScreen(meshList[GEO_TEXT], "This land has the same PH value as earth. Let's try to plant some seeds!", Color(0, 1, 0), 2, 4.5f, 4.5f);
+	}
 
 	//======================================================
 	//inventory
@@ -838,57 +940,12 @@ void PlanetThree::Render()
 			RenderTextOnScreen(meshList[GEO_TEXT], Radish, Color(0, 1, 0), 2, 4.5 + width * 3.5, 1);
 		}
 	}
+
 }
 
 void PlanetThree::RenderSkyBox()
 {
-	//sky box
-	modelStack.PushMatrix();
-	modelStack.Translate(camera.position.x, camera.position.y, camera.position.z);
-	modelStack.Translate(0, -2500, 0);
-	modelStack.Scale(6000, 6000, 6000);
-
-	//Ground
-	modelStack.PushMatrix();
-	modelStack.Rotate(-90, 1, 0, 0);
-	RenderMesh(meshList[GEO_BOTTOM], false);
-	modelStack.PopMatrix();
-
-	//left
-	modelStack.PushMatrix();
-	modelStack.Translate(0, 0.498, 0.498);
-	modelStack.Rotate(180, 0, 1, 0);
-	RenderMesh(meshList[GEO_LEFT], false);
-	modelStack.PopMatrix();
-
-	//top
-	modelStack.PushMatrix();
-	modelStack.Translate(0, 0.98, 0);
-	modelStack.Rotate(90, 1, 0, 0);
-	RenderMesh(meshList[GEO_TOP], false);
-	modelStack.PopMatrix();
-
-	//right
-	modelStack.PushMatrix();
-	modelStack.Translate(0, 0.498, -0.498);
-	RenderMesh(meshList[GEO_RIGHT], false);
-	modelStack.PopMatrix();
-
-	//front
-	modelStack.PushMatrix();
-	modelStack.Translate(0.498, 0.4975, 0);
-	modelStack.Rotate(270, 0, 1, 0);
-	RenderMesh(meshList[GEO_FRONT], false);
-	modelStack.PopMatrix();
-
-	//back
-	modelStack.PushMatrix();
-	modelStack.Translate(-0.498, 0.498, 0);
-	modelStack.Rotate(90, 0, 1, 0);
-	RenderMesh(meshList[GEO_BACK], false);
-	modelStack.PopMatrix();
-
-	modelStack.PopMatrix();//skybox
+	
 }
 
 void PlanetThree::RenderText(Mesh* mesh, std::string text, Color color)

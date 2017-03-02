@@ -56,6 +56,10 @@ class PlanetThree : public Scene
 		GEO_MELONSEED,
 		GEO_RADDISHSEED,
 
+		//npc
+		GEO_KERMIT,
+		GEO_HANDS,
+
 		GEO_SCREEN,
 		GEO_TEXT,
 		GROUND,
@@ -169,7 +173,9 @@ private:
 	bool playerHarvest;
 	int ID;
 	double deltaTime;
-
+	int kermitX;
+	int kermitZ;
+	bool kermitTalk;
 
 	void RenderMesh(Mesh *mesh, bool enableLight);
 	void RenderSkyBox();

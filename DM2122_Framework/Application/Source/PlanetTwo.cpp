@@ -202,8 +202,15 @@ void PlanetTwo::Init()
 	meshList[INVENTORY] = MeshBuilder::GenerateQuad("inventory", Color(1, 1, 1), 1, 1);
 	meshList[INVENTORY]->textureID = LoadTGA("Image//inventoryBox.tga");
 
+	//spaceship
     meshList[SPACESHIP] = MeshBuilder::GenerateOBJ("spaceship", "OBJ//Spaceship.obj");
     meshList[SPACESHIP]->textureID = LoadTGA("Image//spaceship.tga");
+
+	//kermit
+	meshList[GEO_KERMIT] = MeshBuilder::GenerateOBJ("kermit", "OBJ//kermit.obj");
+	meshList[GEO_KERMIT]->textureID = LoadTGA("Image//kermit.tga");
+	meshList[GEO_HANDS] = MeshBuilder::GenerateOBJ("hands", "OBJ//hands.obj");
+	meshList[GEO_HANDS]->textureID = LoadTGA("Image//kermit.tga");
 
 	Mtx44 projection;
 	projection.SetToPerspective(45.f, 4.f / 3.f, 0.1f, 7000.0f);
@@ -217,8 +224,8 @@ void PlanetTwo::Init()
 	translateMeteor = 0;
 	earthquakeX = 0;
 	earthquakeZ = 0;
-	meteorX = rand() % 1001 + (-500);
-	meteorZ = rand() % 1001 + (-500);
+	meteorX = rand() % 1201 + (-600);
+	meteorZ = rand() % 1201 + (-600);
 	mineralX[100] = {};
 	mineralZ[100] = {};
 	treeX[10] = {};
@@ -235,7 +242,11 @@ void PlanetTwo::Init()
 	g_dElapsedTime2 = 0;
 	delaypressE = 0;
 	damage = false;
+	alert = false;
 	mTime = 0;
+	kermitX = 400;
+	kermitZ = 500;
+	kermitTalk = false;
 
 	Common = "";
 	Rare = "";
@@ -248,26 +259,26 @@ void PlanetTwo::Init()
 	//=================== RANDOM MINERAL SPAWN =====================//
 	for (int a = 0; a < 100; a++)
 	{
-		mineralX[a] = rand() % 1001 + (-500);
+		mineralX[a] = rand() % 1201 + (-600);
 	}
 
 
 	for (int a = 0; a < 100; a++)
 	{
-		mineralZ[a] = rand() % 1001 + (-500);
+		mineralZ[a] = rand() % 1201 + (-600);
 	}
 	//============================================================//
 
 	//=================== RANDOM TREE SPAWN =====================//
 	for (int a = 0; a < 10; a++)
 	{
-		treeX[a] = rand() % 1001 + (-500);
+		treeX[a] = rand() % 1201 + (-600);
 	}
 
 
 	for (int a = 0; a < 10; a++)
 	{
-		treeY[a] = rand() % 1001 + (-500);
+		treeY[a] = rand() % 1201 + (-600);
 	}
 	//============================================================//
 
@@ -299,12 +310,6 @@ void PlanetTwo::Init()
 	}
 	//============================================================//
 
-	//=====================random scale===.=.=====================//
-	for (int a = 0; a < 100; a++)
-	{
-		randomrotate2[a] = rand() % 360;
-	}
-	//============================================================//
 }
 
 void PlanetTwo::Update(double dt)
@@ -353,8 +358,8 @@ void PlanetTwo::Update(double dt)
 			translateMeteor = 0;
 			g_dElapsedTime = 0;
 			shake = false;
-			meteorX = rand() % 600;
-			meteorZ = rand() % 600;
+			meteorX = rand() % 1201 + (-600);
+			meteorZ = rand() % 1201 + (-600);
 		}
 	}
 	//===========================================================================//
@@ -391,6 +396,15 @@ void PlanetTwo::Update(double dt)
 		damage = true;
 	}
 
+	if ((camera.position.x >= meteorX - 300 && camera.position.x <= meteorX + 300)
+		&& (camera.position.z >= meteorZ - 300 && camera.position.z <= meteorZ + 300))
+	{
+		alert = true;
+	}
+	else
+	{
+		alert = false;
+	}
 	mTime += dt;
 	if (damage && mTime > 0.5)//every 0.5 seconds
 	{
@@ -413,6 +427,18 @@ void PlanetTwo::Update(double dt)
 		Application::SetScene(1);
 	}
 
+	//===========================================================================//
+
+	//============================NPC TALKING====================================//
+	if ((camera.position.x >= kermitX - 30 && camera.position.x <= kermitX + 30)
+		&& (camera.position.z >= kermitZ - 30 && camera.position.z <= kermitZ + 30))
+	{
+		kermitTalk = true;
+	}
+	else
+	{
+		kermitTalk = false;
+	}
 	//===========================================================================//
 
 	//============================HEALTH PACK====================================//
@@ -550,8 +576,9 @@ void PlanetTwo::Render()
 
 	//textured ground mesh
 	modelStack.PushMatrix();
-	modelStack.Translate(0, -60, 0);
-	modelStack.Scale(9000, 7000, 9000);
+	modelStack.Translate(0, -100, 0);
+	modelStack.Scale(60, 80, 60);
+	modelStack.Rotate(180, 0, 1, 0);
 	RenderMesh(meshList[GROUND], false);
 	modelStack.PopMatrix();
 
@@ -562,9 +589,11 @@ void PlanetTwo::Render()
 	RenderMesh(meshList[GEO_METEOR], false);
 	modelStack.PopMatrix();
 
+	//spaceship
     modelStack.PushMatrix();
-    modelStack.Translate(500, 50, -800);
-    modelStack.Scale(70, 70, 70);
+	modelStack.Translate(500, 0, 1300);
+    modelStack.Scale(50, 50, 50);
+	modelStack.Rotate(180, 0, 1, 0);
     RenderMesh(meshList[SPACESHIP], true);
     modelStack.PopMatrix();
 
@@ -634,6 +663,31 @@ void PlanetTwo::Render()
 		modelStack.PopMatrix();
 	}
 
+	//kermit
+	modelStack.PushMatrix();
+	modelStack.Translate(400, -60, 500);
+	modelStack.PushMatrix();
+	modelStack.Translate(0, 0, 150);
+	modelStack.Rotate(180, 0, 1, 0);
+	modelStack.PushMatrix();
+	modelStack.Scale(1, 1, 1);
+	modelStack.Translate(0, 0, 0);
+	RenderMesh(meshList[GEO_KERMIT], false);
+	modelStack.PopMatrix();
+
+	modelStack.PushMatrix();
+	modelStack.Scale(10, 15, 10);
+	modelStack.Translate(2.2f, 0.8f, 0);
+	RenderMesh(meshList[GEO_HANDS], false);
+	modelStack.PopMatrix();
+	modelStack.PushMatrix();
+	modelStack.Scale(10, 15, 10);
+	modelStack.Translate(-2.2f, 0.8f, 0);
+	RenderMesh(meshList[GEO_HANDS], false);
+	modelStack.PopMatrix();
+	modelStack.PopMatrix();
+	modelStack.PopMatrix();
+
 	modelStack.PopMatrix();//earthquake
 
 	RenderInven();
@@ -644,6 +698,15 @@ void PlanetTwo::Render()
 	modelStack.PushMatrix();
 	string health = "Health: " + std::to_string((int)healthLeft);
 	RenderTextOnScreen(meshList[GEO_TEXT], health, Color(0, 1, 0), 2, 0, 6);
+
+	if (alert == true)
+	{
+		RenderTextOnScreen(meshList[GEO_TEXT], "CAUTION", Color(1, 0, 0), 5, 5.6f, 6);
+	}
+	if (kermitTalk == true)
+	{
+		RenderTextOnScreen(meshList[GEO_TEXT], "This land is full of minerals. Let's take some back!", Color(0, 1, 0), 2, 4.5f, 4.5f);
+	}
 }
 
 void PlanetTwo::RenderInven()

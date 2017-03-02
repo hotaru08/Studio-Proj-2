@@ -45,6 +45,10 @@ class PlanetTwo : public Scene
 		SCHICKEN,
         SPACESHIP,
 
+		//
+		GEO_KERMIT,
+		GEO_HANDS,
+
 		NUM_GEOMETRY,
 	};
 
@@ -105,6 +109,7 @@ private:
 	bool Switch;
 	bool Switch_LightBall;
 	bool shake;
+	bool alert;
 	float translateMeteor;
 	float translatehealthpack;
 	float earthquakeX;
@@ -130,6 +135,9 @@ private:
 	double  delaypressE;
 	bool damage;
 	double mTime;
+	int kermitX;
+	int kermitZ;
+	bool kermitTalk;
 
 	string Common;
 	string Rare;
