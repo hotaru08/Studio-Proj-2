@@ -103,6 +103,11 @@ void MazeCamera::Reset()
 int MazeCamera::coordWallX[23] = { 100, 300, 100, -300, -500, -100, -300, -100, 100, 300, 400, 400, 400, 400, 200, 200, 200, 0, 0, 0, -200, -200, -400 };
 int MazeCamera::coordWallZ[23] = { -400, -400, -200, 0, 0, 200, 200, 400, 400, 400, -300, -100, 100, 300, -100, 100, 300, -500, -100, 100, -100, -300, 300 };
 
+void MazeCamera::collision( int door)
+{
+	coordDoorZ = door;
+}
+
 void MazeCamera::bounds()
 {
 	if (position.x > SizeOfScene)
@@ -144,6 +149,12 @@ void MazeCamera::bounds()
 	}
 	if ((position.x <= -290 && position.x >= -510) &&
 		(position.z <= -110 && position.z >= -320)) //Spaceship
+	{
+		position = PrevPos;
+		collided = true;
+	}
+	if ((position.x <= coordDoorZ + HorzX && position.x >= coordDoorZ - HorzX) &&
+		(position.z <= -355 && position.z >= -445)) //Door
 	{
 		position = PrevPos;
 		collided = true;

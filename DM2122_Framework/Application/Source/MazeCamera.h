@@ -33,11 +33,12 @@ public:
 	virtual void Init(const Vector3& pos, const Vector3& target, const Vector3& up);
 	virtual void Update(double dt);
 	virtual void Reset();
+	void collision(int door);
 	void bounds();
 	void Update(double dt, double x, double y); //for mouse detection
 
 	static int coordWallX[23], coordWallZ[23];
-	int VertX, VertZ, HorzX, HorzZ;
+	int VertX, VertZ, HorzX, HorzZ, coordDoorZ;
 };
 
 #endif

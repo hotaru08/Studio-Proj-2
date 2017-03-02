@@ -251,6 +251,10 @@ void PlanetFour::Init()
 	meshList[GEO_SHIP] = MeshBuilder::GenerateOBJ("Ship", "OBJ//SpaceshipLanding.obj");
 	meshList[GEO_SHIP]->textureID = LoadTGA("Image//Spaceship.tga");
 
+	//key
+	meshList[GEO_KEY] = MeshBuilder::GenerateOBJ("Key", "OBJ//keywhole.obj");
+	meshList[GEO_KEY]->textureID = LoadTGA("Image//Items//Rust.tga");
+
 	Mtx44 projection;
 	projection.SetToPerspective(45.f, 4.f / 3.f, 0.1f, 7000.0f);
 	projectionStack.LoadMatrix(projection);
@@ -259,6 +263,7 @@ void PlanetFour::Init()
 	Switch_LightBall = false;
 	Door = true;
 	OpenDoor = false;
+	key = false;
 }
 
 void PlanetFour::Update(double dt)
@@ -303,6 +308,9 @@ void PlanetFour::Update(double dt)
 		Switch_LightBall = true;
 	}
 
+	//door collision
+	camera.collision(translateDoor);
+
 	//Return to space
 	if (camera.position.x >= -561 && camera.position.x <= -243
 		&& camera.position.z >= -400 && camera.position.z <= -44) 
@@ -339,25 +347,52 @@ void PlanetFour::Update(double dt)
 	}
 
 	//Door animation
-	translateDoor += (float)(transDir * 0.5 * dt);
-	if (translateDoor > 0.5)
+	if (OpenDoor == true)
 	{
+		translateDoor += (float)(transDir * 50 * dt);
+	}
+
+	if (translateDoor > 100
+		&& OpenDoor == true)
+	{
+		OpenDoor = false;
 		transDir = -1;
 	}
-	if (translateDoor < 0)
+	if (translateDoor < -100
+		&& OpenDoor == true)
 	{
+		OpenDoor = false;
 		transDir = 1;
+	}
+
+	//Key
+	if (Application::IsKeyPressed('E') //Get Key
+		&& key == false
+		&& camera.position.x >= 45 && camera.position.x <= 150
+		&& camera.position.z >= -560 && camera.position.z <= -445)
+	{
+		key = true;
 	}
 
 	//Door
 	if (Application::IsKeyPressed('Q') //close door
-		//&& OpenDoor == false
-		&& Door == true)
+		&& OpenDoor == false
+		&& Door == true
+		&& NearDoor == true
+		&& key == true)
+	{
 		Door = false;
+		OpenDoor = true;
+	}
 	else if (Application::IsKeyPressed('Q') //open door
-		//&& OpenDoor == false
-		&& Door == false)
+		&& OpenDoor == false
+		&& Door == false
+		&& NearDoor == true
+		&& key == true)
+	{
 		Door = true;
+		OpenDoor = true;
+	}
 
 	fps = 1 / dt;
 
@@ -411,13 +446,22 @@ void PlanetFour::Render()
 	modelStack.PopMatrix();
 
 	//Door
-	if (Door == true)
+	modelStack.PushMatrix();
+	modelStack.Translate(translateDoor, -80, -400);
+	modelStack.Scale(50, 40, 20);
+	RenderMesh(meshList[GEO_WALL], true);
+	modelStack.PopMatrix();
+
+	//key
+	if (key == false)
 	{
-		modelStack.PushMatrix();
-		modelStack.Translate(-100, -80, -400);
-		modelStack.Scale(50, 40, 20);
-		RenderMesh(meshList[GEO_WALL], true);
-		modelStack.PopMatrix();
+	modelStack.PushMatrix();
+	modelStack.Translate(100, -20, -500);
+	modelStack.Rotate(-90, 1, 0, 0);
+	modelStack.Rotate(90, 0, 0, 1);
+	modelStack.Scale(60, 40, 40);
+	RenderMesh(meshList[GEO_KEY], true);
+	modelStack.PopMatrix();
 	}
 
 	RenderMaze();
