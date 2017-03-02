@@ -29,6 +29,8 @@ Planet1::~Planet1()
 
 void Planet1::Init()
 {
+    Irr.se->play2D("Sounds//planetone.wav");
+
     m_programID = LoadShaders("Shader//Texture.vertexshader", "Shader//Text.fragmentshader");
     // Use our shader
     glUseProgram(m_programID);
@@ -146,6 +148,9 @@ void Planet1::Init()
 
     meshList[BLOOD] = MeshBuilder::GenerateQuad("blood", Color(1, 1, 1), 1, 1);
     meshList[BLOOD]->textureID = LoadTGA("Image//Planet1//Blood.tga");
+
+    meshList[TARGET] = MeshBuilder::GenerateQuad("target", Color(1, 1, 1), 1, 1);
+    meshList[TARGET]->textureID = LoadTGA("Image//Planet1//target.tga");
 
     //top skybox
     meshList[GEO_TOP] = MeshBuilder::GenerateQuad("top", Color(1, 1, 1), 1, 1);
@@ -361,8 +366,7 @@ void Planet1::Update(double dt)
         {
             Bullet* temp = new Bullet(camera.position, camera.target, camera.view, bulletTime);
             allBullet.push_back(temp);
-            test.se->play2D("beam.wav");
-
+            Irr.se->play2D("Sounds//beam.wav");
         }
         hangtime = 0;
     }
@@ -426,6 +430,7 @@ void Planet1::Update(double dt)
         && camera.position.z > 0 && camera.position.z < 1000)
         && flagcapture == true && Application::IsKeyPressed('E'))
     {
+        healthleft = 100;
         Application::SetScene(1);
     }
 
@@ -479,16 +484,17 @@ void Planet1::AlienOne()
             Enemy = EnemyPrevPos;
             if (alienhealth[0] > 0)
             {
+                isDamage = true;
+
                 if (damage > 0.5)
                 {
                     H->HealthDamageReceive(20);
                     damage = 0;
-                    isDamage = true;
                 }
-                else
-                {
-                    isDamage = false;
-                }
+            }
+            else
+            {
+                isDamage = false;
             }
         }
     }
@@ -527,18 +533,19 @@ void Planet1::AlienTwo()
     {
         if (alienhealth[1] > 0)
         {
+            isDamage = true;
+
             Enemy2 = Enemy2PrevPos;
             if (damage > 0.5)
             {
                 H->HealthDamageReceive(20);
                 damage = 0;
-                isDamage = true;
 
             }
-            else
-            {
-                isDamage = false;
-            }
+        }
+        else
+        {
+            isDamage = false;
         }
     }
 }
@@ -576,18 +583,18 @@ void Planet1::AlienThree()
     {
         if (alienhealth[2] > 0)
         {
+            isDamage = true;
             Enemy3 = Enemy3PrevPos;
             if (damage > 0.5)
             {
                 H->HealthDamageReceive(20);
                 damage = 0;
-                isDamage = true;
 
             }
-            else
-            {
-                isDamage = false;
-            }
+        }
+        else
+        {
+            isDamage = false;
         }
     }
 }
@@ -625,18 +632,19 @@ void Planet1::AlienFour()
     {
         if (alienhealth[3] > 0)
         {
+            isDamage = true;
+
             Enemy4 = Enemy4PrevPos;
             if (damage > 0.5)
             {
                 H->HealthDamageReceive(20);
                 damage = 0;
-                isDamage = true;
 
             }
-            else
-            {
-                isDamage = false;
-            }
+        }
+        else
+        {
+            isDamage = false;
         }
     }
 }
@@ -674,18 +682,18 @@ void Planet1::AlienFive()
     {
         if (alienhealth[4] > 0)
         {
+            isDamage = true;
+
             Enemy5 = Enemy5PrevPos;
             if (damage > 0.5)
             {
                 H->HealthDamageReceive(20);
                 damage = 0;
-                isDamage = true;
-
             }
-            else
-            {
-                isDamage = false;
-            }
+        }
+        else
+        {
+            isDamage = false;
         }
     }
 }
@@ -774,10 +782,13 @@ void Planet1::Render()
 
     if (isDamage == true)
     {
-        RenderMeshOnScreen(meshList[BLOOD], 45, 40, 70, 70);
+        RenderMeshOnScreen(meshList[BLOOD], 40, 30, 80, 65);
+
     }
-    string NumAlienCounter = "Number of Aliens left: " + std::to_string((int)NumAlien);
-    RenderTextOnScreen(meshList[GEO_TEXT], NumAlienCounter, Color(1, 1, 1), 2, 0, 0);
+    RenderMeshOnScreen(meshList[TARGET], 70, 50, 20, 20);
+
+    string NumAlienCounter = "Aliens left:" + std::to_string((int)NumAlien);
+    RenderTextOnScreen(meshList[GEO_TEXT], NumAlienCounter, Color(1, 1, 1), 1.75, 33, 22.5);
     RenderMeshOnScreen(meshList[HEALTH], 20, 50, 40, 40);
     RenderMeshOnScreen(meshList[PORTRAIT], 20, 50, 40, 40);
 
