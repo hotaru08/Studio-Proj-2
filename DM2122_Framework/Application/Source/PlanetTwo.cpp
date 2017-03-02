@@ -53,30 +53,6 @@ void PlanetTwo::Init()
 	m_parameters[U_LIGHT0_EXPONENT] = glGetUniformLocation(m_programID, "lights[0].exponent");
 	m_parameters[U_NUMLIGHTS] = glGetUniformLocation(m_programID, "numLights");
 
-	m_parameters[U_LIGHT1_POSITION] = glGetUniformLocation(m_programID, "lights[1].position_cameraspace");
-	m_parameters[U_LIGHT1_COLOR] = glGetUniformLocation(m_programID, "lights[1].color");
-	m_parameters[U_LIGHT1_POWER] = glGetUniformLocation(m_programID, "lights[1].power");
-	m_parameters[U_LIGHT1_KC] = glGetUniformLocation(m_programID, "lights[1].kC");
-	m_parameters[U_LIGHT1_KL] = glGetUniformLocation(m_programID, "lights[1].kL");
-	m_parameters[U_LIGHT1_KQ] = glGetUniformLocation(m_programID, "lights[1].kQ");
-	m_parameters[U_LIGHT1_TYPE] = glGetUniformLocation(m_programID, "lights[1].type");
-	m_parameters[U_LIGHT1_SPOTDIRECTION] = glGetUniformLocation(m_programID, "lights[1].spotDirection");
-	m_parameters[U_LIGHT1_COSCUTOFF] = glGetUniformLocation(m_programID, "lights[1].cosCutoff");
-	m_parameters[U_LIGHT1_COSINNER] = glGetUniformLocation(m_programID, "lights[1].cosInner");
-	m_parameters[U_LIGHT1_EXPONENT] = glGetUniformLocation(m_programID, "lights[1].exponent");
-
-	m_parameters[U_LIGHT2_POSITION] = glGetUniformLocation(m_programID, "lights[2].position_cameraspace");
-	m_parameters[U_LIGHT2_COLOR] = glGetUniformLocation(m_programID, "lights[2].color");
-	m_parameters[U_LIGHT2_POWER] = glGetUniformLocation(m_programID, "lights[2].power");
-	m_parameters[U_LIGHT2_KC] = glGetUniformLocation(m_programID, "lights[2].kC");
-	m_parameters[U_LIGHT2_KL] = glGetUniformLocation(m_programID, "lights[2].kL");
-	m_parameters[U_LIGHT2_KQ] = glGetUniformLocation(m_programID, "lights[2].kQ");
-	m_parameters[U_LIGHT2_TYPE] = glGetUniformLocation(m_programID, "lights[2].type");
-	m_parameters[U_LIGHT2_SPOTDIRECTION] = glGetUniformLocation(m_programID, "lights[2].spotDirection");
-	m_parameters[U_LIGHT2_COSCUTOFF] = glGetUniformLocation(m_programID, "lights[2].cosCutoff");
-	m_parameters[U_LIGHT2_COSINNER] = glGetUniformLocation(m_programID, "lights[2].cosInner");
-	m_parameters[U_LIGHT2_EXPONENT] = glGetUniformLocation(m_programID, "lights[2].exponent");
-
 	//Get a handle for our "colorTexture" uniform
 	m_parameters[U_COLOR_TEXTURE_ENABLED] = glGetUniformLocation(m_programID, "colorTextureEnabled");
 	m_parameters[U_COLOR_TEXTURE] = glGetUniformLocation(m_programID, "colorTexture");
@@ -88,8 +64,8 @@ void PlanetTwo::Init()
 	//Sunlight properties
 	light[0].type = Light::LIGHT_DIRECTIONAL;
 	light[0].position.Set(3000, 900, 700);
-	light[0].color.Set(1, 1, 1);
-	light[0].power = 1.5;
+	light[0].color.Set(1.000, 0.498, 0.314);
+	light[0].power = 3;
 	light[0].kC = 1.f;
 	light[0].kL = 0.01f;
 	light[0].kQ = 0.001f;
@@ -97,33 +73,7 @@ void PlanetTwo::Init()
 	light[0].cosInner = cos(Math::DegreeToRadian(30));
 	light[0].exponent = 3.f;
 	light[0].spotDirection.Set(0.f, 1.f, 0.f);
-
-	//Igloo Light properties
-	light[1].type = Light::LIGHT_POINT;
-	light[1].position.Set(-500, 0, 0);
-	light[1].color.Set(1, 1, 1);
-	light[1].power = 5;
-	light[1].kC = 1.f;
-	light[1].kL = 0.01f;
-	light[1].kQ = 0.001f;
-	light[1].cosCutoff = cos(Math::DegreeToRadian(45));
-	light[1].cosInner = cos(Math::DegreeToRadian(30));
-	light[1].exponent = 3.f;
-	light[1].spotDirection.Set(0.f, 1.f, 0.f);
-
-	//Night Light properties
-	light[2].type = Light::LIGHT_DIRECTIONAL;
-	light[2].position.Set(0, 3000, 0);
-	light[2].color.Set(1, 1, 1);
-	light[2].power = 1;
-	light[2].kC = 1.f;
-	light[2].kL = 0.01f;
-	light[2].kQ = 0.001f;
-	light[2].cosCutoff = cos(Math::DegreeToRadian(45));
-	light[2].cosInner = cos(Math::DegreeToRadian(30));
-	light[2].exponent = 3.f;
-	light[2].spotDirection.Set(0.f, 1.f, 0.f);
-
+	
 	// Make sure you pass uniform parameters after glUseProgram()
 	glUniform1i(m_parameters[U_LIGHT0_TYPE], light[0].type);
 	glUniform3fv(m_parameters[U_LIGHT0_COLOR], 1, &light[0].color.r);
@@ -134,27 +84,7 @@ void PlanetTwo::Init()
 	glUniform1f(m_parameters[U_LIGHT0_COSCUTOFF], light[0].cosCutoff);
 	glUniform1f(m_parameters[U_LIGHT0_COSINNER], light[0].cosInner);
 	glUniform1f(m_parameters[U_LIGHT0_EXPONENT], light[0].exponent);
-	glUniform1i(m_parameters[U_NUMLIGHTS], 3);
-
-	glUniform1i(m_parameters[U_LIGHT1_TYPE], light[1].type);
-	glUniform3fv(m_parameters[U_LIGHT1_COLOR], 1, &light[1].color.r);
-	glUniform1f(m_parameters[U_LIGHT1_POWER], light[1].power);
-	glUniform1f(m_parameters[U_LIGHT1_KC], light[1].kC);
-	glUniform1f(m_parameters[U_LIGHT1_KL], light[1].kL);
-	glUniform1f(m_parameters[U_LIGHT1_KQ], light[1].kQ);
-	glUniform1f(m_parameters[U_LIGHT1_COSCUTOFF], light[1].cosCutoff);
-	glUniform1f(m_parameters[U_LIGHT1_COSINNER], light[1].cosInner);
-	glUniform1f(m_parameters[U_LIGHT1_EXPONENT], light[1].exponent);
-
-	glUniform1i(m_parameters[U_LIGHT2_TYPE], light[2].type);
-	glUniform3fv(m_parameters[U_LIGHT2_COLOR], 1, &light[2].color.r);
-	glUniform1f(m_parameters[U_LIGHT2_POWER], light[2].power);
-	glUniform1f(m_parameters[U_LIGHT2_KC], light[2].kC);
-	glUniform1f(m_parameters[U_LIGHT2_KL], light[2].kL);
-	glUniform1f(m_parameters[U_LIGHT2_KQ], light[2].kQ);
-	glUniform1f(m_parameters[U_LIGHT2_COSCUTOFF], light[2].cosCutoff);
-	glUniform1f(m_parameters[U_LIGHT2_COSINNER], light[2].cosInner);
-	glUniform1f(m_parameters[U_LIGHT2_EXPONENT], light[2].exponent);
+	glUniform1i(m_parameters[U_NUMLIGHTS], 1);
 
 	// Set background color to black
 	glClearColor(0.0f, 0.0f, 0.0f, 0.0f);
@@ -164,9 +94,6 @@ void PlanetTwo::Init()
 	glBindVertexArray(m_vertexArrayID);
 
 	glEnable(GL_DEPTH_TEST);// Enable depth test
-	glEnable(GL_CULL_FACE);// Enable cull test
-	glPolygonMode(GL_FRONT_AND_BACK, GL_LINE); //wireframe mode
-	glPolygonMode(GL_FRONT_AND_BACK, GL_FILL); //default fill mode
 	glEnable(GL_BLEND);//Enable blending
 	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 	glfwSetInputMode(m_window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);//Enable cursor
@@ -174,17 +101,6 @@ void PlanetTwo::Init()
 	//camera
 	camera.Init(Vector3(0, 0, -200), Vector3(1, 0, 0), Vector3(0, 1, 0));
 
-	//axis 
-	meshList[GEO_AXES] = MeshBuilder::GenerateAxes("reference", 1000, 1000, 1000);
-
-	//Lightball
-	meshList[GEO_LIGHTBALL] = MeshBuilder::GenerateSphere("LIGHTBALL", Color(1, 1, 1), 60, 20, 1);
-	meshList[GEO_LIGHTBALL2] = MeshBuilder::GenerateSphere("LIGHTBALL2", Color(1, 1, 1), 60, 20, 1);
-	meshList[GEO_LIGHTBALL3] = MeshBuilder::GenerateSphere("LIGHTBALL3", Color(1, 0, 0), 60, 20, 1);
-
-	//=====================================
-	//DayTime
-	//=====================================
 	//Bottom
 	meshList[GEO_BOTTOM] = MeshBuilder::GenerateQuad("bottom", Color(1, 1, 1), 1, 1);
 	meshList[GEO_BOTTOM]->textureID = LoadTGA("Image//Planet2//bottom.tga");
@@ -395,7 +311,6 @@ void PlanetTwo::Update(double dt)
 
 	healthLeft = health.getCurrentHealth();
 
-
 	g_dElapsedTime += dt; //meteor
 	g_dElapsedTime2 += dt; // healthpack
 	delaypressE += dt;
@@ -417,21 +332,7 @@ void PlanetTwo::Update(double dt)
 	{
 		transDir = 1;
 	}
-	//===================================================================//
 
-	//=============================LIGHTS==============================//
-	//Switching on and off
-	if (Application::IsKeyPressed('B'))
-	{
-		Switch = true;
-		Switch_LightBall = false;
-	}
-
-	if (Application::IsKeyPressed('V'))
-	{
-		Switch = false;
-		Switch_LightBall = true;
-	}
 	//====================================================================//
 
 	//=======================ANIMATION FOR METEOR========================//
@@ -512,7 +413,9 @@ void PlanetTwo::Update(double dt)
 	//===========================================================================//
 
 	//============================HEALTH PACK====================================//
-	if ((camera.position.x <= 25 && camera.position.x >= -25) && (camera.position.z <= 25 && camera.position.z >= -25) && (healthLeft < 100))
+	if ((camera.position.x <= 25 && camera.position.x >= -25) 
+		&& (camera.position.z <= 25 && camera.position.z >= -25) 
+		&& (healthLeft < 100))
 	{
 		if (playerActivated == false)
 		{
@@ -592,24 +495,6 @@ void PlanetTwo::Update(double dt)
 	glfwGetWindowSize(m_window, &width, &height); //get size to center cursor 
 	glfwSetCursorPos(m_window, width / 2, height / 2); //set cursor to center of screen
 
-	//modes
-	if (Application::IsKeyPressed('1'))
-	{
-		glEnable(GL_CULL_FACE);
-	}
-	if (Application::IsKeyPressed('2'))
-	{
-		glDisable(GL_CULL_FACE);
-	}
-	if (Application::IsKeyPressed('3'))
-	{
-		glPolygonMode(GL_FRONT_AND_BACK, GL_FILL); //default fill mode
-	}
-	if (Application::IsKeyPressed('4'))
-	{
-		glPolygonMode(GL_FRONT_AND_BACK, GL_LINE); //wireframe mode
-	}
-
 	if (Application::IsKeyPressed('E'))
 	{
 		playerMined = true;
@@ -635,8 +520,6 @@ void PlanetTwo::Update(double dt)
 		checkCollide = true;
 	}
 
-	fps = 1 / dt;
-
 	camera.Update(dt, (width / 2) - X_Pos, (height / 2) - Y_Pos);
 }
 
@@ -656,17 +539,6 @@ void PlanetTwo::Render()
 	Vector3 lightDirection_cameraspace = viewStack.Top() * lightDir;
 	glUniform3fv(m_parameters[U_LIGHT0_POSITION], 1, &lightDirection_cameraspace.x);
 
-	//Passing the position of light 2 to the shader (Night)
-	Vector3 light2Dir(light[2].position.x, light[2].position.y, light[2].position.z);
-	Vector3 light2Direction_cameraspace = viewStack.Top() * lightDir;
-	glUniform3fv(m_parameters[U_LIGHT2_POSITION], 1, &light2Direction_cameraspace.x);
-
-	//Passing the position of point light 1 to the shader (Igloo)
-	Position light1Position_cameraspace = viewStack.Top() * light[1].position;
-	glUniform3fv(m_parameters[U_LIGHT1_POSITION], 1, &light1Position_cameraspace.x);
-
-	//axes
-	RenderMesh(meshList[GEO_AXES], false);
 	RenderSkyBox();
 
 	//earthquake
@@ -735,7 +607,7 @@ void PlanetTwo::Render()
 	}
 
 
-	//mountaindew
+	//meteor
 	modelStack.PushMatrix();
 	modelStack.Translate(meteorX, 6000 + translateMeteor, meteorZ);
 	modelStack.Scale(100, 100, 100);
@@ -755,39 +627,7 @@ void PlanetTwo::Render()
 
 	modelStack.PopMatrix();//earthquake
 
-	for (int width = 0; width < 10; width++)
-	{
-		RenderMeshOnScreen(meshList[INVENTORY], 8.5 + width * 7, 5, 7.5, 7.5);
-
-		if (inven.storage[0][width] != 0)
-		{
-			if (inven.storage[0][width] == 1)//check for common
-			{
-				RenderMeshOnScreen(meshList[GEO_MINERALBOX], 8.5 + width * 7, 5, 5, 5);
-			}
-			else if (inven.storage[0][width] == 2)//check for rare
-			{
-				RenderMeshOnScreen(meshList[GEO_MINERAL2BOX], 8.5 + width * 7, 5, 5, 5);
-			}
-			else if (inven.storage[0][width] == 3)//check for rare
-			{
-				RenderMeshOnScreen(meshList[GEO_MINERAL3BOX], 8.5 + width * 7, 5, 5, 5);
-			}
-		}
-
-		if (inven.storage[1][width] != 0)
-		{
-
-			Common = std::to_string((int)inven.storage[1][width]);
-			Rare = std::to_string((int)inven.storage[1][width]);
-			Epic = std::to_string((int)inven.storage[1][width]);
-
-			RenderTextOnScreen(meshList[GEO_TEXT], Common, Color(0, 1, 0), 2, 4.5 + width * 3.5, 1);
-			RenderTextOnScreen(meshList[GEO_TEXT], Rare, Color(0, 1, 0), 2, 4.5 + width * 3.5, 1);
-			RenderTextOnScreen(meshList[GEO_TEXT], Epic, Color(0, 1, 0), 2, 4.5 + width * 3.5, 1);
-		}
-	}
-
+	RenderInven();
 
 	//=================================
 	//Text on the screen

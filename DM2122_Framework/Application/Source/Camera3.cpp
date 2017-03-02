@@ -177,30 +177,11 @@ void Camera3::bounds()
 	bool collided = false;
 	for (int i = 0; i < 10 && collided == false; i++)
 	{
-		/*std::cout << "Position: " << "X: " << position.x << " Z: " << position.z << std::endl;
-		std::cout << "Previous: " << "X: " << PrevPos.x << " Z: " << PrevPos.z << std::endl;*/
 		if ((position.x <= coordtreeX[i] + treeMax && position.x >= coordtreeX[i] - treeMin) &&
 			(position.z <= coordtreeZ[i] + treeMax && position.z >= coordtreeZ[i] - treeMin))
 		{
-			/*std::cout << "In IF Position: " << "X: " << position.x << " Z: " << position.z << std::endl;
-			std::cout << "In IF Previous: " << "X: " << PrevPos.x << " Z: " << PrevPos.z << std::endl;*/
 			position = PrevPos;
-			/*std::cout << "Tree " << i << std::endl;*/
-			/*std::cout << "tree0x: " << coordtreeX[0] << std::endl;
-			std::cout << "tree1x: " << coordtreeX[1] << std::endl;
-			std::cout << "tree2x: " << coordtreeX[2] << std::endl;
-			std::cout << "tree3x: " << coordtreeX[3] << std::endl;
-			std::cout << "tree4x: " << coordtreeX[4] << std::endl;
-			std::cout << "tree5x: " << coordtreeX[5] << std::endl;
-			std::cout << "tree6x: " << coordtreeX[6] << std::endl;
-			std::cout << "tree7x: " << coordtreeX[7] << std::endl;
-			std::cout << "tree8x: " << coordtreeX[8] << std::endl;
-			std::cout << "tree9x: " << coordtreeX[9] << std::endl;
-			std::cout << "pos X: " << position.x << std::endl;
-			std::cout << "prevpos X: " << PrevPos.x << std::endl;*/
-			/*std::cout << "collided" << std::endl;*/
 			collided = true;
-			//break;
 		}
 	}
 	PrevPos = position;

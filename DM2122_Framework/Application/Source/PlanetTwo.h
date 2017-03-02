@@ -6,7 +6,6 @@
 #include "Mesh.h"
 #include "MatrixStack.h"
 #include "Light.h"
-#include "Inventory.h"
 #include "Health.h"
 #include "Inventory.h"
 
@@ -14,12 +13,6 @@ class PlanetTwo : public Scene
 {
 	enum GEOMETRY_TYPE
 	{
-		//shapes
-		GEO_AXES,
-		GEO_LIGHTBALL,
-		GEO_LIGHTBALL2,
-		GEO_LIGHTBALL3,
-
 		//skybox Day
 		GEO_LEFT,
 		GEO_RIGHT,
@@ -78,30 +71,6 @@ class PlanetTwo : public Scene
 		U_LIGHT0_COSINNER,
 		U_LIGHT0_EXPONENT,
 
-		U_LIGHT1_POSITION,
-		U_LIGHT1_COLOR,
-		U_LIGHT1_POWER,
-		U_LIGHT1_KC,
-		U_LIGHT1_KL,
-		U_LIGHT1_KQ,
-		U_LIGHT1_TYPE,
-		U_LIGHT1_SPOTDIRECTION,
-		U_LIGHT1_COSCUTOFF,
-		U_LIGHT1_COSINNER,
-		U_LIGHT1_EXPONENT,
-
-		U_LIGHT2_POSITION,
-		U_LIGHT2_COLOR,
-		U_LIGHT2_POWER,
-		U_LIGHT2_KC,
-		U_LIGHT2_KL,
-		U_LIGHT2_KQ,
-		U_LIGHT2_TYPE,
-		U_LIGHT2_SPOTDIRECTION,
-		U_LIGHT2_COSCUTOFF,
-		U_LIGHT2_COSINNER,
-		U_LIGHT2_EXPONENT,
-
 		U_NUMLIGHTS,
 		U_COLOR_TEXTURE_ENABLED,
 		U_COLOR_TEXTURE,
@@ -116,9 +85,7 @@ public:
 	PlanetTwo();
 	~PlanetTwo();
 
-	float fps;
 	int healthLeft;
-	int *changeHealth = &healthLeft;
 
 	//methods
 	virtual void Init();
@@ -171,7 +138,6 @@ private:
 	string Melon;
 	string Radish;
 
-
 	Camera3 camera;
 	MS modelStack, viewStack, projectionStack;
 	Light light[4];
@@ -180,7 +146,6 @@ private:
 
 	void RenderMesh(Mesh *mesh, bool enableLight);
 	void RenderSkyBox();
-	void RenderSkyBoxNight();
 	void RenderText(Mesh* mesh, std::string text, Color color);
 	void RenderTextOnScreen(Mesh* mesh, std::string text, Color color, float size, float x, float y);
 	void RenderMeshOnScreen(Mesh* mesh, int x, int y, int sizex, int sizey);
