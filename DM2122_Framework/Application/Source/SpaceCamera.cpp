@@ -124,7 +124,7 @@ void SpaceCamera::CollisionPlanets()
 			 
 	ColliMin[2].x = 100;
 	ColliMin[2].y = -335;
-	ColliMin[2].z = 5100;
+	ColliMin[2].z = -2660;
 
 	//Mars
 	ColliMax[3].x = 100;

@@ -216,6 +216,7 @@ void ShipCamera::Update(double dt, double x, double y)
 		if (Application::IsKeyPressed('W'))
 		{
 			bounds();
+            collision();
 			position.y = 0;
 			position = position + view * CAMERA_SPEED * dt;
 			target = position + view;
@@ -225,6 +226,7 @@ void ShipCamera::Update(double dt, double x, double y)
 		if (Application::IsKeyPressed('S'))
 		{
 			bounds();
+            collision();
 			position.y = 0;
 			position = position - view * CAMERA_SPEED * dt;
 			target = position + view;
@@ -234,6 +236,7 @@ void ShipCamera::Update(double dt, double x, double y)
 		if (Application::IsKeyPressed('A'))
 		{
 			bounds();
+            collision();
 			position.y = 0;
 			position = position - right * CAMERA_SPEED * dt;
 			target = position + view;
@@ -243,6 +246,7 @@ void ShipCamera::Update(double dt, double x, double y)
 		if (Application::IsKeyPressed('D'))
 		{
 			bounds();
+            collision();
 			position.y = 0;
 			position = position + right * CAMERA_SPEED * dt;
 			target = position + view;
@@ -266,4 +270,37 @@ void ShipCamera::Update(double dt, double x, double y)
 			position -= view * (float)(100.f * dt);
 		}
 	}
+}
+
+void ShipCamera::collision()
+{
+    //table
+    BoxMax[0].x = 75;
+    BoxMax[0].z = -95;
+    BoxMin[0].x = -35;
+    BoxMin[0].z = -150;
+
+    //panel
+    BoxMax[1].x = -185;
+    BoxMax[1].z = 30;
+    BoxMin[1].x = -210;
+    BoxMin[1].z = -30;
+
+    if (position.x < BoxMax[0].x && position.x > BoxMin[0].x && position.z < BoxMax[0].z && position.z > BoxMin[0].z)
+    {
+        position.x = PrevPos.x;
+        position.z = PrevPos.z;
+    }
+
+    else if (position.x < BoxMax[1].x && position.x > BoxMin[1].x && position.z < BoxMax[1].z && position.z > BoxMin[1].z)
+    {
+        position.x = PrevPos.x;
+        position.z = PrevPos.z;
+    }
+
+    else
+    {
+        PrevPos.x = position.x;
+        PrevPos.z = position.z;
+    }
 }
