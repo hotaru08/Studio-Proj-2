@@ -41,6 +41,7 @@ class Planet1 : public Scene
         HEALTHPING,
         PORTRAIT,
         BLOOD,
+        TARGET,
 
         GEO_TEXT,
 
@@ -211,7 +212,7 @@ private:
     Vector3 BulletView;
     Vector3 BulletTarget;
 
-    Sound test;
+    Sound Irr;
 
     void RenderMesh(Mesh *mesh, bool enableLight);
     void RenderSkyBox();
