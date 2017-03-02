@@ -6,6 +6,8 @@
 #include "Mesh.h"
 #include "MatrixStack.h"
 #include "Light.h"
+#include "Sounds.h"
+
 
 class MainMenu : public Scene
 {
@@ -111,7 +113,7 @@ private:
     MainMenuCamera camera;
     MS modelStack, viewStack, projectionStack;
     Light light[4];
-
+    Sound Irr;
 
     //=================================
     //Planets

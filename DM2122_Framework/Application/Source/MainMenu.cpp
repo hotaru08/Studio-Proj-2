@@ -18,6 +18,7 @@ extern GLFWwindow* m_window;
 
 MainMenu::MainMenu()
 {
+
 }
 
 MainMenu::~MainMenu()
@@ -26,6 +27,8 @@ MainMenu::~MainMenu()
 
 void MainMenu::Init()
 {
+    Irr.se->play2D("Sounds//mainmenu.mp3");
+
 	//Initialize GLFW
 	if (!glfwInit())
 	{
@@ -179,7 +182,6 @@ void MainMenu::Init()
 	Stay = false;
     spin = 0;
 	etime = 0;
-	isExit = false;
 }
 
 void MainMenu::Update(double dt)
@@ -219,6 +221,7 @@ void MainMenu::Update(double dt)
 
 	if (Application::IsKeyPressed(VK_RETURN) && count == 0)
 	{
+        Irr.se->stopAllSounds();
 		Application::SetScene(1);//change to space scene
 	}
 	if (Application::IsKeyPressed(VK_RETURN) && count == 2)
