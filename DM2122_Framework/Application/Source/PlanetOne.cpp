@@ -17,7 +17,6 @@
 #include <string>
 
 using std::string;
-extern GLFWwindow* m_window;
 
 Planet1::Planet1()
 {
@@ -104,7 +103,7 @@ void Planet1::Init()
     glPolygonMode(GL_FRONT_AND_BACK, GL_FILL); //default fill mode
     glEnable(GL_BLEND);//Enable blending
     glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-    glfwSetInputMode(m_window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);//Enable cursor
+	glfwSetInputMode(Application::m_window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);//Enable cursor
 
     //camera
     camera.Init(Vector3(0, 0, -200), Vector3(1, 0, 0), Vector3(0, 1, 0));
@@ -148,9 +147,6 @@ void Planet1::Init()
 
     meshList[BLOOD] = MeshBuilder::GenerateQuad("blood", Color(1, 1, 1), 1, 1);
     meshList[BLOOD]->textureID = LoadTGA("Image//Planet1//Blood.tga");
-
-    meshList[TARGET] = MeshBuilder::GenerateQuad("target", Color(1, 1, 1), 1, 1);
-    meshList[TARGET]->textureID = LoadTGA("Image//Planet1//target.tga");
 
     //top skybox
     meshList[GEO_TOP] = MeshBuilder::GenerateQuad("top", Color(1, 1, 1), 1, 1);
@@ -252,9 +248,9 @@ void Planet1::Update(double dt)
 {
     int width, height; //get window size
 
-    glfwGetCursorPos(m_window, &X_Pos, &Y_Pos);// getting the cursor position 
-    glfwGetWindowSize(m_window, &width, &height); //get size to center cursor 
-    glfwSetCursorPos(m_window, width / 2, height / 2); //set cursor to center of screen
+	glfwGetCursorPos(Application::m_window, &X_Pos, &Y_Pos);// getting the cursor position 
+	glfwGetWindowSize(Application::m_window, &width, &height); //get size to center cursor 
+	glfwSetCursorPos(Application::m_window, width / 2, height / 2); //set cursor to center of screen
 
     //modes
     if (Application::IsKeyPressed('1'))
@@ -366,7 +362,8 @@ void Planet1::Update(double dt)
         {
             Bullet* temp = new Bullet(camera.position, camera.target, camera.view, bulletTime);
             allBullet.push_back(temp);
-            Irr.se->play2D("Sounds//beam.wav");
+            Irr.se->play2D("beam.wav");
+
         }
         hangtime = 0;
     }
@@ -431,7 +428,7 @@ void Planet1::Update(double dt)
         && flagcapture == true && Application::IsKeyPressed('E'))
     {
         healthleft = 100;
-        Application::SetScene(1);
+		SceneManager::SetNextScene(1);
     }
 
     for (int i = 0; i < 5; i++)
@@ -484,17 +481,16 @@ void Planet1::AlienOne()
             Enemy = EnemyPrevPos;
             if (alienhealth[0] > 0)
             {
-                isDamage = true;
-
                 if (damage > 0.5)
                 {
                     H->HealthDamageReceive(20);
                     damage = 0;
+                    isDamage = true;
                 }
-            }
-            else
-            {
-                isDamage = false;
+                else
+                {
+                    isDamage = false;
+                }
             }
         }
     }
@@ -533,19 +529,18 @@ void Planet1::AlienTwo()
     {
         if (alienhealth[1] > 0)
         {
-            isDamage = true;
-
             Enemy2 = Enemy2PrevPos;
             if (damage > 0.5)
             {
                 H->HealthDamageReceive(20);
                 damage = 0;
+                isDamage = true;
 
             }
-        }
-        else
-        {
-            isDamage = false;
+            else
+            {
+                isDamage = false;
+            }
         }
     }
 }
@@ -583,18 +578,18 @@ void Planet1::AlienThree()
     {
         if (alienhealth[2] > 0)
         {
-            isDamage = true;
             Enemy3 = Enemy3PrevPos;
             if (damage > 0.5)
             {
                 H->HealthDamageReceive(20);
                 damage = 0;
+                isDamage = true;
 
             }
-        }
-        else
-        {
-            isDamage = false;
+            else
+            {
+                isDamage = false;
+            }
         }
     }
 }
@@ -632,19 +627,18 @@ void Planet1::AlienFour()
     {
         if (alienhealth[3] > 0)
         {
-            isDamage = true;
-
             Enemy4 = Enemy4PrevPos;
             if (damage > 0.5)
             {
                 H->HealthDamageReceive(20);
                 damage = 0;
+                isDamage = true;
 
             }
-        }
-        else
-        {
-            isDamage = false;
+            else
+            {
+                isDamage = false;
+            }
         }
     }
 }
@@ -682,18 +676,18 @@ void Planet1::AlienFive()
     {
         if (alienhealth[4] > 0)
         {
-            isDamage = true;
-
             Enemy5 = Enemy5PrevPos;
             if (damage > 0.5)
             {
                 H->HealthDamageReceive(20);
                 damage = 0;
+                isDamage = true;
+
             }
-        }
-        else
-        {
-            isDamage = false;
+            else
+            {
+                isDamage = false;
+            }
         }
     }
 }
@@ -782,13 +776,10 @@ void Planet1::Render()
 
     if (isDamage == true)
     {
-        RenderMeshOnScreen(meshList[BLOOD], 40, 30, 80, 65);
-
+        RenderMeshOnScreen(meshList[BLOOD], 45, 40, 70, 70);
     }
-    RenderMeshOnScreen(meshList[TARGET], 70, 50, 20, 20);
-
-    string NumAlienCounter = "Aliens left:" + std::to_string((int)NumAlien);
-    RenderTextOnScreen(meshList[GEO_TEXT], NumAlienCounter, Color(1, 1, 1), 1.75, 33, 22.5);
+    string NumAlienCounter = "Number of Aliens left: " + std::to_string((int)NumAlien);
+    RenderTextOnScreen(meshList[GEO_TEXT], NumAlienCounter, Color(1, 1, 1), 2, 0, 0);
     RenderMeshOnScreen(meshList[HEALTH], 20, 50, 40, 40);
     RenderMeshOnScreen(meshList[PORTRAIT], 20, 50, 40, 40);
 

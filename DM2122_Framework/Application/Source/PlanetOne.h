@@ -10,6 +10,8 @@
 #include "Health.h"
 #include "Bullet.h"
 #include "Sounds.h"
+#include "SceneManager.h"
+
 
 using std::vector;
 
@@ -41,7 +43,6 @@ class Planet1 : public Scene
         HEALTHPING,
         PORTRAIT,
         BLOOD,
-        TARGET,
 
         GEO_TEXT,
 
