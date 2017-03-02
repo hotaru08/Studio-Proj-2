@@ -43,6 +43,7 @@ class PlanetTwo : public Scene
 		SMELON,
 		SPUMPKIN,
 		SCHICKEN,
+        SPACESHIP,
 
 		NUM_GEOMETRY,
 	};

@@ -269,6 +269,8 @@ void PlanetThree::Init()
 	meshList[GEO_RADDISHSEED] = MeshBuilder::GenerateOBJ("seed", "OBJ//seed.obj");
 	meshList[GEO_RADDISHSEED]->textureID = LoadTGA("Image//plants.tga");
 
+    meshList[SPACESHIP] = MeshBuilder::GenerateOBJ("spaceship", "OBJ//Spaceship.obj");
+    meshList[SPACESHIP]->textureID = LoadTGA("Image//spaceship.tga");
 
 	Mtx44 projection;
 	projection.SetToPerspective(45.f, 4.f / 3.f, 0.1f, 7000.0f);
@@ -772,8 +774,14 @@ void PlanetThree::Render()
 	RenderMesh(meshList[GEO_MELON], true);
 	modelStack.PopMatrix();
 
+    modelStack.PushMatrix();
+    modelStack.Translate(300, 50, -700);
+    modelStack.Scale(50, 50, 50);
+    RenderMesh(meshList[SPACESHIP], true);
+    modelStack.PopMatrix();
+
 	//======================================================
-	//intory
+	//inventory
 	//======================================================
 	for (int width = 0; width < 10; width++)
 	{
@@ -837,8 +845,8 @@ void PlanetThree::RenderSkyBox()
 	//sky box
 	modelStack.PushMatrix();
 	modelStack.Translate(camera.position.x, camera.position.y, camera.position.z);
-	modelStack.Translate(0, -1250, 0);
-	modelStack.Scale(3000, 3000, 3000);
+	modelStack.Translate(0, -2500, 0);
+	modelStack.Scale(6000, 6000, 6000);
 
 	//Ground
 	modelStack.PushMatrix();

@@ -202,6 +202,9 @@ void PlanetTwo::Init()
 	meshList[INVENTORY] = MeshBuilder::GenerateQuad("inventory", Color(1, 1, 1), 1, 1);
 	meshList[INVENTORY]->textureID = LoadTGA("Image//inventoryBox.tga");
 
+    meshList[SPACESHIP] = MeshBuilder::GenerateOBJ("spaceship", "OBJ//Spaceship.obj");
+    meshList[SPACESHIP]->textureID = LoadTGA("Image//spaceship.tga");
+
 	Mtx44 projection;
 	projection.SetToPerspective(45.f, 4.f / 3.f, 0.1f, 7000.0f);
 	projectionStack.LoadMatrix(projection);
@@ -559,6 +562,12 @@ void PlanetTwo::Render()
 	RenderMesh(meshList[GEO_METEOR], false);
 	modelStack.PopMatrix();
 
+    modelStack.PushMatrix();
+    modelStack.Translate(500, 50, -800);
+    modelStack.Scale(70, 70, 70);
+    RenderMesh(meshList[SPACESHIP], true);
+    modelStack.PopMatrix();
+
 	//mineral1
 	for (int i = 0; i < 50; i++)
 	{
@@ -704,8 +713,8 @@ void PlanetTwo::RenderSkyBox()
 	//sky box
 	modelStack.PushMatrix();
 	modelStack.Translate(camera.position.x, camera.position.y, camera.position.z);
-	modelStack.Translate(0, -1250, 0);
-	modelStack.Scale(3000, 3000, 3000);
+	modelStack.Translate(0, -2500, 0);
+	modelStack.Scale(6000, 6000, 6000);
 
 	//Ground
 	modelStack.PushMatrix();

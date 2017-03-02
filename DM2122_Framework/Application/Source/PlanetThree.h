@@ -59,6 +59,7 @@ class PlanetThree : public Scene
 		GEO_SCREEN,
 		GEO_TEXT,
 		GROUND,
+        SPACESHIP,
 
 		NUM_GEOMETRY,
 	};
